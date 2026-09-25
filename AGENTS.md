@@ -120,7 +120,7 @@ algorithm, then divide. Do not calculate intermediate conditional
 probabilities. For each `p(G)`, draw the graph with the nodes colored by
 group (`G`, `G_ancestors`, `G_rest`) and a legend. Then write the full joint
 distribution with the variables colored by group (`\vg`, `\va`, `\vr`), and
-strike out in red (`\cancel`) each factor that contains a variable of
+strike out in red (`\strike`) each factor that contains a variable of
 `G_rest`.
 
 If the problem asks several questions, make one subproblem for each
