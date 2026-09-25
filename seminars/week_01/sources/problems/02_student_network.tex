@@ -66,13 +66,44 @@ $p(P = 1 \mid T = 1, H = 1)$.
 \begin{solution}
 \solpart{Idea}
 This problem uses the method of Problem~\ref{prob:medical-test} on a
-larger graph. The graph in Figure~\ref{fig:student-network} gives the joint
-distribution as a product of one factor for each node. Each factor is the
-distribution of the node given its parents:
+larger graph. First, write the joint distribution with the graph in
+Figure~\ref{fig:student-network}.
+
+The chain rule is true for any distribution and any order of the variables.
+Use an order where each parent comes before its children:
+\[
+  p(P, D, A, H, T)
+  = p(P) \, p(D \mid P) \, p(A \mid P, D) \, p(H \mid P, D, A) \,
+    p(T \mid P, D, A, H).
+\]
+The graph adds the assumptions of the model. An arrow shows a direct
+influence. If there is no arrow, there is no direct influence. Thus, given
+its parents, a variable does not depend on the variables before it in the
+order. Apply this rule to each factor:
+\begin{itemize}
+  \item $D$ has no parents, so $p(D \mid P) = p(D)$. The depression does
+    not depend on the party.
+  \item The parents of $A$ are $P$ and $D$, so the factor
+    $p(A \mid P, D)$ does not change.
+  \item The only parent of $H$ is $P$, so
+    $p(H \mid P, D, A) = p(H \mid P)$. Only the party causes the headache.
+  \item The only parent of $T$ is $A$, so
+    $p(T \mid P, D, A, H) = p(T \mid A)$. The teacher sees only the answer.
+\end{itemize}
+Substitute these factors into the chain rule:
 \[
   p(P, D, A, H, T)
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
+This is the general rule for a directed graph without cycles: the joint
+distribution is the product of the factors $p(\text{node} \mid
+\text{parents})$. A model of this type is a \emph{Bayesian network}.
+
+The order is important. In a different order, a factor can have a child in
+the condition, for example $p(A \mid T)$. The graph does not simplify this
+factor, and the tables do not give it. In the order from parents to
+children, each factor becomes one of the given tables.
+
 The tables give all five factors. Thus the joint distribution is known,
 and you can get any probability from it. To find the probability of $P$
 given an observation, move through the graph in two directions:
