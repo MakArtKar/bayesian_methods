@@ -65,69 +65,56 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-\emph{Main question:} how to find $p(G_x \mid G_y)$ for any groups of
-variables $G_x$ and $G_y$? Problem~\ref{prob:medical-test} is a special
-case.
-
-\emph{Step 1. Reduce the question to joint distributions.}
-\[
-  p(G_x \mid G_y) = \frac{p(G_x, G_y)}{p(G_y)}.
-\]
-Thus it is sufficient to find the joint distribution $p(G)$ of any group
-$G$.
-
-\emph{Step 2. Find the factors for $p(G)$.} The problem gives the
-distribution of each source, $p(P)$ and $p(D)$, and the distribution of
-each other node given its parents, $p(A \mid P, D)$, $p(H \mid P)$, and
-$p(T \mid A)$. The chain rule gives any joint distribution from these
-factors. Example for $G = \{H, A\}$ in the graph of this problem. $H$ and
-$A$ depend on $P$ and $D$, so add $P$ and $D$:
-\begin{align*}
-  p(P, D, A, H)
-  &= p(P, D, A) \, p(H \mid P, D, A)
-    && \text{(chain rule)} \\
-  &= p(P, D, A) \, p(H \mid P)
-    && \text{(parent of $H$: $P$)} \\
-  &= p(P, D) \, p(A \mid P, D) \, p(H \mid P)
-    && \text{(chain rule; parents of $A$: $P$, $D$)} \\
-  &= p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P)
-    && \text{(chain rule; $D$ has no parents)}.
-\end{align*}
-The factor $p(T \mid A)$ is not in the product. The product contains the
-factors of the sources and the arrows from which a path goes to $G$, and
-only these factors. From $T$, no path goes to $H$ or $A$:
-\begin{center}
-  \crossgraph{k}{k}{g}{g}{x}
-\end{center}
-
-\emph{Trick:} write the joint distribution of all variables one time. For
-each $G$, strike out the factors of the nodes from which no path goes to
-$G$:
-\[
-  p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, \strike{p(T \mid A)}.
-\]
-
-\emph{Step 3. Sum over the other variables.} Sum the product of the kept
-factors over the kept variables that are not in $G$:
-\[
-  p(H, A)
-  = \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
-    p(H \mid P = p).
-\]
-Move the factors that do not depend on a summation variable out of its
-sum, and calculate each factor.
+Goal: $p(G_x \mid G_y)$ for any groups of variables $G_x$ and $G_y$.
+Problem~\ref{prob:medical-test} is a special case.
+\begin{enumerate}[label=\textit{Step \arabic*.}, leftmargin=*]
+  \item \textit{Reduce to joint distributions:}
+    $p(G_x \mid G_y) = \dfrac{p(G_x, G_y)}{p(G_y)}$.
+    Now find $p(G)$ for any group $G$.
+  \item \textit{Find the factors of $p(G)$ with the chain rule.} Given:
+    $p(P)$, $p(D)$ for the sources; $p(A \mid P, D)$, $p(H \mid P)$,
+    $p(T \mid A)$ for the other nodes. Example for $G = \{H, A\}$:
+    \begin{align*}
+      p(P, D, A, H)
+      &= p(P, D, A) \, p(H \mid P, D, A)
+        && \text{(chain rule)} \\
+      &= p(P, D, A) \, p(H \mid P)
+        && \text{(parent of $H$: $P$)} \\
+      &= p(P, D) \, p(A \mid P, D) \, p(H \mid P)
+        && \text{(chain rule; parents of $A$: $P$, $D$)} \\
+      &= p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P)
+        && \text{(chain rule; $D$ has no parents)}.
+    \end{align*}
+    Only the factors of the sources and arrows with a path to $G$ appear.
+    From $T$, no path goes to $G$, so $p(T \mid A)$ is not in the product:
+    \begin{center}
+      \crossgraph{k}{k}{g}{g}{x}
+    \end{center}
+    \textit{Trick:} write the joint distribution of all variables one
+    time, and strike out the other factors:
+    \[
+      p(P, D, A, H, T)
+      = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
+        \strike{p(T \mid A)}.
+    \]
+  \item \textit{Sum over the kept variables that are not in $G$.} Move
+    the constants out of the sums:
+    \[
+      p(H, A)
+      = \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
+        p(H \mid P = p).
+    \]
+\end{enumerate}
 
 \solpart{Solution}
-The tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
-$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$. In each
-graph, the nodes of $G$ are blue. A red cross marks a struck-out
-factor: on a source, or on the arrows into a node.
-
-\emph{Joint distribution.} Apply the chain rule one variable at a time,
-from the children to the parents. A missing arrow means no direct
-influence: given its parents, a node does not depend on the other nodes in
-the condition.
+\begin{itemize}
+  \item $p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$
+    for each node $X$.
+  \item In the graphs, a red cross marks a struck-out factor: on a source,
+    or on the arrows into a node.
+  \item Joint distribution: chain rule from the children to the parents.
+    Given its parents, a node does not depend on the other nodes.
+\end{itemize}
 \begin{align*}
   p(P, D, A, H, T)
   &= p(P, D, A, H) \, p(T \mid P, D, A, H)
@@ -156,26 +143,24 @@ Thus
 
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
+\solstep{Step 1 (Idea 1). Write the ratio.}
 \[
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, H\}$.}
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, H\}$.}
 \begin{center}
   \crossgraph{g}{x}{g}{x}{x}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)}.
-\]
-Keep the other factors:
-\[
+  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)} \\
+  \Longrightarrow\;
   p(P, H) = p(P) \, p(H \mid P).
-\]
+\end{gather*}
 
-\solstep{Step 3. Find the numerator (Idea, Step~3).}
-No other variables are kept, so there is no sum:
+\solstep{Step 3 (Idea 3). Numerator.}
+No sum: no other variables are kept.
 \[
   p(P = 1, H = 1)
   = p(P = 1) \, p(H = 1 \mid P = 1)
@@ -183,20 +168,18 @@ No other variables are kept, so there is no sum:
   = 0.18.
 \]
 
-\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{H\}$.}
+\solstep{Step 4 (Idea 2). Denominator: $G = \{H\}$.}
 \begin{center}
   \crossgraph{k}{x}{g}{x}{x}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)}.
-\]
-Keep the other factors:
-\[
+  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)} \\
+  \Longrightarrow\;
   p(P, H) = p(P) \, p(H \mid P).
-\]
+\end{gather*}
 
-\solstep{Step 5. Find the denominator (Idea, Step~3).}
+\solstep{Step 5 (Idea 3). Denominator.}
 \begin{align*}
   p(H = 1)
   &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p)
@@ -216,25 +199,23 @@ Keep the other factors:
 
 \solsubproblem{(b) Find $p(P = 1 \mid T = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
+\solstep{Step 1 (Idea 1). Write the ratio.}
 \[
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, T\}$.}
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, T\}$.}
 \begin{center}
   \crossgraph{g}{k}{x}{k}{g}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A).
-\]
-Keep the other factors:
-\[
+  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A) \\
+  \Longrightarrow\;
   p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
-\]
+\end{gather*}
 
-\solstep{Step 3. Find the numerator (Idea, Step~3).}
+\solstep{Step 3 (Idea 3). Numerator.}
 \begin{align*}
   &p(P = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
@@ -253,20 +234,18 @@ Keep the other factors:
    = 0.184564.
 \end{align*}
 
-\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{T\}$.}
+\solstep{Step 4 (Idea 2). Denominator: $G = \{T\}$.}
 \begin{center}
   \crossgraph{k}{k}{x}{k}{g}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A).
-\]
-Keep the other factors:
-\[
+  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A) \\
+  \Longrightarrow\;
   p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
-\]
+\end{gather*}
 
-\solstep{Step 5. Find the denominator (Idea, Step~3).}
+\solstep{Step 5 (Idea 3). Denominator.}
 \begin{align*}
   &p(T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
@@ -294,26 +273,24 @@ Keep the other factors:
 
 \solsubproblem{(c) Find $p(P = 1 \mid T = 1, H = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
+\solstep{Step 1 (Idea 1). Write the ratio.}
 \[
   p(P = 1 \mid T = 1, H = 1)
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, H, T\}$.}
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, H, T\}$.}
 \begin{center}
   \crossgraph{g}{k}{g}{k}{g}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
-\]
-Keep the other factors:
-\[
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
+  \Longrightarrow\;
   p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
-\]
+\end{gather*}
 
-\solstep{Step 3. Find the numerator (Idea, Step~3).}
+\solstep{Step 3 (Idea 3). Numerator.}
 \begin{align*}
   &p(P = 1, H = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
@@ -328,20 +305,18 @@ Keep the other factors:
   &= 0.1661076.
 \end{align*}
 
-\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{H, T\}$.}
+\solstep{Step 4 (Idea 2). Denominator: $G = \{H, T\}$.}
 \begin{center}
   \crossgraph{k}{k}{g}{k}{g}
 \end{center}
-\[
+\begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
-\]
-Keep the other factors:
-\[
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
+  \Longrightarrow\;
   p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
-\]
+\end{gather*}
 
-\solstep{Step 5. Find the denominator (Idea, Step~3).}
+\solstep{Step 5 (Idea 3). Denominator.}
 \begin{align*}
   &p(H = 1, T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
