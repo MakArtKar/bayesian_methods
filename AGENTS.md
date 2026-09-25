@@ -101,17 +101,19 @@ transition, and keep it short:
   arithmetic.
 - Do not repeat in words what a formula already shows.
 
-If a solution calculates a conditional probability in a causal graph, use
-this plan:
+If a solution calculates a probability in a causal graph, use this
+algorithm for `p(S)`, where `S` is a set of variables with fixed values:
 
-1. Write the joint distribution of all variables with the chain rule and
-   the graph.
-2. Write the goal as a ratio: `p(X | Y) = p(X, Y) / p(Y)`.
-3. Find the numerator and the denominator as sums of the joint
-   distribution over the other variables. Move the factors that do not
-   depend on the summation variable out of each sum. A distribution sums
-   to 1 over all its values. If no kept variable has a parent among the
-   summed variables, the factors of the summed variables sum to 1.
+1. `B` is the set of the ancestors of `S` that are not in `S`. `R` is the
+   set of all other variables.
+2. `p(S) = sum_B p(S, B)`, because the sum over `R` of `p(R | S, B)` is 1.
+3. `S` and `B` together contain the parents of all their variables. Thus
+   the chain rule gives `p(S, B)` as a product of the given tables.
+4. Move the factors that do not depend on a summation variable out of its
+   sum.
+
+For `p(X | Y)`, find `p(X, Y)` and `p(Y)` with this algorithm, then
+divide. Do not calculate intermediate conditional probabilities.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier

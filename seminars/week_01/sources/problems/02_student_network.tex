@@ -65,7 +65,7 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-Use the plan of Problem~\ref{prob:medical-test} on a larger graph. The
+Problem~\ref{prob:medical-test} is a special case of the algorithm below. The
 tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
 $p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
 
@@ -99,22 +99,31 @@ Thus
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
-\emph{Summed variables that are not parents of kept variables sum to 1.}
-Example: keep $P$ and $H$, and sum over $D$, $A$, and $T$:
-\begin{align*}
-  &p(P, H) \\
-  &= \sum_{d} \sum_{a} \sum_{t} p(P) \, p(D = d) \,
-     p(A = a \mid P, D = d) \, p(H \mid P) \, p(T = t \mid A = a) \\
-  &= p(P) \, p(H \mid P) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P, D = d)
-     \sum_{t} p(T = t \mid A = a)
-    && \text{(constants out)} \\
-  &= p(P) \, p(H \mid P) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P, D = d)
-    && \textstyle\text{($\sum_t = 1$)} \\
-  &= p(P) \, p(H \mid P) \sum_{d} p(D = d)
-    && \textstyle\text{($\sum_a = 1$)} \\
-  &= p(P) \, p(H \mid P)
-    && \textstyle\text{($\sum_d = 1$)}.
-\end{align*}
+\emph{Algorithm for $p(S)$}, where $S$ is a set of variables with fixed
+values:
+\begin{enumerate}[label=\arabic*.]
+  \item $B$: the ancestors of the variables in $S$ that are not in $S$.
+    $R$: all other variables.
+  \item Sum out $R$:
+    \begin{align*}
+      p(S)
+      &= \sum_{B} \sum_{R} p(S, B, R)
+       = \sum_{B} \sum_{R} p(R \mid S, B) \, p(S, B)
+        && \text{(chain rule)} \\
+      &= \sum_{B} p(S, B) \sum_{R} p(R \mid S, B)
+        && \text{(constants out)} \\
+      &= \sum_{B} p(S, B)
+        && \textstyle\text{($\sum_R p(R \mid S, B) = 1$)}.
+    \end{align*}
+  \item $S \cup B$ contains the parents of all its variables. Thus the
+    chain rule gives a product of the given tables:
+    $p(S, B) = \prod_{v \in S \cup B} p(v \mid \text{parents of } v)$.
+  \item Move the factors that do not depend on a summation variable out of
+    its sum. Then calculate.
+\end{enumerate}
+For a conditional probability, find $p(X, Y)$ and $p(Y)$ with the
+algorithm:
+$p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
 
 \solpart{Solution}
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
@@ -124,23 +133,22 @@ Example: keep $P$ and $H$, and sum over $D$, $A$, and $T$:
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find $p(P = p, H = 1)$.}
+\solstep{Step 2. Find the numerator: $S = \{P, H\}$, $B = \varnothing$.}
 \[
-  p(P = p, H = 1) = p(P = p) \, p(H = 1 \mid P = p)
-  \qquad \text{(Idea)}.
+  p(P = 1, H = 1)
+  = p(P = 1) \, p(H = 1 \mid P = 1)
+  = 0.2 \cdot 0.9
+  = 0.18.
 \]
-\begin{align*}
-  p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
-  p(P = 0, H = 1) &= (1 - 0.2) \cdot 0.2 = 0.8 \cdot 0.2 = 0.16.
-\end{align*}
 
-\solstep{Step 3. Find the denominator.}
-\[
+\solstep{Step 3. Find the denominator: $S = \{H\}$, $B = \{P\}$.}
+\begin{align*}
   p(H = 1)
-  = \sum_{p} p(P = p, H = 1)
-  = 0.18 + 0.16
-  = 0.34.
-\]
+  &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p) \\
+  &= 0.2 \cdot 0.9 + (1 - 0.2) \cdot 0.2
+   = 0.18 + 0.16
+   = 0.34.
+\end{align*}
 
 \solstep{Step 4. Divide.}
 \[
@@ -157,68 +165,45 @@ Example: keep $P$ and $H$, and sum over $D$, $A$, and $T$:
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Find $p(P = p, T = 1)$.}
-Sum over $H$ as in the Idea, then over $D$ inside the sum over $A$:
+\solstep{Step 2. Find the numerator: $S = \{P, T\}$, $B = \{A, D\}$.}
 \begin{align*}
-  &p(P = p, T = 1) \\
-  &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
+  &p(P = 1, T = 1) \\
+  &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
+     p(T = 1 \mid A = a)
+    && \text{(algorithm)} \\
+  &= p(P = 1) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
+     p(A = a \mid P = 1, D = d) \, p(D = d)
+    && \text{(constants out)} \\
+  &= 0.2 \, \bigl[ 0.95 \, \bigl(0.999 \cdot 0.4 + 0.9 \cdot (1 - 0.4)\bigr)
+    && \text{($a = 1$, $a = 0$)} \\
+  &\qquad + 0.5 \, \bigl((1 - 0.999) \cdot 0.4 + (1 - 0.9) \cdot (1 - 0.4)\bigr)
+     \bigr] \\
+  &= 0.2 \, [0.95 \cdot 0.9396 + 0.5 \cdot 0.0604] \\
+  &= 0.2 \, [0.89262 + 0.0302]
+   = 0.2 \cdot 0.92282
+   = 0.184564.
+\end{align*}
+
+\solstep{Step 3. Find the denominator: $S = \{T\}$, $B = \{P, A, D\}$.}
+\begin{align*}
+  &p(T = 1) \\
+  &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
      p(A = a \mid P = p, D = d) \, p(T = 1 \mid A = a)
-    && \text{(sum out $H$)} \\
-  &= p(P = p) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
+    && \text{(algorithm)} \\
+  &= \sum_{p} p(P = p) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
      p(A = a \mid P = p, D = d) \, p(D = d)
     && \text{(constants out)} \\
-  &= p(P = p) \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = p)
-    && \text{(sum over $D$)} \\
-  &= p(P = p) \, p(T = 1 \mid P = p)
-    && \text{(sum over $A$)}.
-\end{align*}
-The sum over $D$:
-\begin{align*}
-  &\sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
-  &= \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d \mid P = p)
-    && \text{($p(P, D) = p(P) \, p(D)$, Idea)} \\
-  &= \sum_{d} p(A = a, D = d \mid P = p)
-    && \text{(chain rule)} \\
-  &= p(A = a \mid P = p).
-\end{align*}
-The sum over $A$ is the same with $T$ and $A$.
-
-\solstep{Step 3. Find $p(A = 1 \mid P = p)$ for Step 2.}
-\begin{align*}
-  p(A = 1 \mid P = 1)
-  &= \sum_{d} p(A = 1 \mid P = 1, D = d) \, p(D = d)
-   = 0.999 \cdot 0.4 + 0.9 \cdot (1 - 0.4) \\
-  &= 0.3996 + 0.54
-   = 0.9396, \\
-  p(A = 1 \mid P = 0)
-  &= \sum_{d} p(A = 1 \mid P = 0, D = d) \, p(D = d)
-   = 0.9 \cdot 0.4 + 0.01 \cdot (1 - 0.4) \\
-  &= 0.36 + 0.006
-   = 0.366.
+  &= 0.184564 + (1 - 0.2) \, \bigl[ 0.95 \, (0.9 \cdot 0.4 + 0.01 \cdot 0.6)
+    && \text{($p = 1$: Step 2)} \\
+  &\qquad + 0.5 \, \bigl((1 - 0.9) \cdot 0.4 + (1 - 0.01) \cdot 0.6\bigr) \bigr] \\
+  &= 0.184564 + 0.8 \, [0.95 \cdot 0.366 + 0.5 \cdot 0.634] \\
+  &= 0.184564 + 0.8 \, [0.3477 + 0.317]
+   = 0.184564 + 0.8 \cdot 0.6647 \\
+  &= 0.184564 + 0.53176
+   = 0.716324.
 \end{align*}
 
-\solstep{Step 4. Find $p(T = 1 \mid P = p)$ for Step 2.}
-\begin{align*}
-  p(T = 1 \mid P = 1)
-  &= \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = 1)
-   = 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396) \\
-  &= 0.89262 + 0.0302
-   = 0.92282, \\
-  p(T = 1 \mid P = 0)
-  &= \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = 0)
-   = 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366) \\
-  &= 0.3477 + 0.317
-   = 0.6647.
-\end{align*}
-
-\solstep{Step 5. Find the numerator and the denominator.}
-\begin{align*}
-  p(P = 1, T = 1) &= 0.2 \cdot 0.92282 = 0.184564, \\
-  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176, \\
-  p(T = 1) &= \sum_{p} p(P = p, T = 1) = 0.184564 + 0.53176 = 0.716324.
-\end{align*}
-
-\solstep{Step 6. Divide.}
+\solstep{Step 4. Divide.}
 \[
   p(P = 1 \mid T = 1)
   = \frac{0.184564}{0.716324}
@@ -233,37 +218,37 @@ The sum over $A$ is the same with $T$ and $A$.
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find $p(P = p, H = 1, T = 1)$.}
-Sum over $D$ and $A$ as in Step~2 of (b). The factor $p(H = 1 \mid P = p)$
-is a constant:
+\solstep{Step 2. Find the numerator: $S = \{P, H, T\}$, $B = \{A, D\}$.}
 \begin{align*}
-  &p(P = p, H = 1, T = 1) \\
-  &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
-     p(A = a \mid P = p, D = d)
-    && \text{(joint distribution)} \\
-  &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
-  &= p(P = p) \, p(H = 1 \mid P = p)
+  &p(P = 1, H = 1, T = 1) \\
+  &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
+    && \text{(algorithm)} \\
+  &\qquad \cdot p(H = 1 \mid P = 1) \, p(T = 1 \mid A = a) \\
+  &= p(H = 1 \mid P = 1)
     && \text{(constants out)} \\
-  &\qquad \cdot \sum_{a} p(T = 1 \mid A = a)
-     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
-  &= p(P = p) \, p(H = 1 \mid P = p) \, p(T = 1 \mid P = p)
-    && \text{(Step 2 of (b))}.
-\end{align*}
-With Step~4 of (b):
-\begin{align*}
-  p(P = 1, H = 1, T = 1) &= 0.2 \cdot 0.9 \cdot 0.92282
-    = 0.18 \cdot 0.92282 = 0.1661076, \\
-  p(P = 0, H = 1, T = 1) &= 0.8 \cdot 0.2 \cdot 0.6647
-    = 0.16 \cdot 0.6647 = 0.106352.
+  &\qquad \cdot p(P = 1) \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = 1, D = d) \, p(D = d) \\
+  &= 0.9 \cdot 0.184564
+    && \text{((b), Step 2)} \\
+  &= 0.1661076.
 \end{align*}
 
-\solstep{Step 3. Find the denominator.}
-\[
-  p(H = 1, T = 1)
-  = \sum_{p} p(P = p, H = 1, T = 1)
-  = 0.1661076 + 0.106352
-  = 0.2724596.
-\]
+\solstep{Step 3. Find the denominator: $S = \{H, T\}$, $B = \{P, A, D\}$.}
+\begin{align*}
+  &p(H = 1, T = 1) \\
+  &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
+     p(A = a \mid P = p, D = d)
+    && \text{(algorithm)} \\
+  &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
+  &= \sum_{p} p(H = 1 \mid P = p)
+    && \text{(constants out)} \\
+  &\qquad \cdot p(P = p) \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
+  &= 0.9 \cdot 0.184564 + 0.2 \cdot 0.53176
+    && \text{((b), Step 3)} \\
+  &= 0.1661076 + 0.106352
+   = 0.2724596.
+\end{align*}
 
 \solstep{Step 4. Divide.}
 \[
@@ -280,6 +265,6 @@ With Step~4 of (b):
   \underbrace{0.258}_{T = 1}, \quad
   \underbrace{0.610}_{H = 1,\, T = 1}.
 \]
-An unhappy teacher is weak evidence: $p(T = 1 \mid P = 0) = 0.6647$ is
-also high. Two observations together give the strongest evidence.
+An unhappy teacher is weak evidence: without the party, the teacher is
+also often unhappy ($0.6647$ in Step~3 of (b)). Two observations together give the strongest evidence.
 \end{solution}

@@ -28,19 +28,15 @@ The disease causes the test result. The causal graph has one arrow:
     \draw[->] (D) -- (T);
   \end{tikzpicture}
 \end{center}
-Plan for a conditional probability of query variables $X$ given observed
-variables $Y$:
-\begin{enumerate}[label=\arabic*.]
-  \item Write the joint distribution of all variables with the chain rule
-    and the graph.
-  \item Write the goal as a ratio:
-    $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
-  \item Find the numerator and the denominator as sums of the joint
-    distribution over the other variables:
-    $p(X, Y) = \sum_{z} p(X, Y, Z = z)$ and $p(Y) = \sum_{x} p(X = x, Y)$.
-    Move the factors that do not depend on the summation variable out of
-    the sum. A distribution sums to 1 over all its values.
-\end{enumerate}
+Write the goal as a ratio, and find the numerator and the denominator from
+the joint distribution:
+\begin{align*}
+  p(D \mid T) &= \frac{p(D, T)}{p(T)}, \\
+  p(D, T) &= p(D) \, p(T \mid D)
+    && \text{(chain rule; both factors are given)}, \\
+  p(T) &= \sum_{d} p(D = d, T)
+    && \text{(sum over the parent $D$)}.
+\end{align*}
 
 \solpart{Solution}
 \solstep{Step 1. Write the joint distribution.}
