@@ -47,6 +47,11 @@ Every committed PDF must be built from the committed version of its sources.
   document reads, or the commit fails.
 - If LaTeX fails, the commit fails. Fix the error and commit again.
 - To build without a commit, run `python3 scripts/pdf_freshness.py build`.
+  For documents that are already tracked, it also stages the PDF and the
+  stamp.
+- Stage files with `git add` and then run `git commit` without paths.
+  `git commit <paths>` commits through a temporary index, and the hook can
+  fail with a stash conflict.
 - Never edit a PDF or a stamp by hand, and never commit a PDF without its
   sources.
 

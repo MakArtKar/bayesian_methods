@@ -4,13 +4,14 @@
 A document is a `.tex` file with `\\documentclass` under one of the content
 directories. `build` compiles `<dir>/<name>.tex` into `<dir>/<name>.pdf` and
 writes `<dir>/<name>.pdf.stamp`. The stamp records the git blob ID of the PDF
-and of every source file in the repository that the build read.
+and of every source file in the repository that the build read. If the `.tex`
+file is tracked, `build` also stages the PDF and the stamp.
 
 `check` compares the stamps with the git index. It does not run LaTeX, so it
 is fast and works in CI.
 
 `hook` is the pre-commit hook. It builds the stale documents that are in the
-git index, stages their PDFs and stamps, and then runs `check`.
+git index, and then runs `check`.
 
 Usage:
     python3 scripts/pdf_freshness.py build          # build stale documents
@@ -203,7 +204,13 @@ def build_one(tex: Path) -> None:
             )
         blob = git("hash-object", str(dep)).decode().strip()
         lines.append(f"{blob}  {dep.relative_to(cwd).as_posix()}\n")
-    Path(str(pdf) + STAMP_SUFFIX).write_text("".join(lines))
+    stamp = Path(str(pdf) + STAMP_SUFFIX)
+    stamp.write_text("".join(lines))
+    # Stage the outputs of tracked documents. Otherwise the pre-commit hook
+    # stashes them as unstaged changes, and the stash conflicts with the PDF
+    # that the hook builds.
+    if git("ls-files", "--", str(tex)):
+        git("add", "--", str(pdf), str(stamp))
 
 
 def working_tree_documents(include_untracked: bool = True) -> list[Path]:
@@ -258,8 +265,6 @@ def hook() -> int:
     ]
     for tex in documents:
         build_one(tex)
-        pdf = tex.with_suffix(".pdf")
-        git("add", "--", str(pdf), str(pdf) + STAMP_SUFFIX)
     return check()
 
 
