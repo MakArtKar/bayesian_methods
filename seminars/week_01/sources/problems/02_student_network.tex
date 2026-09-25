@@ -65,12 +65,21 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-Problem~\ref{prob:medical-test} is a special case of this method.
+\emph{Main question:} how to find $p(G_x \mid G_y)$ for any groups of
+variables $G_x$ and $G_y$? Problem~\ref{prob:medical-test} is a special
+case.
 
-\emph{Joint distribution.} The problem gives the distribution of each source
-node and the distribution of each other node given its parents. The chain
-rule, from the children to the parents, gives the joint distribution as the
-product of these factors. Example for the graph $X \to Z \leftarrow Y$:
+\emph{Step 1. Reduce the question to joint distributions.}
+\[
+  p(G_x \mid G_y) = \frac{p(G_x, G_y)}{p(G_y)}.
+\]
+Thus it is sufficient to find the joint distribution $p(G)$ of any group
+$G$.
+
+\emph{Step 2. Find $p(G, \Ganc)$ with the chain rule.} The problem gives the
+distribution of each source node and the distribution of each other node
+given its parents. The chain rule gives any joint distribution from these
+factors. Example for the graph $X \to Z \leftarrow Y$:
 \begin{align*}
   p(X, Y, Z)
   &= p(X, Y) \, p(Z \mid X, Y)
@@ -80,33 +89,13 @@ product of these factors. Example for the graph $X \to Z \leftarrow Y$:
   &= p(X) \, p(Y) \, p(Z \mid X, Y)
     && \text{($Y$ has no parents)}.
 \end{align*}
+To find $p(G)$, only the ancestors of $G$ are necessary. Let $\Ganc$ be the
+ancestors of $G$ that are not in $G$, and $\Grest$ all other variables.
 
-\emph{Algorithm for $p(G)$}, where $G$ is a group of variables with fixed
-values:
-\begin{enumerate}[label=\arabic*.]
-  \item $\Ganc$: the ancestors of $G$ that are not in $G$. $\Grest$: all
-    other variables.
-  \item $p(G) = \sum_{\Ganc} p(G, \Ganc)$: the sum over $\Grest$ is 1.
-  \item $G$ and $\Ganc$ together contain the parents of all their variables.
-    Thus the chain rule gives $p(G, \Ganc)$ as a product of the given
-    tables.
-  \item Move the factors that do not depend on a summation variable out of
-    its sum. Then calculate.
-\end{enumerate}
-\emph{Proof of Step 2.}
-\begin{align*}
-  p(G)
-  &= \sum_{\Ganc} \sum_{\Grest} p(G, \Ganc, \Grest) \\
-  &= \sum_{\Ganc} \sum_{\Grest} p(G, \Ganc) \, p(\Grest \mid G, \Ganc)
-    && \text{(chain rule)} \\
-  &= \sum_{\Ganc} p(G, \Ganc) \sum_{\Grest} p(\Grest \mid G, \Ganc)
-    && \text{(constants out)} \\
-  &= \sum_{\Ganc} p(G, \Ganc)
-    && \text{(a distribution sums to 1)}.
-\end{align*}
-
-\emph{Proof of Step 3.} No arrow goes from $\Grest$ to $G$ or $\Ganc$:
-otherwise, its start is an ancestor of $G$.
+\emph{Trick:} write the joint distribution of all variables one time. Then
+strike out each factor with a variable of $\Grest$. The other factors give
+$p(G, \Ganc)$. No arrow goes from $\Grest$ to $G$ or $\Ganc$, so these
+factors do not contain $\Grest$:
 \begin{center}
   \begin{tikzpicture}[
       >={Stealth},
@@ -142,15 +131,13 @@ otherwise, its start is an ancestor of $G$.
     \draw[meta] (BG) -- (BR);
   \end{tikzpicture}
 \end{center}
-Thus the parents of each variable in $G \cup \Ganc$ are in $G \cup \Ganc$.
-Apply the chain rule to the variables of $G \cup \Ganc$, parents first.
-Then each factor is $p(v \mid \text{parents of } v)$, a given table.
 
-For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
-algorithm, then divide:
+\emph{Step 3. Sum over $\Ganc$.}
 \[
-  p(Q \mid E) = \frac{p(Q, E)}{p(E)}.
+  p(G) = \sum_{\Ganc} p(G, \Ganc).
 \]
+Write the product from Step~2 under the sum, move the factors that do not
+depend on a summation variable out of its sum, and calculate each factor.
 
 \solpart{Solution}
 The tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
@@ -188,20 +175,27 @@ Thus
 
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio.}
+\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
 \[
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $G = \{P, H\}$, $\Ganc = \varnothing$.}
+\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, H\}$, $\Ganc = \varnothing$.}
 \begin{center}
   \groupgraph{grp}{rst}{grp}{rst}{rst}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\vg{P}, \vr{D}, \vr{A}, \vg{H}, \vr{T})
   = p(\vg{P}) \, \strike{p(\vr{D})} \, \strike{p(\vr{A} \mid \vg{P}, \vr{D})} \, p(\vg{H} \mid \vg{P}) \, \strike{p(\vr{T} \mid \vr{A})}.
 \]
+Keep the other factors:
+\[
+  p(P, H) = p(P) \, p(H \mid P).
+\]
+
+\solstep{Step 3. Find the numerator (Idea, Step~3).}
+$\Ganc$ is empty, so there is no sum:
 \[
   p(P = 1, H = 1)
   = p(P = 1) \, p(H = 1 \mid P = 1)
@@ -209,24 +203,31 @@ Joint distribution:
   = 0.18.
 \]
 
-\solstep{Step 3. Find the denominator: $G = \{H\}$, $\Ganc = \{P\}$.}
+\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{H\}$, $\Ganc = \{P\}$.}
 \begin{center}
   \groupgraph{anc}{rst}{grp}{rst}{rst}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\va{P}, \vr{D}, \vr{A}, \vg{H}, \vr{T})
   = p(\va{P}) \, \strike{p(\vr{D})} \, \strike{p(\vr{A} \mid \va{P}, \vr{D})} \, p(\vg{H} \mid \va{P}) \, \strike{p(\vr{T} \mid \vr{A})}.
 \]
+Keep the other factors:
+\[
+  p(H, P) = p(P) \, p(H \mid P).
+\]
+
+\solstep{Step 5. Find the denominator (Idea, Step~3).}
 \begin{align*}
   p(H = 1)
-  &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p) \\
+  &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p)
+    && \text{(Step 4)} \\
   &= 0.2 \cdot 0.9 + (1 - 0.2) \cdot 0.2
    = 0.18 + 0.16
    = 0.34.
 \end{align*}
 
-\solstep{Step 4. Divide.}
+\solstep{Step 6. Divide.}
 \[
   p(P = 1 \mid H = 1)
   = \frac{0.18}{0.34}
@@ -236,25 +237,31 @@ Joint distribution:
 
 \solsubproblem{(b) Find $p(P = 1 \mid T = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio.}
+\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
 \[
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $G = \{P, T\}$, $\Ganc = \{A, D\}$.}
+\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, T\}$, $\Ganc = \{A, D\}$.}
 \begin{center}
   \groupgraph{grp}{anc}{rst}{anc}{grp}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\vg{P}, \va{D}, \va{A}, \vr{H}, \vg{T})
   = p(\vg{P}) \, p(\va{D}) \, p(\va{A} \mid \vg{P}, \va{D}) \, \strike{p(\vr{H} \mid \vg{P})} \, p(\vg{T} \mid \va{A}).
 \]
+Keep the other factors:
+\[
+  p(P, T, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+\]
+
+\solstep{Step 3. Find the numerator (Idea, Step~3).}
 \begin{align*}
   &p(P = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
      p(T = 1 \mid A = a)
-    && \text{(algorithm)} \\
+    && \text{(Step 2)} \\
   &= p(P = 1) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
      p(A = a \mid P = 1, D = d) \, p(D = d)
     && \text{(constants out)} \\
@@ -268,25 +275,31 @@ Joint distribution:
    = 0.184564.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $G = \{T\}$, $\Ganc = \{P, A, D\}$.}
+\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{T\}$, $\Ganc = \{P, A, D\}$.}
 \begin{center}
   \groupgraph{anc}{anc}{rst}{anc}{grp}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\va{P}, \va{D}, \va{A}, \vr{H}, \vg{T})
   = p(\va{P}) \, p(\va{D}) \, p(\va{A} \mid \va{P}, \va{D}) \, \strike{p(\vr{H} \mid \va{P})} \, p(\vg{T} \mid \va{A}).
 \]
+Keep the other factors:
+\[
+  p(T, P, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+\]
+
+\solstep{Step 5. Find the denominator (Idea, Step~3).}
 \begin{align*}
   &p(T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
      p(A = a \mid P = p, D = d) \, p(T = 1 \mid A = a)
-    && \text{(algorithm)} \\
+    && \text{(Step 4)} \\
   &= \sum_{p} p(P = p) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
      p(A = a \mid P = p, D = d) \, p(D = d)
     && \text{(constants out)} \\
   &= 0.184564 + (1 - 0.2) \, \bigl[ 0.95 \, (0.9 \cdot 0.4 + 0.01 \cdot 0.6)
-    && \text{($p = 1$: Step 2)} \\
+    && \text{($p = 1$: Step 3)} \\
   &\qquad + 0.5 \, \bigl((1 - 0.9) \cdot 0.4 + (1 - 0.01) \cdot 0.6\bigr) \bigr] \\
   &= 0.184564 + 0.8 \, [0.95 \cdot 0.366 + 0.5 \cdot 0.634] \\
   &= 0.184564 + 0.8 \, [0.3477 + 0.317]
@@ -295,7 +308,7 @@ Joint distribution:
    = 0.716324.
 \end{align*}
 
-\solstep{Step 4. Divide.}
+\solstep{Step 6. Divide.}
 \[
   p(P = 1 \mid T = 1)
   = \frac{0.184564}{0.716324}
@@ -304,61 +317,73 @@ Joint distribution:
 
 \solsubproblem{(c) Find $p(P = 1 \mid T = 1, H = 1)$.}
 
-\solstep{Step 1. Write the goal as a ratio.}
+\solstep{Step 1. Write the goal as a ratio (Idea, Step~1).}
 \[
   p(P = 1 \mid T = 1, H = 1)
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $G = \{P, H, T\}$, $\Ganc = \{A, D\}$.}
+\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, H, T\}$, $\Ganc = \{A, D\}$.}
 \begin{center}
   \groupgraph{grp}{anc}{grp}{anc}{grp}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\vg{P}, \va{D}, \va{A}, \vg{H}, \vg{T})
   = p(\vg{P}) \, p(\va{D}) \, p(\va{A} \mid \vg{P}, \va{D}) \, p(\vg{H} \mid \vg{P}) \, p(\vg{T} \mid \va{A}).
 \]
+Keep the other factors:
+\[
+  p(P, H, T, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+\]
+
+\solstep{Step 3. Find the numerator (Idea, Step~3).}
 \begin{align*}
   &p(P = 1, H = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
-    && \text{(algorithm)} \\
+    && \text{(Step 2)} \\
   &\qquad \cdot p(H = 1 \mid P = 1) \, p(T = 1 \mid A = a) \\
   &= p(H = 1 \mid P = 1)
     && \text{(constants out)} \\
   &\qquad \cdot p(P = 1) \sum_{a} p(T = 1 \mid A = a)
      \sum_{d} p(A = a \mid P = 1, D = d) \, p(D = d) \\
   &= 0.9 \cdot 0.184564
-    && \text{((b), Step 2)} \\
+    && \text{((b), Step 3)} \\
   &= 0.1661076.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $G = \{H, T\}$, $\Ganc = \{P, A, D\}$.}
+\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{H, T\}$, $\Ganc = \{P, A, D\}$.}
 \begin{center}
   \groupgraph{anc}{anc}{grp}{anc}{grp}
 \end{center}
-Joint distribution:
+Strike out the factors with $\Grest$ in the joint distribution:
 \[
   p(\va{P}, \va{D}, \va{A}, \vg{H}, \vg{T})
   = p(\va{P}) \, p(\va{D}) \, p(\va{A} \mid \va{P}, \va{D}) \, p(\vg{H} \mid \va{P}) \, p(\vg{T} \mid \va{A}).
 \]
+Keep the other factors:
+\[
+  p(H, T, P, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+\]
+
+\solstep{Step 5. Find the denominator (Idea, Step~3).}
 \begin{align*}
   &p(H = 1, T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
      p(A = a \mid P = p, D = d)
-    && \text{(algorithm)} \\
+    && \text{(Step 4)} \\
   &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
   &= \sum_{p} p(H = 1 \mid P = p)
     && \text{(constants out)} \\
   &\qquad \cdot p(P = p) \sum_{a} p(T = 1 \mid A = a)
      \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
   &= 0.9 \cdot 0.184564 + 0.2 \cdot 0.53176
-    && \text{((b), Step 3)} \\
+    && \text{((b), Step 5)} \\
   &= 0.1661076 + 0.106352
    = 0.2724596.
 \end{align*}
 
-\solstep{Step 4. Divide.}
+\solstep{Step 6. Divide.}
 \[
   p(P = 1 \mid T = 1, H = 1)
   = \frac{0.1661076}{0.2724596}
@@ -374,5 +399,5 @@ Joint distribution:
   \underbrace{0.610}_{H = 1,\, T = 1}.
 \]
 An unhappy teacher is weak evidence: without the party, the teacher is
-also often unhappy ($0.6647$ in Step~3 of (b)). Two observations together give the strongest evidence.
+also often unhappy ($0.6647$ in Step~5 of (b)). Two observations together give the strongest evidence.
 \end{solution}

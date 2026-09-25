@@ -102,26 +102,25 @@ transition, and keep it short:
 - Do not repeat in words what a formula already shows.
 
 If a solution calculates a probability in a causal graph, use this
-algorithm for `p(G)`, where the group `G` is a set of variables with fixed
-values:
+method:
 
-1. `G_ancestors` is the set of the ancestors of `G` that are not in `G`.
-   `G_rest` is the set of all other variables.
-2. `p(G) = sum_{G_ancestors} p(G, G_ancestors)`, because the sum over
-   `G_rest` is 1.
-3. `G` and `G_ancestors` together contain the parents of all their
-   variables. Thus the chain rule gives `p(G, G_ancestors)` as a product of
-   the given tables.
-4. Move the factors that do not depend on a summation variable out of its
-   sum.
+1. Reduce the question to joint distributions:
+   `p(G_x | G_y) = p(G_x, G_y) / p(G_y)`.
+2. For each joint distribution `p(G)`, find `p(G, G_ancestors)` with the
+   chain rule. `G_ancestors` is the set of the ancestors of `G` that are not
+   in `G`, and `G_rest` is the set of all other variables. Write the joint
+   distribution of all variables, and strike out each factor with a
+   variable of `G_rest`. The other factors give `p(G, G_ancestors)`.
+3. `p(G) = sum_{G_ancestors} p(G, G_ancestors)`. Move the factors that do not
+   depend on a summation variable out of its sum, then calculate.
 
-For a query `Q` and an observation `E`, find `p(Q, E)` and `p(E)` with this
-algorithm, then divide. Do not calculate intermediate conditional
-probabilities. For each `p(G)`, draw the graph with the nodes colored by
-group (`G`, `G_ancestors`, `G_rest`) and a legend. Then write the full joint
-distribution with the variables colored by group (`\vg`, `\va`, `\vr`), and
-strike out in red (`\strike`) each factor that contains a variable of
-`G_rest`.
+Do not calculate intermediate conditional probabilities. In the
+`Solution`, name the step of the method in each step title, for example
+`Step 2. Find p(G, G_ancestors) for the numerator (Idea, Step 2)`. For each
+`p(G)`, draw the graph with the nodes colored by group (`G`, `G_ancestors`,
+`G_rest`) and a legend. Write the joint distribution with the variables
+colored by group (`\vg`, `\va`, `\vr`), and strike out in red (`\strike`)
+each factor that contains a variable of `G_rest`.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier
