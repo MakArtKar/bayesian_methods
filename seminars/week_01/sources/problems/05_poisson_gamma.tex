@@ -1,0 +1,23 @@
+\label{prob:poisson-gamma}
+Let $x_1, x_2, \ldots, x_N$ be an independent sample from $\Poiss(\lambda)$.
+The prior distribution is the gamma distribution
+\[
+  p(\lambda) = \Gam(\lambda \mid a, b)
+  = \frac{b^a}{\Gamma(a)} \lambda^{a - 1} \exp(-b \lambda),
+  \quad a, b > 0.
+\]
+Find the Bayesian estimate of $\lambda$ as the mean of the posterior
+distribution $p(\lambda \mid x_1, \ldots, x_N)$.
+
+\paragraph{Notes on comparing the estimates from
+  Problems~\ref{prob:poisson-mle} and~\ref{prob:poisson-gamma}.}
+\begin{enumerate}[label=\arabic*.]
+  \item For more about non-informative priors, see Section~5.4 ``Priors''
+    in Kevin P.\ Murphy, \emph{Machine Learning: A Probabilistic
+    Perspective}.
+  \item The prior $p(\lambda) \propto \frac{1}{\lambda}$ is a uniform prior
+    on $\log \lambda$. To see this, use the change-of-variables rule for
+    the density of a function of a random variable. See, for example,
+    \href{https://en.wikipedia.org/wiki/Probability_density_function#Function_of_random_variables_and_change_of_variables_in_the_probability_density_function}{this
+    article}.
+\end{enumerate}

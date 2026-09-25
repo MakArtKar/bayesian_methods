@@ -1,0 +1,65 @@
+\label{prob:student-network}
+Consider the following probabilistic model. At a seminar, a student answers
+badly ($A = 1$) or well ($A = 0$). This depends on whether the student has
+depression ($D = 1$ or $D = 0$) and whether the student went to a party the
+night before ($P = 1$ or $P = 0$). The party can also give the student a
+headache ($H = 1$). A bad answer makes the teacher unhappy ($T = 1$).
+Figure~\ref{fig:student-network} shows the causal relations in the model.
+The probabilities are:
+\begin{center}
+  \begin{tabular}[t]{c|cc}
+    \toprule
+    $p(A = 1 \mid P, D)$ & $P$ & $D$ \\
+    \midrule
+    0.999 & 1 & 1 \\
+    0.9   & 1 & 0 \\
+    0.9   & 0 & 1 \\
+    0.01  & 0 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \quad
+  \begin{tabular}[t]{c|c}
+    \toprule
+    $p(H = 1 \mid P)$ & $P$ \\
+    \midrule
+    0.9 & 1 \\
+    0.2 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \quad
+  \begin{tabular}[t]{c|c}
+    \toprule
+    $p(T = 1 \mid A)$ & $A$ \\
+    \midrule
+    0.95 & 1 \\
+    0.5  & 0 \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  $p(P = 1) = 0.2, \qquad p(D = 1) = 0.4.$
+\end{center}
+Find $p(P = 1 \mid H = 1)$, $p(P = 1 \mid T = 1)$, and
+$p(P = 1 \mid T = 1, H = 1)$.
+
+\begin{figure}[ht]
+  \centering
+  \vspace{-1em}
+  \begin{tikzpicture}[
+      node distance=0.3cm and 0.5cm,
+      var/.style={circle, draw, minimum size=0.75cm},
+      >={Stealth},
+    ]
+    \node[var] (P) {$P$};
+    \node[var, right=2cm of P] (D) {$D$};
+    \node[var, below left=of P] (H) {$H$};
+    \node[var, below right=of P] (A) {$A$};
+    \node[var, below=of A] (T) {$T$};
+    \draw[->] (P) -- (H);
+    \draw[->] (P) -- (A);
+    \draw[->] (D) -- (A);
+    \draw[->] (A) -- (T);
+  \end{tikzpicture}
+  \caption{Causal relations for Problem~\ref{prob:student-network}}
+  \label{fig:student-network}
+\end{figure}
