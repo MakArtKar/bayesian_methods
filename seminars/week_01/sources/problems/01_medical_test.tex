@@ -38,8 +38,9 @@ Together, they give Bayes' theorem:
 \]
 
 \solpart{Solution}
-\emph{Computation graph.} Shaded nodes are given. Each arrow shows the
-formula for the node below it.
+\emph{Computation graph.} The goal is at the top. Each node needs the
+nodes below it, and the arrow into the node shows the formula. Shaded nodes
+are given.
 \begin{center}
   \begin{tikzpicture}[
       x=1cm, y=1cm, font=\small, >={Stealth},
@@ -48,38 +49,39 @@ formula for the node below it.
       goal/.style={val, very thick},
       op/.style={font=\footnotesize, inner sep=2pt},
     ]
-    % Given values.
-    \node[given] (T1D1) at (0, 0) {$p(T{=}1 \mid D{=}1)$};
-    \node[given] (D1)   at (4, 0) {$p(D{=}1)$};
-    \node[given] (T0D0) at (9, 0) {$p(T{=}0 \mid D{=}0)$};
-    % Complements.
-    \node[val] (D0)   at (6, -1.6) {$p(D{=}0)$};
-    \node[val] (T1D0) at (9, -1.6) {$p(T{=}1 \mid D{=}0)$};
-    \draw[->] (D1) -- node[op, above right] {$1 - p(D{=}1)$} (D0);
-    \draw[->] (T0D0) -- node[op, right] {$1 - p(T{=}0 \mid D{=}0)$} (T1D0);
-    % Joint probabilities.
-    \node[val] (J1) at (1.5, -3.6) {$p(D{=}1, T{=}1)$};
-    \node[val] (J0) at (7.5, -3.6) {$p(D{=}0, T{=}1)$};
-    \coordinate (j1) at (1.5, -2.6);
-    \coordinate (j0) at (7.5, -2.6);
-    \draw (T1D1) -- (j1);
-    \draw (D1) -- (j1);
-    \draw[->] (j1) -- node[op, left] {$p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
-    \draw (D0) -- (j0);
-    \draw (T1D0) -- (j0);
-    \draw[->] (j0) -- node[op, right] {$p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
+    % Goal.
+    \node[goal] (G) at (1.5, 0.2) {$p(D{=}1 \mid T{=}1)$};
     % Marginal probability.
-    \node[val] (T1) at (4.5, -5.6) {$p(T{=}1)$};
-    \coordinate (t1) at (4.5, -4.6);
+    \node[val] (T1) at (4.5, -2) {$p(T{=}1)$};
+    % Joint probabilities.
+    \node[val] (J1) at (1.5, -4) {$p(D{=}1, T{=}1)$};
+    \node[val] (J0) at (7.5, -4) {$p(D{=}0, T{=}1)$};
+    % Complements.
+    \node[val] (D0)   at (6, -6) {$p(D{=}0)$};
+    \node[val] (T1D0) at (9, -6) {$p(T{=}1 \mid D{=}0)$};
+    % Given values.
+    \node[given] (T1D1) at (0, -7.6) {$p(T{=}1 \mid D{=}1)$};
+    \node[given] (D1)   at (4, -7.6) {$p(D{=}1)$};
+    \node[given] (T0D0) at (9, -7.6) {$p(T{=}0 \mid D{=}0)$};
+    % Arrows go from the inputs up to the node that uses them.
+    \coordinate (g) at (1.5, -1);
+    \draw (J1) -- (g);
+    \draw (T1) -- (g);
+    \draw[->] (g) -- node[op, left] {$p(D{=}1, T{=}1) \,/\, p(T{=}1)$} (G);
+    \coordinate (t1) at (4.5, -3);
     \draw (J1) -- (t1);
     \draw (J0) -- (t1);
     \draw[->] (t1) -- node[op, right] {$p(D{=}1, T{=}1) + p(D{=}0, T{=}1)$} (T1);
-    % Goal.
-    \node[goal] (G) at (1.5, -7.6) {$p(D{=}1 \mid T{=}1)$};
-    \coordinate (g) at (1.5, -6.6);
-    \draw (J1) -- (g);
-    \draw (T1) -- (g);
-    \draw[->] (g) -- node[op, left] {$\dfrac{p(D{=}1, T{=}1)}{p(T{=}1)}$} (G);
+    \coordinate (j1) at (1.5, -5);
+    \draw (T1D1) -- (j1);
+    \draw (D1) -- (j1);
+    \draw[->] (j1) -- node[op, left] {$p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
+    \coordinate (j0) at (7.5, -5);
+    \draw (D0) -- (j0);
+    \draw (T1D0) -- (j0);
+    \draw[->] (j0) -- node[op, right] {$p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
+    \draw[->] (D1) -- node[op, below right] {$1 - p(D{=}1)$} (D0);
+    \draw[->] (T0D0) -- node[op, right] {$1 - p(T{=}0 \mid D{=}0)$} (T1D0);
   \end{tikzpicture}
 \end{center}
 
