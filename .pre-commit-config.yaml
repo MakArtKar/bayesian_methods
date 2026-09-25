@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pdf-freshness
+        name: Build stale PDFs and check that they match their sources
+        entry: python3 scripts/pdf_freshness.py hook
+        language: system
+        pass_filenames: false
+        always_run: true

@@ -1,0 +1,14 @@
+name: PDF
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  freshness:
+    name: PDFs match sources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/pdf_freshness.py check
