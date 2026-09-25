@@ -121,7 +121,13 @@ Problem~\ref{prob:medical-test} is a special case.
       \end{tikzpicture}
     \end{center}
     \textit{Trick:} write the joint distribution of all variables one
-    time, and strike out the other factors:
+    time. The factor of a node $X$ is $p(X \mid \text{parents of } X)$:
+    \begin{itemize}
+      \item keep it if $X$ is in $G$, or if a path goes from $X$ to $G$;
+      \item else strike it out.
+    \end{itemize}
+    For $G = \{H, A\}$: $A$ and $H$ are in $G$; $P \to H$; $D \to A$; no
+    path goes from $T$ to $G$:
     \[
       p(P, D, A, H, T)
       = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \,
