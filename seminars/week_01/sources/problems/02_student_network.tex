@@ -152,7 +152,8 @@ $T$ sums to 1:
 \begin{align*}
   &p(H, A) \\
   &= \sum_{p} \sum_{d} \sum_{t} p(P = p) \, p(D = d) \,
-     p(A \mid P = p, D = d) \, p(H \mid P = p) \, p(T = t \mid A) \\
+     p(A \mid P = p, D = d) \\
+  &\qquad \cdot p(H \mid P = p) \, p(T = t \mid A) \\
   &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
     && \text{(constants out)} \\
   &\qquad \cdot p(H \mid P = p) \sum_{t} p(T = t \mid A) \\
