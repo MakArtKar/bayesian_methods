@@ -3,3 +3,62 @@ independent Poisson random variables, that is,
 $p(x_i = k) = \exp(-\lambda_i) \frac{\lambda_i^k}{k!}$,
 $k = 0, 1, 2, \ldots$ Prove that
 $x_1 + x_2 \sim \Poiss(\lambda_1 + \lambda_2)$.
+
+\begin{solution}
+\solpart{Idea}
+To find the distribution of a function $y = f(x_1, \ldots, x_n)$ of discrete
+random variables, find $p(y = k)$ for each value $k$:
+\begin{enumerate}
+  \item Write the event $\{f(x_1, \ldots, x_n) = k\}$ as a union of
+    disjoint events $\{x_1 = j_1, \ldots, x_n = j_n\}$, one for each tuple
+    with $f(j_1, \ldots, j_n) = k$.
+  \item Sum the probabilities of these events:
+    \[
+      p(y = k) = \sum_{f(j_1, \ldots, j_n) = k}
+        p(x_1 = j_1, \ldots, x_n = j_n).
+    \]
+  \item If the variables are independent, write each joint probability as
+    a product.
+  \item Simplify the sum and compare it with known distributions.
+\end{enumerate}
+
+\solpart{Solution}
+\solstep{Step 1. Write the event as a union of disjoint events.}
+The variables take only values $0, 1, 2, \ldots$ Thus $x_1 + x_2 = k$ if and
+only if $x_1 = j$ and $x_2 = k - j$ for one $j \in \{0, \ldots, k\}$:
+\[
+  p(x_1 + x_2 = k) = \sum_{j=0}^{k} p(x_1 = j, x_2 = k - j).
+\]
+
+\solstep{Step 2. Use the independence of $x_1$ and $x_2$.}
+\[
+  p(x_1 + x_2 = k)
+  = \sum_{j=0}^{k} p(x_1 = j) \, p(x_2 = k - j)
+  = \sum_{j=0}^{k} e^{-\lambda_1} \frac{\lambda_1^j}{j!} \,
+    e^{-\lambda_2} \frac{\lambda_2^{k-j}}{(k-j)!}.
+\]
+
+\solstep{Step 3. Move the factors that do not depend on $j$ out of the sum.}
+\[
+  p(x_1 + x_2 = k)
+  = e^{-(\lambda_1 + \lambda_2)}
+    \sum_{j=0}^{k} \frac{\lambda_1^j \lambda_2^{k-j}}{j! \, (k-j)!}.
+\]
+
+\solstep{Step 4. Use the binomial theorem.}
+Multiply and divide by $k!$. Then the sum is the binomial expansion of
+$(\lambda_1 + \lambda_2)^k$:
+\[
+  p(x_1 + x_2 = k)
+  = \frac{e^{-(\lambda_1 + \lambda_2)}}{k!}
+    \sum_{j=0}^{k} \binom{k}{j} \lambda_1^j \lambda_2^{k-j}
+  = e^{-(\lambda_1 + \lambda_2)} \frac{(\lambda_1 + \lambda_2)^k}{k!}.
+\]
+This is the probability mass function of
+$\Poiss(\lambda_1 + \lambda_2)$.
+
+\solpart{Conclusion}
+The sum of two independent Poisson random variables is a Poisson random
+variable, and the parameters add. By induction, the same is true for any
+finite number of independent Poisson random variables.
+\end{solution}

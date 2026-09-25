@@ -16,5 +16,10 @@
 % A problem file holds the statement and, optionally, a `solution`
 % environment. Call \showsolutions or \hidesolutions in the main file.
 \newcommand{\showsolutions}{%
-  \specialcomment{solution}{\par\medskip\noindent\textbf{Solution.}\ }{\par}}
+  \specialcomment{solution}{\par\medskip}{\par\bigskip}}
 \newcommand{\hidesolutions}{\excludecomment{solution}}
+
+% Parts of a solution, in this order: Interpretation (optional), Idea,
+% Solution, Conclusion (optional). Use \solstep for steps inside a part.
+\newcommand{\solpart}[1]{\par\smallskip\noindent\textbf{#1.}\ }
+\newcommand{\solstep}[1]{\par\smallskip\noindent\textit{#1}\par\nopagebreak}

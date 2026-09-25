@@ -1,3 +1,48 @@
 \label{prob:poisson-mle}
 Let $x_1, x_2, \ldots, x_N$ be an independent sample from $\Poiss(\lambda)$.
 Find the maximum likelihood estimate of $\lambda$.
+
+\begin{solution}
+\solpart{Idea}
+Use the standard method for a maximum likelihood estimate:
+\begin{enumerate}
+  \item Write the likelihood: the probability of the sample as a function
+    of the parameter. For an independent sample, it is a product.
+  \item Take the logarithm. The logarithm is an increasing function, so the
+    maximum point does not change. The product becomes a sum.
+  \item Set the derivative to zero and solve for the parameter.
+  \item Make sure that the solution is a maximum, for example with the
+    sign of the second derivative.
+\end{enumerate}
+
+\solpart{Solution}
+Let $S = \sum_{i=1}^{N} x_i$.
+
+\solstep{Step 1. Write the likelihood.}
+\[
+  L(\lambda) = \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}.
+\]
+
+\solstep{Step 2. Take the logarithm.}
+\[
+  \ell(\lambda) = \log L(\lambda)
+  = -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!.
+\]
+
+\solstep{Step 3. Set the derivative to zero.}
+\[
+  \ell'(\lambda) = -N + \frac{S}{\lambda} = 0
+  \quad \Longrightarrow \quad
+  \lambda = \frac{S}{N} = \bar{x}.
+\]
+
+\solstep{Step 4. Make sure that the solution is a maximum.}
+If $S > 0$, then $\ell''(\lambda) = -S / \lambda^2 < 0$ for all
+$\lambda > 0$. Thus $\ell$ is strictly concave, and the solution of
+Step~3 is the global maximum. If $S = 0$, then all $x_i = 0$ and
+$\ell(\lambda) = -N\lambda$. This function decreases, so the maximum is at
+$\lambda = 0 = \bar{x}$.
+
+The maximum likelihood estimate is the sample mean:
+$\hat{\lambda}_{\mathrm{ML}} = \bar{x}$.
+\end{solution}

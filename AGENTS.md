@@ -67,6 +67,26 @@ seminars/week_01/
   `\showsolutions` (problems with solutions).
 - To refer to another problem or a figure, use `\label` and `\ref`. Do not
   write problem numbers by hand.
+
+## Solutions
+
+Divide each solution into these parts, in this order. Start each part with
+`\solpart{<name>}`:
+
+1. `Interpretation` (optional). Write the problem in formal terms: define
+   the random variables, give the known values as formulas, and state what
+   to find. Add this part only when the statement is in words.
+2. `Idea`. Explain how to find the method of the solution. Give the general
+   method first, then apply it to this problem. If a problem extends the
+   method of an earlier problem, say so.
+3. `Solution`. Give the full derivation. Divide it into steps with
+   `\solstep{Step N. <action>.}`. Each step makes one transition. Do not skip
+   steps, and do not add text without facts.
+4. `Conclusion` (optional). Give the practical meaning of the result or its
+   relation to other problems.
+
+Write the text in Simplified Technical English: short sentences, one fact
+for each sentence, active voice, and one term for each concept.
 - Use PDF for course materials, not Markdown.
 
 ## Keeping PDFs up to date

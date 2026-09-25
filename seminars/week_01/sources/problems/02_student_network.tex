@@ -44,7 +44,6 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{figure}[ht]
   \centering
-  \vspace{-1em}
   \begin{tikzpicture}[
       node distance=0.3cm and 0.5cm,
       var/.style={circle, draw, minimum size=0.75cm},
@@ -63,3 +62,98 @@ $p(P = 1 \mid T = 1, H = 1)$.
   \caption{Causal relations for Problem~\ref{prob:student-network}}
   \label{fig:student-network}
 \end{figure}
+
+\begin{solution}
+\solpart{Idea}
+This problem uses the method of Problem~\ref{prob:medical-test} on a larger graph. The graph in
+Figure~\ref{fig:student-network} gives the joint distribution as a product
+of one factor for each node. Each factor is the distribution of the node
+given its parents:
+\[
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+\]
+The tables give all five factors. Thus the joint distribution is known,
+and you can get any probability from it. To find the probability of $P$
+given an observation, move through the graph in two directions:
+\begin{enumerate}
+  \item Along the edges, from $P$ to the observed variable. Sum over each
+    unobserved variable on the path with the chain rule, for example
+    $p(T \mid P) = \sum_A p(T \mid A) \, p(A \mid P)$.
+  \item Against the edges, from the observed variable back to $P$. Use
+    Bayes' theorem, for example
+    $p(P \mid T) \propto p(P) \, p(T \mid P)$.
+\end{enumerate}
+
+\solpart{Solution}
+\solstep{Step 1. Find the probability of a bad answer given the party.}
+The depression $D$ is not observed, so sum over $D$. The variables $P$ and
+$D$ are source nodes of the graph, so they are independent, and
+$p(D \mid P) = p(D)$:
+\[
+  p(A = 1 \mid P) = \sum_{D} p(A = 1 \mid P, D) \, p(D).
+\]
+Substitute the values from the tables:
+\begin{align*}
+  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6 = 0.9396, \\
+  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6 = 0.366.
+\end{align*}
+
+\solstep{Step 2. Find the probability of an unhappy teacher given the party.}
+The variable $T$ depends on $P$ only through $A$, so sum over $A$:
+\[
+  p(T = 1 \mid P)
+  = p(T = 1 \mid A = 1) \, p(A = 1 \mid P)
+  + p(T = 1 \mid A = 0) \, p(A = 0 \mid P).
+\]
+Substitute the values from Step~1:
+\begin{align*}
+  p(T = 1 \mid P = 1) &= 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604 = 0.92282, \\
+  p(T = 1 \mid P = 0) &= 0.95 \cdot 0.366 + 0.5 \cdot 0.634 = 0.6647.
+\end{align*}
+
+\solstep{Step 3. Find $p(P = 1 \mid H = 1)$.}
+Use Bayes' theorem with the table for $p(H \mid P)$:
+\[
+  p(P = 1 \mid H = 1)
+  = \frac{p(P = 1) \, p(H = 1 \mid P = 1)}
+         {\sum_{P} p(P) \, p(H = 1 \mid P)}
+  = \frac{0.2 \cdot 0.9}{0.2 \cdot 0.9 + 0.8 \cdot 0.2}
+  = \frac{0.18}{0.34} \approx 0.529.
+\]
+
+\solstep{Step 4. Find $p(P = 1 \mid T = 1)$.}
+Use Bayes' theorem with the values from Step~2:
+\[
+  p(P = 1 \mid T = 1)
+  = \frac{0.2 \cdot 0.92282}{0.2 \cdot 0.92282 + 0.8 \cdot 0.6647}
+  = \frac{0.184564}{0.716324} \approx 0.258.
+\]
+
+\solstep{Step 5. Show that $H$ and $T$ are independent given $P$.}
+Sum the joint distribution over the unobserved variables $D$ and $A$. Move
+each factor out of the sums that do not contain its variables:
+\[
+  p(P, H, T)
+  = p(P) \, p(H \mid P)
+    \sum_{A} p(T \mid A) \sum_{D} p(D) \, p(A \mid P, D)
+  = p(P) \, p(H \mid P) \, p(T \mid P).
+\]
+The last equality uses Steps 1 and 2. Thus
+$p(H, T \mid P) = p(H \mid P) \, p(T \mid P)$.
+
+\solstep{Step 6. Find $p(P = 1 \mid T = 1, H = 1)$.}
+Use Bayes' theorem with the product from Step~5:
+\[
+  p(P = 1 \mid T = 1, H = 1)
+  = \frac{0.2 \cdot 0.9 \cdot 0.92282}
+         {0.2 \cdot 0.9 \cdot 0.92282 + 0.8 \cdot 0.2 \cdot 0.6647}
+  = \frac{0.16611}{0.27246} \approx 0.610.
+\]
+
+\solpart{Conclusion}
+The prior probability of the party is 0.2. A headache increases it to
+0.529. An unhappy teacher increases it only to 0.258, because a bad answer
+has other causes, and the teacher is often unhappy without a bad answer.
+The two observations together give the highest probability, 0.610.
+\end{solution}
