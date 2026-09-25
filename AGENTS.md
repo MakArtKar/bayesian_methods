@@ -106,21 +106,19 @@ method:
 
 1. Reduce the question to joint distributions:
    `p(G_x | G_y) = p(G_x, G_y) / p(G_y)`.
-2. For each joint distribution `p(G)`, find `p(G, G_ancestors)` with the
-   chain rule. `G_ancestors` is the set of the ancestors of `G` that are not
-   in `G`, and `G_rest` is the set of all other variables. Write the joint
-   distribution of all variables, and strike out each factor with a
-   variable of `G_rest`. The other factors give `p(G, G_ancestors)`.
-3. `p(G) = sum_{G_ancestors} p(G, G_ancestors)`. Move the factors that do not
-   depend on a summation variable out of its sum, then calculate.
+2. For each joint distribution `p(G)`, write the joint distribution of all
+   variables with the chain rule. Strike out (`\strike`) the factors of the
+   nodes from which no path goes to `G`. The other factors are the factors
+   of the sources and arrows from which a path goes to `G`.
+3. Sum the product of the kept factors over the kept variables that are
+   not in `G`. Move the factors that do not depend on a summation variable
+   out of its sum, then calculate.
 
 Do not calculate intermediate conditional probabilities. In the
 `Solution`, name the step of the method in each step title, for example
-`Step 2. Find p(G, G_ancestors) for the numerator (Idea, Step 2)`. For each
-`p(G)`, draw the graph with the nodes colored by group (`G`, `G_ancestors`,
-`G_rest`) and a legend. Write the joint distribution with the variables
-colored by group (`\vg`, `\va`, `\vr`), and strike out in red (`\strike`)
-each factor that contains a variable of `G_rest`.
+`Step 2. Strike out the factors for the numerator (Idea, Step 2)`. For each
+`p(G)`, draw the graph: the nodes of `G` with thick borders, and a red cross
+on each node with a struck-out factor and red arrows into it.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier

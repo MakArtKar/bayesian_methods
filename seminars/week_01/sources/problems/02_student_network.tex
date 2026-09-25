@@ -76,72 +76,52 @@ case.
 Thus it is sufficient to find the joint distribution $p(G)$ of any group
 $G$.
 
-\emph{Step 2. Find $p(G, \Ganc)$ with the chain rule.} The problem gives the
-distribution of each source node and the distribution of each other node
-given its parents. The chain rule gives any joint distribution from these
-factors. Example for the graph $X \to Z \leftarrow Y$:
+\emph{Step 2. Find the factors for $p(G)$.} The problem gives the
+distribution of each source and the distribution of each other node given
+its parents. The chain rule gives any joint distribution from these
+factors. Example for $G = \{H, A\}$ in the graph of this problem. $H$ and
+$A$ depend on $P$ and $D$, so add $P$ and $D$:
 \begin{align*}
-  p(X, Y, Z)
-  &= p(X, Y) \, p(Z \mid X, Y)
+  p(P, D, A, H)
+  &= p(P, D, A) \, p(H \mid P, D, A)
     && \text{(chain rule)} \\
-  &= p(X) \, p(Y \mid X) \, p(Z \mid X, Y)
-    && \text{(chain rule)} \\
-  &= p(X) \, p(Y) \, p(Z \mid X, Y)
-    && \text{($Y$ has no parents)}.
+  &= p(P, D, A) \, p(H \mid P)
+    && \text{(parent of $H$: $P$)} \\
+  &= p(P, D) \, p(A \mid P, D) \, p(H \mid P)
+    && \text{(chain rule; parents of $A$: $P$, $D$)} \\
+  &= p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P)
+    && \text{(chain rule; $D$ has no parents)}.
 \end{align*}
-To find $p(G)$, only the ancestors of $G$ are necessary. Let $\Ganc$ be the
-ancestors of $G$ that are not in $G$, and $\Grest$ all other variables.
-
-\emph{Trick:} write the joint distribution of all variables one time. Then
-strike out each factor with a variable of $\Grest$. The other factors give
-$p(G, \Ganc)$. No arrow goes from $\Grest$ to $G$ or $\Ganc$, so these
-factors do not contain $\Grest$:
+The factor $p(T \mid A)$ is not in the product. The product contains the
+factors of the sources and the arrows from which a path goes to $G$, and
+only these factors. From $T$, no path goes to $H$ or $A$:
 \begin{center}
-  \begin{tikzpicture}[
-      >={Stealth},
-      dot/.style={circle, draw, fill=white, minimum size=0.3cm, inner sep=0pt},
-      box/.style={draw, rounded corners, inner sep=7pt},
-      meta/.style={->, very thick},
-    ]
-    \node[dot] (a1) at (0, 0) {};
-    \node[dot] (a2) at (1, -0.5) {};
-    \node[dot] (a3) at (2, 0) {};
-    \draw[->] (a1) -- (a2);
-    \draw[->] (a3) -- (a2);
-    \node[dot] (g1) at (-2, -2.4) {};
-    \node[dot] (g2) at (-1, -2.9) {};
-    \node[dot] (g3) at (-2, -3.4) {};
-    \draw[->] (g1) -- (g2);
-    \draw[->] (g3) -- (g2);
-    \node[dot] (r1) at (3, -2.4) {};
-    \node[dot] (r2) at (4, -2.9) {};
-    \node[dot] (r3) at (3, -3.4) {};
-    \draw[->] (r1) -- (r2);
-    \draw[->] (r2) -- (r3);
-    \begin{scope}[on background layer]
-      \node[box, anc, fit=(a1) (a2) (a3)] (BA) {};
-      \node[box, grp, fit=(g1) (g2) (g3)] (BG) {};
-      \node[box, rst, fit=(r1) (r2) (r3)] (BR) {};
-    \end{scope}
-    \node[above=0.05cm of BA] {$\Ganc$};
-    \node[left=0.05cm of BG] {$G$};
-    \node[right=0.05cm of BR] {$\Grest$};
-    \draw[meta] (BA) -- (BG);
-    \draw[meta] (BA) -- (BR);
-    \draw[meta] (BG) -- (BR);
-  \end{tikzpicture}
+  \crossgraph{k}{k}{g}{g}{x}
 \end{center}
 
-\emph{Step 3. Sum over $\Ganc$.}
+\emph{Trick:} write the joint distribution of all variables one time. For
+each $G$, strike out the factors of the nodes from which no path goes to
+$G$:
 \[
-  p(G) = \sum_{\Ganc} p(G, \Ganc).
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, \strike{p(T \mid A)}.
 \]
-Write the product from Step~2 under the sum, move the factors that do not
-depend on a summation variable out of its sum, and calculate each factor.
+
+\emph{Step 3. Sum over the other variables.} Sum the product of the kept
+factors over the kept variables that are not in $G$:
+\[
+  p(H, A)
+  = \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
+    p(H \mid P = p).
+\]
+Move the factors that do not depend on a summation variable out of its
+sum, and calculate each factor.
 
 \solpart{Solution}
 The tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
-$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
+$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$. In each
+graph, the nodes of $G$ have thick borders. A red cross marks a node with a
+struck-out factor, and its incoming arrows are red.
 
 \emph{Joint distribution.} Apply the chain rule one variable at a time,
 from the children to the parents. A missing arrow means no direct
@@ -180,14 +160,13 @@ Thus
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, H\}$, $\Ganc = \varnothing$.}
+\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, H\}$.}
 \begin{center}
-  \groupgraph{grp}{rst}{grp}{rst}{rst}
+  \crossgraph{g}{x}{g}{x}{x}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\vg{P}, \vr{D}, \vr{A}, \vg{H}, \vr{T})
-  = p(\vg{P}) \, \strike{p(\vr{D})} \, \strike{p(\vr{A} \mid \vg{P}, \vr{D})} \, p(\vg{H} \mid \vg{P}) \, \strike{p(\vr{T} \mid \vr{A})}.
+  p(P, D, A, H, T)
+  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)}.
 \]
 Keep the other factors:
 \[
@@ -195,7 +174,7 @@ Keep the other factors:
 \]
 
 \solstep{Step 3. Find the numerator (Idea, Step~3).}
-$\Ganc$ is empty, so there is no sum:
+No other variables are kept, so there is no sum:
 \[
   p(P = 1, H = 1)
   = p(P = 1) \, p(H = 1 \mid P = 1)
@@ -203,18 +182,17 @@ $\Ganc$ is empty, so there is no sum:
   = 0.18.
 \]
 
-\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{H\}$, $\Ganc = \{P\}$.}
+\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{H\}$.}
 \begin{center}
-  \groupgraph{anc}{rst}{grp}{rst}{rst}
+  \crossgraph{k}{x}{g}{x}{x}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\va{P}, \vr{D}, \vr{A}, \vg{H}, \vr{T})
-  = p(\va{P}) \, \strike{p(\vr{D})} \, \strike{p(\vr{A} \mid \va{P}, \vr{D})} \, p(\vg{H} \mid \va{P}) \, \strike{p(\vr{T} \mid \vr{A})}.
+  p(P, D, A, H, T)
+  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)}.
 \]
 Keep the other factors:
 \[
-  p(H, P) = p(P) \, p(H \mid P).
+  p(P, H) = p(P) \, p(H \mid P).
 \]
 
 \solstep{Step 5. Find the denominator (Idea, Step~3).}
@@ -242,18 +220,17 @@ Keep the other factors:
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, T\}$, $\Ganc = \{A, D\}$.}
+\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, T\}$.}
 \begin{center}
-  \groupgraph{grp}{anc}{rst}{anc}{grp}
+  \crossgraph{g}{k}{x}{k}{g}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\vg{P}, \va{D}, \va{A}, \vr{H}, \vg{T})
-  = p(\vg{P}) \, p(\va{D}) \, p(\va{A} \mid \vg{P}, \va{D}) \, \strike{p(\vr{H} \mid \vg{P})} \, p(\vg{T} \mid \va{A}).
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A).
 \]
 Keep the other factors:
 \[
-  p(P, T, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+  p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
 \]
 
 \solstep{Step 3. Find the numerator (Idea, Step~3).}
@@ -275,18 +252,17 @@ Keep the other factors:
    = 0.184564.
 \end{align*}
 
-\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{T\}$, $\Ganc = \{P, A, D\}$.}
+\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{T\}$.}
 \begin{center}
-  \groupgraph{anc}{anc}{rst}{anc}{grp}
+  \crossgraph{k}{k}{x}{k}{g}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\va{P}, \va{D}, \va{A}, \vr{H}, \vg{T})
-  = p(\va{P}) \, p(\va{D}) \, p(\va{A} \mid \va{P}, \va{D}) \, \strike{p(\vr{H} \mid \va{P})} \, p(\vg{T} \mid \va{A}).
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A).
 \]
 Keep the other factors:
 \[
-  p(T, P, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+  p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
 \]
 
 \solstep{Step 5. Find the denominator (Idea, Step~3).}
@@ -323,18 +299,17 @@ Keep the other factors:
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find $p(G, \Ganc)$ for the numerator (Idea, Step~2): $G = \{P, H, T\}$, $\Ganc = \{A, D\}$.}
+\solstep{Step 2. Strike out the factors for the numerator (Idea, Step~2): $G = \{P, H, T\}$.}
 \begin{center}
-  \groupgraph{grp}{anc}{grp}{anc}{grp}
+  \crossgraph{g}{k}{g}{k}{g}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\vg{P}, \va{D}, \va{A}, \vg{H}, \vg{T})
-  = p(\vg{P}) \, p(\va{D}) \, p(\va{A} \mid \vg{P}, \va{D}) \, p(\vg{H} \mid \vg{P}) \, p(\vg{T} \mid \va{A}).
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 Keep the other factors:
 \[
-  p(P, H, T, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+  p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
 \solstep{Step 3. Find the numerator (Idea, Step~3).}
@@ -352,18 +327,17 @@ Keep the other factors:
   &= 0.1661076.
 \end{align*}
 
-\solstep{Step 4. Find $p(G, \Ganc)$ for the denominator (Idea, Step~2): $G = \{H, T\}$, $\Ganc = \{P, A, D\}$.}
+\solstep{Step 4. Strike out the factors for the denominator (Idea, Step~2): $G = \{H, T\}$.}
 \begin{center}
-  \groupgraph{anc}{anc}{grp}{anc}{grp}
+  \crossgraph{k}{k}{g}{k}{g}
 \end{center}
-Strike out the factors with $\Grest$ in the joint distribution:
 \[
-  p(\va{P}, \va{D}, \va{A}, \vg{H}, \vg{T})
-  = p(\va{P}) \, p(\va{D}) \, p(\va{A} \mid \va{P}, \va{D}) \, p(\vg{H} \mid \va{P}) \, p(\vg{T} \mid \va{A}).
+  p(P, D, A, H, T)
+  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 Keep the other factors:
 \[
-  p(H, T, P, A, D) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+  p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
 \solstep{Step 5. Find the denominator (Idea, Step~3).}
