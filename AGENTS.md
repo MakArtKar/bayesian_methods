@@ -89,6 +89,14 @@ Divide each solution into these parts, in this order. Start each part with
 4. `Conclusion` (optional). Give the practical meaning of the result or its
    relation to other problems.
 
+A solution is mainly formulas and transitions. Use text only to explain a
+transition, and keep it short:
+
+- Write derivations as `align*` chains, one transition for each line.
+- Put the reason for a transition next to it:
+  `&= ... && \text{(parent of $T$: $A$)}`.
+- Do not repeat in words what a formula already shows.
+
 Write the text in Simplified Technical English: short sentences, one fact
 for each sentence, active voice, and one term for each concept.
 - Use PDF for course materials, not Markdown.

@@ -11,150 +11,93 @@ distribution $p(\lambda \mid x_1, \ldots, x_N)$.
 
 \begin{solution}
 \solpart{Idea}
-Bayes' theorem gives the posterior distribution:
+The numerator and the denominator of Bayes' theorem contain the same
+function:
 \[
   p(\lambda \mid X)
   = \frac{p(X \mid \lambda) \, p(\lambda)}
          {\int p(X \mid \lambda) \, p(\lambda) \, d\lambda},
   \qquad X = (x_1, \ldots, x_N).
 \]
-The numerator and the denominator contain the same function. The
-denominator only integrates it over $\lambda$. Thus you do not have to
-calculate the integral directly:
-\begin{enumerate}
-  \item Write the numerator as $C \cdot g(\lambda)$. The constant $C$ does
-    not depend on $\lambda$.
-  \item Find a known distribution $q$ with a density proportional to $g$:
-    $g(\lambda) = Z \, q(\lambda)$, where $Z$ is a known constant.
-  \item A density integrates to 1. Thus the denominator is
-    \[
-      \int C Z \, q(\lambda) \, d\lambda
-      = C Z \int q(\lambda) \, d\lambda
-      = C Z.
-    \]
-  \item Divide the numerator by the denominator:
-    \[
-      p(\lambda \mid X) = \frac{C Z \, q(\lambda)}{C Z} = q(\lambda).
-    \]
-\end{enumerate}
-The same method gives the posterior mean without a direct integral.
+Do not calculate the integral directly:
+\begin{align*}
+  p(X \mid \lambda) \, p(\lambda) &= C \cdot g(\lambda)
+    && \text{($C$ does not depend on $\lambda$)} \\
+  g(\lambda) &= Z \, q(\lambda)
+    && \text{($q$ is a known density)} \\
+  \int C Z \, q(\lambda) \, d\lambda &= C Z
+    && \text{(a density integrates to 1)} \\
+  p(\lambda \mid X) &= \frac{C Z \, q(\lambda)}{C Z} = q(\lambda).
+\end{align*}
+The same method gives the posterior mean.
 
 \solpart{Solution}
-Let $S = \sum_{i=1}^{N} x_i$.
+Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
 
-\solstep{Step 1. Write the likelihood as one product.}
-Collect the factors with $e^{-\lambda}$ and the powers of $\lambda$:
-\[
-  p(X \mid \lambda)
-  = \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
-  = \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}.
-\]
-
-\solstep{Step 2. Multiply the likelihood by the prior.}
-\[
+\solstep{Step 1. Separate the constant in the numerator.}
+\begin{align*}
   p(X \mid \lambda) \, p(\lambda)
-  = \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
-    \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}.
-\]
+  &= \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \\
+  &= \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \\
+  &= \underbrace{\frac{b^a}{\Gamma(a) \prod_{i} x_i!}}_{C}
+     \cdot
+     \underbrace{\lambda^{a' - 1} e^{-b'\lambda}}_{g(\lambda)}.
+\end{align*}
 
-\solstep{Step 3. Separate the constant and the function of $\lambda$.}
-\[
-  p(X \mid \lambda) \, p(\lambda)
-  = \underbrace{\frac{b^a}{\Gamma(a) \prod_{i} x_i!}}_{C}
-    \cdot
-    \underbrace{\lambda^{a + S - 1} e^{-(b + N)\lambda}}_{g(\lambda)}.
-\]
-
-\solstep{Step 4. Find the distribution with a density proportional to
-  $g$.}
-Let $a' = a + S$ and $b' = b + N$. Then
-$g(\lambda) = \lambda^{a' - 1} e^{-b'\lambda}$. The gamma density with these
-parameters is
+\solstep{Step 2. Find the known density.}
 \[
   \Gam(\lambda \mid a', b')
   = \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1} e^{-b'\lambda}
-  = \frac{b'^{a'}}{\Gamma(a')} \, g(\lambda).
-\]
-Thus
-\[
+  \;\Longrightarrow\;
   g(\lambda) = \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b').
 \]
 
-\solstep{Step 5. Calculate the denominator.}
-Use Step~4. Then use the fact that the gamma density integrates to 1:
-\[
+\solstep{Step 3. Find the posterior distribution.}
+\begin{align*}
   \int C g(\lambda) \, d\lambda
-  = C \frac{\Gamma(a')}{b'^{a'}} \int \Gam(\lambda \mid a', b') \, d\lambda
-  = C \frac{\Gamma(a')}{b'^{a'}}.
-\]
-
-\solstep{Step 6. Divide the numerator by the denominator.}
-\[
+  &= C \frac{\Gamma(a')}{b'^{a'}} \int \Gam(\lambda \mid a', b') \, d\lambda
+   = C \frac{\Gamma(a')}{b'^{a'}}, \\
   p(\lambda \mid X)
-  = \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
-         {C \frac{\Gamma(a')}{b'^{a'}}}
-  = \Gam(\lambda \mid a', b')
-  = \Gam(\lambda \mid a + S, \, b + N).
-\]
+  &= \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
+          {C \frac{\Gamma(a')}{b'^{a'}}}
+   = \Gam(\lambda \mid a + S, \, b + N).
+\end{align*}
 
-\solstep{Step 7. Write the posterior mean as an integral.}
-Substitute the gamma density:
-\[
+\solstep{Step 4. Find the posterior mean.}
+The integrand $\lambda^{a'} e^{-b'\lambda}$ is an unnormalized
+$\Gam(\lambda \mid a' + 1, b')$:
+\begin{align*}
   \mathbb{E}[\lambda \mid X]
-  = \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
-  = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda.
-\]
-
-\solstep{Step 8. Calculate the integral with the same method.}
-The function under the integral is proportional to a gamma density with the
-parameters $a' + 1$ and $b'$:
+  &= \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
+   = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+   = \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \\
+  &= \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
+     && \text{($\Gamma(a' + 1) = a' \, \Gamma(a')$)} \\
+  &= \frac{a'}{b'} = \frac{a + S}{b + N}.
+\end{align*}
 \[
-  \lambda^{a'} e^{-b'\lambda}
-  = \lambda^{(a' + 1) - 1} e^{-b'\lambda}
-  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \, \Gam(\lambda \mid a' + 1, b').
-\]
-The gamma density integrates to 1. Thus
-\[
-  \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
-  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}}.
-\]
-
-\solstep{Step 9. Simplify the posterior mean.}
-Substitute Step~8 into Step~7. Then use $\Gamma(a' + 1) = a' \, \Gamma(a')$:
-\[
-  \mathbb{E}[\lambda \mid X]
-  = \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
-  = \frac{\Gamma(a' + 1)}{\Gamma(a') \, b'}
-  = \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
-  = \frac{a'}{b'}.
-\]
-The Bayesian estimate is
-\[
-  \hat{\lambda}_{\mathrm{B}} = \frac{a'}{b'} = \frac{a + S}{b + N}.
+  \hat{\lambda}_{\mathrm{B}} = \frac{a + S}{b + N}.
 \]
 
 \solpart{Conclusion}
 \begin{itemize}
-  \item The gamma prior and the Poisson likelihood give a gamma posterior.
-    A prior with this property is \emph{conjugate} to the likelihood. With
-    a conjugate prior, the update only changes the parameters:
-    $a \to a + S$ and $b \to b + N$. Thus $a$ acts as a prior number of
-    events, and $b$ acts as a prior number of observations.
-  \item The estimate is a weighted mean of the prior mean $a/b$ and the
-    maximum likelihood estimate $\bar{x} = S/N$ from
-    Problem~\ref{prob:poisson-mle}:
+  \item \emph{Conjugate prior:} gamma prior $\times$ Poisson likelihood
+    $\to$ gamma posterior. The update only changes the parameters:
+    $a \to a + S$ (events), $b \to b + N$ (observations).
+  \item The estimate is a weighted mean of the prior mean and the
+    estimate $\bar{x}$ from Problem~\ref{prob:poisson-mle}:
     \[
       \frac{a + S}{b + N}
       = \frac{a}{b + N} + \frac{S}{b + N}
       = \frac{b}{b + N} \cdot \frac{a}{b}
-      + \frac{N}{b + N} \cdot \frac{S}{N}.
+      + \frac{N}{b + N} \cdot \bar{x}
+      \;\xrightarrow{N \to \infty}\; \bar{x}.
     \]
-    When $N$ increases, the weight $N / (b + N)$ of the data goes to 1, and
-    the estimate goes to $\bar{x}$.
-  \item When $a \to 0$ and $b \to 0$, the prior density is proportional to
-    $\lambda^{a - 1} e^{-b\lambda} \to 1/\lambda$. This is the
-    non-informative prior from the notes below. With this prior, the
-    Bayesian estimate is $(0 + S)/(0 + N) = \bar{x}$.
+  \item If $a, b \to 0$, then $p(\lambda) \propto \lambda^{a - 1}
+    e^{-b\lambda} \to 1/\lambda$, the non-informative prior from the notes
+    below, and $\hat{\lambda}_{\mathrm{B}} \to S/N = \bar{x}$.
 \end{itemize}
 \end{solution}
 

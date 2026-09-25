@@ -4,68 +4,45 @@ Find the maximum likelihood estimate of $\lambda$.
 
 \begin{solution}
 \solpart{Idea}
-Use the standard method for a maximum likelihood estimate:
-\begin{enumerate}
-  \item Write the likelihood: the probability of the sample as a function
-    of the parameter. For an independent sample, it is a product:
-    $L(\lambda) = \prod_{i} p(x_i \mid \lambda)$.
-  \item Take the logarithm: $\ell(\lambda) = \log L(\lambda)
-    = \sum_{i} \log p(x_i \mid \lambda)$. The logarithm is an increasing
-    function, so the maximum point does not change.
-  \item Set the derivative to zero, $\ell'(\lambda) = 0$, and solve for
-    the parameter.
-  \item Make sure that the solution is a maximum, for example with the
-    sign of the second derivative $\ell''(\lambda)$.
-\end{enumerate}
+\[
+  L(\lambda) = \prod_{i} p(x_i \mid \lambda)
+  \;\to\;
+  \ell(\lambda) = \log L(\lambda) = \sum_{i} \log p(x_i \mid \lambda)
+  \;\to\;
+  \ell'(\lambda) = 0
+  \;\to\;
+  \ell''(\lambda) < 0.
+\]
+The logarithm is increasing, so $L$ and $\ell$ have the same maximum
+point.
 
 \solpart{Solution}
-Let $S = \sum_{i=1}^{N} x_i$. Then the sample mean is $\bar{x} = S / N$.
+Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
 
-\solstep{Step 1. Write the likelihood.}
-\[
-  L(\lambda) = \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}.
-\]
-
-\solstep{Step 2. Take the logarithm.}
-The logarithm of a product is the sum of the logarithms:
-\[
+\solstep{Step 1. Write the log-likelihood.}
+\begin{align*}
   \ell(\lambda)
-  = \sum_{i=1}^{N} \log \left( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \right)
-  = \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right).
-\]
+  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
+   = \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right)
+   = -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!.
+\end{align*}
 
-\solstep{Step 3. Calculate each sum.}
+\solstep{Step 2. Set the derivative to zero.}
 \[
-  \ell(\lambda) = -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!.
-\]
-
-\solstep{Step 4. Calculate the derivative.}
-The last term does not depend on $\lambda$:
-\[
-  \ell'(\lambda) = -N + \frac{S}{\lambda}.
-\]
-
-\solstep{Step 5. Set the derivative to zero and solve.}
-\[
-  -N + \frac{S}{\lambda} = 0
-  \quad \Longrightarrow \quad
-  \frac{S}{\lambda} = N
-  \quad \Longrightarrow \quad
+  \ell'(\lambda) = -N + \frac{S}{\lambda} = 0
+  \;\Longrightarrow\;
   \lambda = \frac{S}{N} = \bar{x}.
 \]
 
-\solstep{Step 6. Make sure that the solution is a maximum.}
-Calculate the second derivative:
+\solstep{Step 3. Make sure that it is a maximum.}
 \[
-  \ell''(\lambda) = -\frac{S}{\lambda^2}.
+  \ell''(\lambda) = -\frac{S}{\lambda^2} < 0
+  \quad \text{if } S > 0.
 \]
-If $S > 0$, then $\ell''(\lambda) < 0$ for all $\lambda > 0$. Thus $\ell$
-is strictly concave, and the solution of Step~5 is the global maximum.
-
-If $S = 0$, then all $x_i = 0$, and $\ell(\lambda) = -N\lambda$. This
-function decreases, so the maximum is at $\lambda = 0$. This value is also
-equal to $\bar{x}$.
-
-The maximum likelihood estimate is the sample mean:
-$\hat{\lambda}_{\mathrm{ML}} = \bar{x}$.
+Thus $\ell$ is strictly concave, and $\bar{x}$ is the global maximum. If
+$S = 0$, then $\ell(\lambda) = -N\lambda$ decreases, and the maximum is at
+$\lambda = 0 = \bar{x}$.
+\[
+  \hat{\lambda}_{\mathrm{ML}} = \bar{x}.
+\]
 \end{solution}

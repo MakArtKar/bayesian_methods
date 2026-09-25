@@ -65,168 +65,105 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-This problem uses the method of Problem~\ref{prob:medical-test} on a
-larger graph. First, write the joint distribution with the graph in
-Figure~\ref{fig:student-network}.
+Use the method of Problem~\ref{prob:medical-test} on a larger graph.
 
-The chain rule is true for any distribution and any order of the variables.
-Use an order where each parent comes before its children:
-\[
+\emph{Joint distribution.} Apply the chain rule one variable at a time,
+from the children to the parents. A missing arrow means no direct
+influence: given its parents, a node does not depend on the other nodes in
+the condition.
+\begin{align*}
   p(P, D, A, H, T)
-  = p(P) \, p(D \mid P) \, p(A \mid P, D) \, p(H \mid P, D, A) \,
-    p(T \mid P, D, A, H).
-\]
-The graph adds the assumptions of the model. An arrow shows a direct
-influence. If there is no arrow, there is no direct influence. Thus, given
-its parents, a variable does not depend on the variables before it in the
-order. Apply this rule to each factor:
-\begin{itemize}
-  \item $D$ has no parents, so $p(D \mid P) = p(D)$. The depression does
-    not depend on the party.
-  \item The parents of $A$ are $P$ and $D$, so the factor
-    $p(A \mid P, D)$ does not change.
-  \item The only parent of $H$ is $P$, so
-    $p(H \mid P, D, A) = p(H \mid P)$. Only the party causes the headache.
-  \item The only parent of $T$ is $A$, so
-    $p(T \mid P, D, A, H) = p(T \mid A)$. The teacher sees only the answer.
-\end{itemize}
-Substitute these factors into the chain rule:
+  &= p(P, D, A, H) \, p(T \mid P, D, A, H) \\
+  &= p(P, D, A, H) \, p(T \mid A)
+   && \text{(parent of $T$: $A$)} \\
+  p(P, D, A, H)
+  &= p(P, D, A) \, p(H \mid P, D, A) \\
+  &= p(P, D, A) \, p(H \mid P)
+   && \text{(parent of $H$: $P$)} \\
+  p(P, D, A)
+  &= p(P, D) \, p(A \mid P, D)
+   && \text{(parents of $A$: $P$, $D$)} \\
+  p(P, D)
+  &= p(P) \, p(D \mid P) \\
+  &= p(P) \, p(D)
+   && \text{($D$ has no parents)}
+\end{align*}
+Thus
 \[
   p(P, D, A, H, T)
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
-This is the general rule for a directed graph without cycles: the joint
-distribution is the product of the factors $p(\text{node} \mid
-\text{parents})$. A model of this type is a \emph{Bayesian network}.
+Each factor is a given table.
 
-The order is important. In a different order, a factor can have a child in
-the condition, for example $p(A \mid T)$. The graph does not simplify this
-factor, and the tables do not give it. In the order from parents to
-children, each factor becomes one of the given tables.
-
-The tables give all five factors. Thus the joint distribution is known,
-and you can get any probability from it. To find the probability of $P$
-given an observation, move through the graph in two directions:
-\begin{enumerate}
-  \item Along the edges, from $P$ to the observed variable. Sum over each
-    unobserved variable on the path, for example
-    $p(T \mid P) = \sum_A p(T \mid A) \, p(A \mid P)$.
-  \item Against the edges, from the observed variable back to $P$. Use
-    Bayes' theorem, for example
-    $p(P \mid T) = p(P) \, p(T \mid P) / p(T)$.
-\end{enumerate}
-Each factor $p(\text{node} \mid \text{parents})$ sums to 1 over the values of
-the node. Thus, when you sum the joint distribution over a variable that is
-not a parent of other variables, its factor disappears.
+\emph{Queries.} Move along the edges with sums, and against the edges with
+Bayes' theorem:
+\[
+  p(T \mid P) = \sum_{A} p(T \mid A) \, p(A \mid P),
+  \qquad
+  p(P \mid T) = \frac{p(P) \, p(T \mid P)}{\sum_{P'} p(P') \, p(T \mid P')}.
+\]
+A sum over a node without children removes its factor, because
+$\sum_{x} p(x \mid \text{parents}) = 1$.
 
 \solpart{Solution}
 \solstep{Step 1. Find the missing probabilities.}
-The probabilities of the two values of a variable add to 1:
 \[
   p(P = 0) = 1 - 0.2 = 0.8, \qquad
   p(D = 0) = 1 - 0.4 = 0.6.
 \]
 
-\solstep{Step 2. Show that $P$ and $D$ are independent.}
-Sum the joint distribution over $T$, then $H$, then $A$. Each sum removes
-one factor, because the factor sums to 1:
-\[
-  p(P, D)
-  = \sum_{A} \sum_{H} \sum_{T} p(P, D, A, H, T)
-  = p(P) \, p(D).
-\]
-Thus $p(D \mid P) = p(P, D) / p(P) = p(D)$.
-
-\solstep{Step 3. Write $p(A \mid P)$ as a sum over $D$.}
-The depression $D$ is not observed. Sum over $D$, then use the definition
-of a conditional probability, then use Step~2:
-\[
+\solstep{Step 2. Find $p(A = 1 \mid P)$.}
+\begin{align*}
   p(A \mid P)
-  = \sum_{D} p(A, D \mid P)
-  = \sum_{D} p(A \mid P, D) \, p(D \mid P)
-  = \sum_{D} p(A \mid P, D) \, p(D).
-\]
-
-\solstep{Step 4. Calculate $p(A = 1 \mid P)$.}
-Substitute the values from the tables and from Step~1:
-\begin{align*}
-  p(A = 1 \mid P = 1)
-    &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
-     = 0.3996 + 0.54
-     = 0.9396, \\
-  p(A = 1 \mid P = 0)
-    &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
-     = 0.36 + 0.006
-     = 0.366.
+  &= \sum_{D} p(A, D \mid P)
+   = \sum_{D} p(A \mid P, D) \, p(D \mid P) \\
+  &= \sum_{D} p(A \mid P, D) \, p(D)
+   && \text{($D$ does not depend on $P$)}.
 \end{align*}
-Thus $p(A = 0 \mid P = 1) = 1 - 0.9396 = 0.0604$ and
-$p(A = 0 \mid P = 0) = 1 - 0.366 = 0.634$.
-
-\solstep{Step 5. Show that $p(T \mid A, P) = p(T \mid A)$.}
-Sum the joint distribution over $H$ and $D$. Then do the same without $T$:
 \begin{align*}
-  p(P, A, T) &= p(P) \, p(T \mid A) \sum_{D} p(D) \, p(A \mid P, D), \\
-  p(P, A) &= p(P) \sum_{D} p(D) \, p(A \mid P, D).
+  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
+    = 0.3996 + 0.54 = 0.9396, \\
+  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
+    = 0.36 + 0.006 = 0.366.
 \end{align*}
-Divide the first line by the second line:
-$p(T \mid A, P) = p(P, A, T) / p(P, A) = p(T \mid A)$.
 
-\solstep{Step 6. Write $p(T \mid P)$ as a sum over $A$.}
-The answer $A$ is not observed. Sum over $A$, then use the definition of a
-conditional probability, then use Step~5:
-\[
+\solstep{Step 3. Find $p(T = 1 \mid P)$.}
+\begin{align*}
   p(T \mid P)
-  = \sum_{A} p(T, A \mid P)
-  = \sum_{A} p(T \mid A, P) \, p(A \mid P)
-  = \sum_{A} p(T \mid A) \, p(A \mid P).
-\]
-
-\solstep{Step 7. Calculate $p(T = 1 \mid P)$.}
-Substitute the values from the table and from Step~4:
+  &= \sum_{A} p(T, A \mid P)
+   = \sum_{A} p(T \mid A, P) \, p(A \mid P) \\
+  &= \sum_{A} p(T \mid A) \, p(A \mid P)
+   && \text{(parent of $T$: $A$)}.
+\end{align*}
 \begin{align*}
-  p(T = 1 \mid P = 1)
-    &= 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604
-     = 0.89262 + 0.0302
-     = 0.92282, \\
-  p(T = 1 \mid P = 0)
-    &= 0.95 \cdot 0.366 + 0.5 \cdot 0.634
-     = 0.3477 + 0.317
-     = 0.6647.
+  p(T = 1 \mid P = 1) &= 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396)
+    = 0.89262 + 0.0302 = 0.92282, \\
+  p(T = 1 \mid P = 0) &= 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366)
+    = 0.3477 + 0.317 = 0.6647.
 \end{align*}
 
-\solstep{Step 8. Find $p(P = 1 \mid H = 1)$.}
-Sum the joint distribution over $T$, $A$, and $D$. Each sum removes one
-factor, so $p(P, H) = p(P) \, p(H \mid P)$. Calculate the joint
-probabilities:
+\solstep{Step 4. Find $p(P = 1 \mid H = 1)$.}
+Sum out $T$, $A$, $D$: $p(P, H) = p(P) \, p(H \mid P)$.
 \begin{align*}
   p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
-  p(P = 0, H = 1) &= 0.8 \cdot 0.2 = 0.16.
-\end{align*}
-Sum them over $P$: $p(H = 1) = 0.18 + 0.16 = 0.34$. Divide:
-\[
+  p(P = 0, H = 1) &= 0.8 \cdot 0.2 = 0.16, \\
   p(P = 1 \mid H = 1)
-  = \frac{p(P = 1, H = 1)}{p(H = 1)}
-  = \frac{0.18}{0.34}
-  = \frac{9}{17}
-  \approx 0.529.
-\]
+    &= \frac{0.18}{0.18 + 0.16} = \frac{0.18}{0.34} = \frac{9}{17}
+     \approx 0.529.
+\end{align*}
 
-\solstep{Step 9. Find $p(P = 1 \mid T = 1)$.}
-Use $p(P, T) = p(P) \, p(T \mid P)$ and the values from Step~7:
+\solstep{Step 5. Find $p(P = 1 \mid T = 1)$.}
+$p(P, T) = p(P) \, p(T \mid P)$ with Step~3:
 \begin{align*}
   p(P = 1, T = 1) &= 0.2 \cdot 0.92282 = 0.184564, \\
-  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176.
-\end{align*}
-Sum them over $P$: $p(T = 1) = 0.184564 + 0.53176 = 0.716324$. Divide:
-\[
+  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176, \\
   p(P = 1 \mid T = 1)
-  = \frac{p(P = 1, T = 1)}{p(T = 1)}
-  = \frac{0.184564}{0.716324}
-  \approx 0.258.
-\]
+    &= \frac{0.184564}{0.184564 + 0.53176}
+     = \frac{0.184564}{0.716324}
+     \approx 0.258.
+\end{align*}
 
-\solstep{Step 10. Show that $H$ and $T$ are independent given $P$.}
-Sum the joint distribution over the unobserved variables $D$ and $A$:
+\solstep{Step 6. Find $p(P, H, T)$.}
 \begin{align*}
   p(P, H, T)
   &= \sum_{A} \sum_{D} p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
@@ -235,30 +172,29 @@ Sum the joint distribution over the unobserved variables $D$ and $A$:
      p(A \mid P, D)
      && \text{(move factors out of the sums)} \\
   &= p(P) \, p(H \mid P) \sum_{A} p(T \mid A) \, p(A \mid P)
-     && \text{(Step 3)} \\
+     && \text{(Step 2)} \\
   &= p(P) \, p(H \mid P) \, p(T \mid P)
-     && \text{(Step 6)}.
+     && \text{(Step 3)}.
 \end{align*}
-Divide by $p(P)$: $p(H, T \mid P) = p(H \mid P) \, p(T \mid P)$.
 
-\solstep{Step 11. Find $p(P = 1 \mid T = 1, H = 1)$.}
-Use the product from Step~10 and the values from Step~7:
+\solstep{Step 7. Find $p(P = 1 \mid T = 1, H = 1)$.}
 \begin{align*}
   p(P = 1, H = 1, T = 1) &= 0.2 \cdot 0.9 \cdot 0.92282 = 0.166108, \\
-  p(P = 0, H = 1, T = 1) &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.106352.
-\end{align*}
-Sum them over $P$: $p(H = 1, T = 1) = 0.166108 + 0.106352 = 0.27246$.
-Divide:
-\[
+  p(P = 0, H = 1, T = 1) &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.106352, \\
   p(P = 1 \mid T = 1, H = 1)
-  = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}
-  = \frac{0.166108}{0.27246}
-  \approx 0.610.
-\]
+    &= \frac{0.166108}{0.166108 + 0.106352}
+     = \frac{0.166108}{0.27246}
+     \approx 0.610.
+\end{align*}
 
 \solpart{Conclusion}
-The prior probability of the party is 0.2. A headache increases it to
-0.529. An unhappy teacher increases it only to 0.258, because a bad answer
-has other causes, and the teacher is often unhappy without a bad answer.
-The two observations together give the highest probability, 0.610.
+\[
+  \underbrace{0.2}_{\text{prior}}
+  \;\to\;
+  \underbrace{0.529}_{H = 1}, \quad
+  \underbrace{0.258}_{T = 1}, \quad
+  \underbrace{0.610}_{H = 1,\, T = 1}.
+\]
+An unhappy teacher is weak evidence: $p(T = 1 \mid P = 0) = 0.6647$ is
+also high. Two observations together give the strongest evidence.
 \end{solution}

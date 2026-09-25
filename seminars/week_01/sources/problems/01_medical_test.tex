@@ -8,9 +8,7 @@ disease.
 
 \begin{solution}
 \solpart{Interpretation}
-Let $D \in \{0, 1\}$ show whether the patient has the disease ($D = 1$).
-Let $T \in \{0, 1\}$ be the test result ($T = 1$ is a positive result).
-The problem gives three values:
+$D = 1$: the patient has the disease. $T = 1$: the test result is positive.
 \[
   p(D = 1) = 10^{-4}, \qquad
   p(T = 1 \mid D = 1) = 0.99, \qquad
@@ -19,30 +17,19 @@ The problem gives three values:
 Find $p(D = 1 \mid T = 1)$.
 
 \solpart{Idea}
-The disease causes the test result, so the causal graph is $D \to T$.
-The graph gives the joint distribution as a product of two factors:
+The disease causes the test result: the graph is $D \to T$. The source node
+and the edge give the joint distribution:
 \[
   p(D, T) = p(D) \, p(T \mid D).
 \]
-The problem gives both factors: the distribution of the source node $D$
-and the conditional distribution on the edge $D \to T$. Thus the joint
-distribution is known. From the joint distribution, you can get any other
-probability with two operations:
-\begin{itemize}
-  \item A marginal probability is the sum of the joint probability over
-    the other variables:
-    \[
-      p(T) = \sum_{D} p(D, T).
-    \]
-    For continuous variables $x$ and $y$, the sum is an integral:
-    $p(y) = \int p(x, y) \, dx$.
-  \item A conditional probability is a joint probability divided by a
-    marginal probability:
-    \[
-      p(D \mid T) = \frac{p(D, T)}{p(T)}.
-    \]
-\end{itemize}
-These two operations together give Bayes' theorem:
+The joint distribution gives any other probability with two operations:
+\begin{align*}
+  p(T) &= \sum_{D} p(D, T)
+    && \text{(marginal; for continuous $x$: $p(y) = \textstyle\int p(x, y) \, dx$)}, \\
+  p(D \mid T) &= \frac{p(D, T)}{p(T)}
+    && \text{(conditional)}.
+\end{align*}
+Together, they give Bayes' theorem:
 \[
   p(D \mid T)
   = \frac{p(D, T)}{p(T)}
@@ -52,15 +39,13 @@ These two operations together give Bayes' theorem:
 
 \solpart{Solution}
 \solstep{Step 1. Find the missing probabilities.}
-The probabilities of the two values of a variable add to 1. Thus
 \begin{align*}
   p(D = 0) &= 1 - p(D = 1) = 1 - 0.0001 = 0.9999, \\
-  p(T = 1 \mid D = 0) &= 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01.
+  p(T = 1 \mid D = 0) &= 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01
+    && \text{(false positive)}.
 \end{align*}
-The second value is the probability of a false positive result.
 
-\solstep{Step 2. Find the joint probabilities of a positive result.}
-Use $p(D, T) = p(D) \, p(T \mid D)$:
+\solstep{Step 2. Find the joint probabilities.}
 \begin{align*}
   p(D = 1, T = 1) &= p(D = 1) \, p(T = 1 \mid D = 1)
     = 0.0001 \cdot 0.99 = 0.000099, \\
@@ -68,8 +53,7 @@ Use $p(D, T) = p(D) \, p(T \mid D)$:
     = 0.9999 \cdot 0.01 = 0.009999.
 \end{align*}
 
-\solstep{Step 3. Find the marginal probability of a positive result.}
-Sum the joint probabilities over $D$:
+\solstep{Step 3. Find the marginal probability.}
 \[
   p(T = 1)
   = p(D = 1, T = 1) + p(D = 0, T = 1)
@@ -77,29 +61,22 @@ Sum the joint probabilities over $D$:
   = 0.010098.
 \]
 
-\solstep{Step 4. Divide the joint probability by the marginal probability.}
+\solstep{Step 4. Find the conditional probability.}
 \[
   p(D = 1 \mid T = 1)
   = \frac{p(D = 1, T = 1)}{p(T = 1)}
   = \frac{0.000099}{0.010098}
-  = \frac{99}{10098}
   = \frac{99}{99 \cdot 102}
   = \frac{1}{102}
   \approx 0.0098.
 \]
-The patient has the disease with a probability of approximately 1\%.
 
 \solpart{Conclusion}
-A positive result increases the probability of the disease from 0.01\% to
-approximately 1\%. But the patient is still healthy with a probability of
-99\%. The cause is the low prior probability. In 10\,000 people, the test
-finds approximately $10\,000 \cdot 0.000099 \approx 1$ sick person and
-$10\,000 \cdot 0.009999 \approx 100$ healthy people. For this reason, most
-positive results of a mass test for a rare disease are false.
-
-A second independent test gives more information. After the first positive
-result, the probability of the disease is $1/102$. This value is the prior
-probability for the second test. If the second result is also positive, then
+The probability increases from 0.01\% to only 1\%. In 10\,000 people, the
+test finds $10\,000 \cdot 0.000099 \approx 1$ sick person and
+$10\,000 \cdot 0.009999 \approx 100$ healthy people. Thus most positive
+results of a mass test for a rare disease are false. A second positive
+independent test uses $1/102$ as the prior:
 \[
   p(D = 1 \mid T_1 = 1, T_2 = 1)
   = \frac{\frac{1}{102} \cdot 0.99}
