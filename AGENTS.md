@@ -77,11 +77,15 @@ Divide each solution into these parts, in this order. Start each part with
    the random variables, give the known values as formulas, and state what
    to find. Add this part only when the statement is in words.
 2. `Idea`. Explain how to find the method of the solution. Give the general
-   method first, then apply it to this problem. If a problem extends the
-   method of an earlier problem, say so.
+   method first, then apply it to this problem. Give each general rule as a
+   formula, not only in words. If a problem extends the method of an earlier
+   problem, say so.
 3. `Solution`. Give the full derivation. Divide it into steps with
    `\solstep{Step N. <action>.}`. Each step makes one transition. Do not skip
-   steps, and do not add text without facts.
+   steps, and do not add text without facts. Write each transition as a
+   separate equality: a complement ($1 - p$), a substitution of values, an
+   arithmetic result, and a simplification. Show the products before their
+   sum. If a step uses an earlier result, name the step.
 4. `Conclusion` (optional). Give the practical meaning of the result or its
    relation to other problems.
 

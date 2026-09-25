@@ -65,10 +65,10 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-This problem uses the method of Problem~\ref{prob:medical-test} on a larger graph. The graph in
-Figure~\ref{fig:student-network} gives the joint distribution as a product
-of one factor for each node. Each factor is the distribution of the node
-given its parents:
+This problem uses the method of Problem~\ref{prob:medical-test} on a
+larger graph. The graph in Figure~\ref{fig:student-network} gives the joint
+distribution as a product of one factor for each node. Each factor is the
+distribution of the node given its parents:
 \[
   p(P, D, A, H, T)
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
@@ -78,77 +78,151 @@ and you can get any probability from it. To find the probability of $P$
 given an observation, move through the graph in two directions:
 \begin{enumerate}
   \item Along the edges, from $P$ to the observed variable. Sum over each
-    unobserved variable on the path with the chain rule, for example
+    unobserved variable on the path, for example
     $p(T \mid P) = \sum_A p(T \mid A) \, p(A \mid P)$.
   \item Against the edges, from the observed variable back to $P$. Use
     Bayes' theorem, for example
-    $p(P \mid T) \propto p(P) \, p(T \mid P)$.
+    $p(P \mid T) = p(P) \, p(T \mid P) / p(T)$.
 \end{enumerate}
+Each factor $p(\text{node} \mid \text{parents})$ sums to 1 over the values of
+the node. Thus, when you sum the joint distribution over a variable that is
+not a parent of other variables, its factor disappears.
 
 \solpart{Solution}
-\solstep{Step 1. Find the probability of a bad answer given the party.}
-The depression $D$ is not observed, so sum over $D$. The variables $P$ and
-$D$ are source nodes of the graph, so they are independent, and
-$p(D \mid P) = p(D)$:
+\solstep{Step 1. Find the missing probabilities.}
+The probabilities of the two values of a variable add to 1:
 \[
-  p(A = 1 \mid P) = \sum_{D} p(A = 1 \mid P, D) \, p(D).
+  p(P = 0) = 1 - 0.2 = 0.8, \qquad
+  p(D = 0) = 1 - 0.4 = 0.6.
 \]
-Substitute the values from the tables:
+
+\solstep{Step 2. Show that $P$ and $D$ are independent.}
+Sum the joint distribution over $T$, then $H$, then $A$. Each sum removes
+one factor, because the factor sums to 1:
+\[
+  p(P, D)
+  = \sum_{A} \sum_{H} \sum_{T} p(P, D, A, H, T)
+  = p(P) \, p(D).
+\]
+Thus $p(D \mid P) = p(P, D) / p(P) = p(D)$.
+
+\solstep{Step 3. Write $p(A \mid P)$ as a sum over $D$.}
+The depression $D$ is not observed. Sum over $D$, then use the definition
+of a conditional probability, then use Step~2:
+\[
+  p(A \mid P)
+  = \sum_{D} p(A, D \mid P)
+  = \sum_{D} p(A \mid P, D) \, p(D \mid P)
+  = \sum_{D} p(A \mid P, D) \, p(D).
+\]
+
+\solstep{Step 4. Calculate $p(A = 1 \mid P)$.}
+Substitute the values from the tables and from Step~1:
 \begin{align*}
-  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6 = 0.9396, \\
-  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6 = 0.366.
+  p(A = 1 \mid P = 1)
+    &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
+     = 0.3996 + 0.54
+     = 0.9396, \\
+  p(A = 1 \mid P = 0)
+    &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
+     = 0.36 + 0.006
+     = 0.366.
+\end{align*}
+Thus $p(A = 0 \mid P = 1) = 1 - 0.9396 = 0.0604$ and
+$p(A = 0 \mid P = 0) = 1 - 0.366 = 0.634$.
+
+\solstep{Step 5. Show that $p(T \mid A, P) = p(T \mid A)$.}
+Sum the joint distribution over $H$ and $D$. Then do the same without $T$:
+\begin{align*}
+  p(P, A, T) &= p(P) \, p(T \mid A) \sum_{D} p(D) \, p(A \mid P, D), \\
+  p(P, A) &= p(P) \sum_{D} p(D) \, p(A \mid P, D).
+\end{align*}
+Divide the first line by the second line:
+$p(T \mid A, P) = p(P, A, T) / p(P, A) = p(T \mid A)$.
+
+\solstep{Step 6. Write $p(T \mid P)$ as a sum over $A$.}
+The answer $A$ is not observed. Sum over $A$, then use the definition of a
+conditional probability, then use Step~5:
+\[
+  p(T \mid P)
+  = \sum_{A} p(T, A \mid P)
+  = \sum_{A} p(T \mid A, P) \, p(A \mid P)
+  = \sum_{A} p(T \mid A) \, p(A \mid P).
+\]
+
+\solstep{Step 7. Calculate $p(T = 1 \mid P)$.}
+Substitute the values from the table and from Step~4:
+\begin{align*}
+  p(T = 1 \mid P = 1)
+    &= 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604
+     = 0.89262 + 0.0302
+     = 0.92282, \\
+  p(T = 1 \mid P = 0)
+    &= 0.95 \cdot 0.366 + 0.5 \cdot 0.634
+     = 0.3477 + 0.317
+     = 0.6647.
 \end{align*}
 
-\solstep{Step 2. Find the probability of an unhappy teacher given the party.}
-The variable $T$ depends on $P$ only through $A$, so sum over $A$:
-\[
-  p(T = 1 \mid P)
-  = p(T = 1 \mid A = 1) \, p(A = 1 \mid P)
-  + p(T = 1 \mid A = 0) \, p(A = 0 \mid P).
-\]
-Substitute the values from Step~1:
+\solstep{Step 8. Find $p(P = 1 \mid H = 1)$.}
+Sum the joint distribution over $T$, $A$, and $D$. Each sum removes one
+factor, so $p(P, H) = p(P) \, p(H \mid P)$. Calculate the joint
+probabilities:
 \begin{align*}
-  p(T = 1 \mid P = 1) &= 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604 = 0.92282, \\
-  p(T = 1 \mid P = 0) &= 0.95 \cdot 0.366 + 0.5 \cdot 0.634 = 0.6647.
+  p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
+  p(P = 0, H = 1) &= 0.8 \cdot 0.2 = 0.16.
 \end{align*}
-
-\solstep{Step 3. Find $p(P = 1 \mid H = 1)$.}
-Use Bayes' theorem with the table for $p(H \mid P)$:
+Sum them over $P$: $p(H = 1) = 0.18 + 0.16 = 0.34$. Divide:
 \[
   p(P = 1 \mid H = 1)
-  = \frac{p(P = 1) \, p(H = 1 \mid P = 1)}
-         {\sum_{P} p(P) \, p(H = 1 \mid P)}
-  = \frac{0.2 \cdot 0.9}{0.2 \cdot 0.9 + 0.8 \cdot 0.2}
-  = \frac{0.18}{0.34} \approx 0.529.
+  = \frac{p(P = 1, H = 1)}{p(H = 1)}
+  = \frac{0.18}{0.34}
+  = \frac{9}{17}
+  \approx 0.529.
 \]
 
-\solstep{Step 4. Find $p(P = 1 \mid T = 1)$.}
-Use Bayes' theorem with the values from Step~2:
+\solstep{Step 9. Find $p(P = 1 \mid T = 1)$.}
+Use $p(P, T) = p(P) \, p(T \mid P)$ and the values from Step~7:
+\begin{align*}
+  p(P = 1, T = 1) &= 0.2 \cdot 0.92282 = 0.184564, \\
+  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176.
+\end{align*}
+Sum them over $P$: $p(T = 1) = 0.184564 + 0.53176 = 0.716324$. Divide:
 \[
   p(P = 1 \mid T = 1)
-  = \frac{0.2 \cdot 0.92282}{0.2 \cdot 0.92282 + 0.8 \cdot 0.6647}
-  = \frac{0.184564}{0.716324} \approx 0.258.
+  = \frac{p(P = 1, T = 1)}{p(T = 1)}
+  = \frac{0.184564}{0.716324}
+  \approx 0.258.
 \]
 
-\solstep{Step 5. Show that $H$ and $T$ are independent given $P$.}
-Sum the joint distribution over the unobserved variables $D$ and $A$. Move
-each factor out of the sums that do not contain its variables:
-\[
+\solstep{Step 10. Show that $H$ and $T$ are independent given $P$.}
+Sum the joint distribution over the unobserved variables $D$ and $A$:
+\begin{align*}
   p(P, H, T)
-  = p(P) \, p(H \mid P)
-    \sum_{A} p(T \mid A) \sum_{D} p(D) \, p(A \mid P, D)
-  = p(P) \, p(H \mid P) \, p(T \mid P).
-\]
-The last equality uses Steps 1 and 2. Thus
-$p(H, T \mid P) = p(H \mid P) \, p(T \mid P)$.
+  &= \sum_{A} \sum_{D} p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
+     p(T \mid A) \\
+  &= p(P) \, p(H \mid P) \sum_{A} p(T \mid A) \sum_{D} p(D) \,
+     p(A \mid P, D)
+     && \text{(move factors out of the sums)} \\
+  &= p(P) \, p(H \mid P) \sum_{A} p(T \mid A) \, p(A \mid P)
+     && \text{(Step 3)} \\
+  &= p(P) \, p(H \mid P) \, p(T \mid P)
+     && \text{(Step 6)}.
+\end{align*}
+Divide by $p(P)$: $p(H, T \mid P) = p(H \mid P) \, p(T \mid P)$.
 
-\solstep{Step 6. Find $p(P = 1 \mid T = 1, H = 1)$.}
-Use Bayes' theorem with the product from Step~5:
+\solstep{Step 11. Find $p(P = 1 \mid T = 1, H = 1)$.}
+Use the product from Step~10 and the values from Step~7:
+\begin{align*}
+  p(P = 1, H = 1, T = 1) &= 0.2 \cdot 0.9 \cdot 0.92282 = 0.166108, \\
+  p(P = 0, H = 1, T = 1) &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.106352.
+\end{align*}
+Sum them over $P$: $p(H = 1, T = 1) = 0.166108 + 0.106352 = 0.27246$.
+Divide:
 \[
   p(P = 1 \mid T = 1, H = 1)
-  = \frac{0.2 \cdot 0.9 \cdot 0.92282}
-         {0.2 \cdot 0.9 \cdot 0.92282 + 0.8 \cdot 0.2 \cdot 0.6647}
-  = \frac{0.16611}{0.27246} \approx 0.610.
+  = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}
+  = \frac{0.166108}{0.27246}
+  \approx 0.610.
 \]
 
 \solpart{Conclusion}

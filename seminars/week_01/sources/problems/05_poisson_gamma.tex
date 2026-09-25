@@ -27,63 +27,110 @@ calculate the integral directly:
   \item Find a known distribution $q$ with a density proportional to $g$:
     $g(\lambda) = Z \, q(\lambda)$, where $Z$ is a known constant.
   \item A density integrates to 1. Thus the denominator is
-    $\int C Z \, q(\lambda) \, d\lambda = C Z$.
-  \item Divide: the posterior distribution is $q$.
+    \[
+      \int C Z \, q(\lambda) \, d\lambda
+      = C Z \int q(\lambda) \, d\lambda
+      = C Z.
+    \]
+  \item Divide the numerator by the denominator:
+    \[
+      p(\lambda \mid X) = \frac{C Z \, q(\lambda)}{C Z} = q(\lambda).
+    \]
 \end{enumerate}
 The same method gives the posterior mean without a direct integral.
 
 \solpart{Solution}
 Let $S = \sum_{i=1}^{N} x_i$.
 
-\solstep{Step 1. Write the numerator as a constant times a function of
-  $\lambda$.}
+\solstep{Step 1. Write the likelihood as one product.}
+Collect the factors with $e^{-\lambda}$ and the powers of $\lambda$:
+\[
+  p(X \mid \lambda)
+  = \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
+  = \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}.
+\]
+
+\solstep{Step 2. Multiply the likelihood by the prior.}
 \[
   p(X \mid \lambda) \, p(\lambda)
-  = \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
-    \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+  = \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
+    \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}.
+\]
+
+\solstep{Step 3. Separate the constant and the function of $\lambda$.}
+\[
+  p(X \mid \lambda) \, p(\lambda)
   = \underbrace{\frac{b^a}{\Gamma(a) \prod_{i} x_i!}}_{C}
     \cdot
     \underbrace{\lambda^{a + S - 1} e^{-(b + N)\lambda}}_{g(\lambda)}.
 \]
 
-\solstep{Step 2. Find the distribution with a density proportional to
+\solstep{Step 4. Find the distribution with a density proportional to
   $g$.}
-Let $a' = a + S$ and $b' = b + N$. The function $g$ has the form of the
-gamma density with these parameters:
+Let $a' = a + S$ and $b' = b + N$. Then
+$g(\lambda) = \lambda^{a' - 1} e^{-b'\lambda}$. The gamma density with these
+parameters is
 \[
-  g(\lambda) = \lambda^{a' - 1} e^{-b'\lambda}
-  = \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b').
+  \Gam(\lambda \mid a', b')
+  = \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1} e^{-b'\lambda}
+  = \frac{b'^{a'}}{\Gamma(a')} \, g(\lambda).
+\]
+Thus
+\[
+  g(\lambda) = \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b').
 \]
 
-\solstep{Step 3. Calculate the denominator.}
-The gamma density integrates to 1:
+\solstep{Step 5. Calculate the denominator.}
+Use Step~4. Then use the fact that the gamma density integrates to 1:
 \[
   \int C g(\lambda) \, d\lambda
   = C \frac{\Gamma(a')}{b'^{a'}} \int \Gam(\lambda \mid a', b') \, d\lambda
   = C \frac{\Gamma(a')}{b'^{a'}}.
 \]
 
-\solstep{Step 4. Divide the numerator by the denominator.}
-The constants cancel:
+\solstep{Step 6. Divide the numerator by the denominator.}
 \[
-  p(\lambda \mid X) = \Gam(\lambda \mid a + S, \, b + N).
+  p(\lambda \mid X)
+  = \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
+         {C \frac{\Gamma(a')}{b'^{a'}}}
+  = \Gam(\lambda \mid a', b')
+  = \Gam(\lambda \mid a + S, \, b + N).
 \]
 
-\solstep{Step 5. Calculate the posterior mean.}
-The function $\lambda^{a'} e^{-b'\lambda}$ has the form of the density
-$\Gam(\lambda \mid a' + 1, b')$. Thus its integral is
-$\Gamma(a' + 1) / b'^{a' + 1}$, and
+\solstep{Step 7. Write the posterior mean as an integral.}
+Substitute the gamma density:
 \[
   \mathbb{E}[\lambda \mid X]
   = \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
-  = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+  = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda.
+\]
+
+\solstep{Step 8. Calculate the integral with the same method.}
+The function under the integral is proportional to a gamma density with the
+parameters $a' + 1$ and $b'$:
+\[
+  \lambda^{a'} e^{-b'\lambda}
+  = \lambda^{(a' + 1) - 1} e^{-b'\lambda}
+  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \, \Gam(\lambda \mid a' + 1, b').
+\]
+The gamma density integrates to 1. Thus
+\[
+  \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}}.
+\]
+
+\solstep{Step 9. Simplify the posterior mean.}
+Substitute Step~8 into Step~7. Then use $\Gamma(a' + 1) = a' \, \Gamma(a')$:
+\[
+  \mathbb{E}[\lambda \mid X]
   = \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+  = \frac{\Gamma(a' + 1)}{\Gamma(a') \, b'}
+  = \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
   = \frac{a'}{b'}.
 \]
-The last equality uses $\Gamma(a' + 1) = a' \, \Gamma(a')$. The Bayesian
-estimate is
+The Bayesian estimate is
 \[
-  \hat{\lambda}_{\mathrm{B}} = \frac{a + S}{b + N}.
+  \hat{\lambda}_{\mathrm{B}} = \frac{a'}{b'} = \frac{a + S}{b + N}.
 \]
 
 \solpart{Conclusion}
@@ -94,19 +141,20 @@ estimate is
     $a \to a + S$ and $b \to b + N$. Thus $a$ acts as a prior number of
     events, and $b$ acts as a prior number of observations.
   \item The estimate is a weighted mean of the prior mean $a/b$ and the
-    maximum likelihood estimate $\bar{x}$ from
+    maximum likelihood estimate $\bar{x} = S/N$ from
     Problem~\ref{prob:poisson-mle}:
     \[
       \frac{a + S}{b + N}
+      = \frac{a}{b + N} + \frac{S}{b + N}
       = \frac{b}{b + N} \cdot \frac{a}{b}
-      + \frac{N}{b + N} \cdot \bar{x}.
+      + \frac{N}{b + N} \cdot \frac{S}{N}.
     \]
-    When $N$ increases, the weight of the data increases, and the estimate
-    goes to $\bar{x}$.
-  \item When $a \to 0$ and $b \to 0$, the prior density becomes
-    proportional to $1/\lambda$. This is the non-informative prior from
-    the notes below. With this prior, the Bayesian estimate is equal to
-    $\bar{x}$.
+    When $N$ increases, the weight $N / (b + N)$ of the data goes to 1, and
+    the estimate goes to $\bar{x}$.
+  \item When $a \to 0$ and $b \to 0$, the prior density is proportional to
+    $\lambda^{a - 1} e^{-b\lambda} \to 1/\lambda$. This is the
+    non-informative prior from the notes below. With this prior, the
+    Bayesian estimate is $(0 + S)/(0 + N) = \bar{x}$.
 \end{itemize}
 \end{solution}
 
