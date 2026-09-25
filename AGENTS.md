@@ -50,10 +50,8 @@ Every committed PDF must be built from the committed version of its sources.
 - Never edit a PDF or a stamp by hand, and never commit a PDF without its
   sources.
 
-GitHub Actions (`.github/workflows/pdf.yml`) runs on every push to `main` and
-on every pull request. It catches commits that skipped the hook:
-
-- `python3 scripts/pdf_freshness.py check` compares the stamps with the
-  committed files. It fails if a PDF is stale, if a document has no PDF, or if
-  a PDF has no source.
-- A second job builds all documents to make sure that the sources compile.
+GitHub Actions (`.github/workflows/pdf.yml`) runs
+`python3 scripts/pdf_freshness.py check` on every push to `main` and on every
+pull request. It catches commits that skipped the hook. The check compares the
+stamps with the committed files. It fails if a PDF is stale, if a document has
+no PDF, or if a PDF has no source. CI does not run LaTeX.
