@@ -38,33 +38,42 @@ Together, they give Bayes' theorem:
 \]
 
 \solpart{Solution}
-\solstep{Step 1. Find the missing probabilities.}
-\begin{align*}
-  p(D = 0) &= 1 - p(D = 1) = 1 - 0.0001 = 0.9999, \\
-  p(T = 1 \mid D = 0) &= 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01
-    && \text{(false positive)}.
-\end{align*}
+\solstep{Step 1. Write the goal.}
+\[
+  p(D = 1 \mid T = 1) = \frac{p(D = 1, T = 1)}{p(T = 1)}.
+\]
 
-\solstep{Step 2. Find the joint probabilities.}
-\begin{align*}
-  p(D = 1, T = 1) &= p(D = 1) \, p(T = 1 \mid D = 1)
-    = 0.0001 \cdot 0.99 = 0.000099, \\
-  p(D = 0, T = 1) &= p(D = 0) \, p(T = 1 \mid D = 0)
-    = 0.9999 \cdot 0.01 = 0.009999.
-\end{align*}
+\solstep{Step 2. Find the numerator $p(D = 1, T = 1)$.}
+\[
+  p(D = 1, T = 1) = p(D = 1) \, p(T = 1 \mid D = 1)
+  = 0.0001 \cdot 0.99 = 0.000099.
+\]
 
-\solstep{Step 3. Find the marginal probability.}
+\solstep{Step 3. Find the denominator $p(T = 1)$.}
 \[
   p(T = 1)
   = p(D = 1, T = 1) + p(D = 0, T = 1)
-  = 0.000099 + 0.009999
-  = 0.010098.
+  = 0.000099 + p(D = 0, T = 1)
+  \qquad \text{(Step 2)}.
 \]
 
-\solstep{Step 4. Find the conditional probability.}
+\solstep{Step 3a. Find $p(D = 0, T = 1)$ for Step 3.}
+\begin{align*}
+  p(D = 0, T = 1) &= p(D = 0) \, p(T = 1 \mid D = 0), \\
+  p(D = 0) &= 1 - p(D = 1) = 1 - 0.0001 = 0.9999, \\
+  p(T = 1 \mid D = 0) &= 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01
+    && \text{(false positive)}, \\
+  p(D = 0, T = 1) &= 0.9999 \cdot 0.01 = 0.009999.
+\end{align*}
+
+\solstep{Step 3b. Substitute Step 3a into Step 3.}
+\[
+  p(T = 1) = 0.000099 + 0.009999 = 0.010098.
+\]
+
+\solstep{Step 4. Substitute Steps 2 and 3 into Step 1.}
 \[
   p(D = 1 \mid T = 1)
-  = \frac{p(D = 1, T = 1)}{p(T = 1)}
   = \frac{0.000099}{0.010098}
   = \frac{99}{99 \cdot 102}
   = \frac{1}{102}

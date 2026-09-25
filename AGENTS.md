@@ -96,6 +96,11 @@ transition, and keep it short:
 - Put the reason for a transition next to it:
   `&= ... && \text{(parent of $T$: $A$)}`.
 - Do not repeat in words what a formula already shows.
+- Derive from the goal. Step 1 writes the quantity to find in terms of
+  unknown values. When a formula needs an unknown value, find it in a
+  sub-step (`Step 1a. Find X for Step 1.`), then substitute it back
+  (`Step 1b. Substitute Step 1a into Step 1.`). Do not calculate values
+  before a formula needs them.
 
 Write the text in Simplified Technical English: short sentences, one fact
 for each sentence, active voice, and one term for each concept.

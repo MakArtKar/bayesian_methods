@@ -34,19 +34,32 @@ The same method gives the posterior mean.
 \solpart{Solution}
 Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
 
-\solstep{Step 1. Separate the constant in the numerator.}
+\solstep{Step 1. Write the goal.}
+\[
+  \hat{\lambda}_{\mathrm{B}} = \mathbb{E}[\lambda \mid X]
+  = \int \lambda \, p(\lambda \mid X) \, d\lambda.
+\]
+
+\solstep{Step 2. Find $p(\lambda \mid X)$ for Step 1.}
+\[
+  p(\lambda \mid X)
+  = \frac{p(X \mid \lambda) \, p(\lambda)}
+         {\int p(X \mid \lambda) \, p(\lambda) \, d\lambda}.
+\]
+
+\solstep{Step 2a. Separate the constant in the numerator of Step 2.}
 \begin{align*}
   p(X \mid \lambda) \, p(\lambda)
   &= \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
-     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \\
-  &= \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+   = \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
      \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \\
   &= \underbrace{\frac{b^a}{\Gamma(a) \prod_{i} x_i!}}_{C}
      \cdot
      \underbrace{\lambda^{a' - 1} e^{-b'\lambda}}_{g(\lambda)}.
 \end{align*}
 
-\solstep{Step 2. Find the known density.}
+\solstep{Step 2b. Find the known density for $g$ from Step 2a.}
 \[
   \Gam(\lambda \mid a', b')
   = \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1} e^{-b'\lambda}
@@ -54,26 +67,38 @@ Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
   g(\lambda) = \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b').
 \]
 
-\solstep{Step 3. Find the posterior distribution.}
-\begin{align*}
-  \int C g(\lambda) \, d\lambda
-  &= C \frac{\Gamma(a')}{b'^{a'}} \int \Gam(\lambda \mid a', b') \, d\lambda
-   = C \frac{\Gamma(a')}{b'^{a'}}, \\
+\solstep{Step 2c. Substitute Steps 2a and 2b into Step 2.}
+\[
   p(\lambda \mid X)
-  &= \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
-          {C \frac{\Gamma(a')}{b'^{a'}}}
-   = \Gam(\lambda \mid a + S, \, b + N).
-\end{align*}
+  = \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
+         {C \frac{\Gamma(a')}{b'^{a'}}
+          \int \Gam(\lambda \mid a', b') \, d\lambda}
+  = \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
+         {C \frac{\Gamma(a')}{b'^{a'}}}
+  = \Gam(\lambda \mid a + S, \, b + N).
+\]
 
-\solstep{Step 4. Find the posterior mean.}
-The integrand $\lambda^{a'} e^{-b'\lambda}$ is an unnormalized
-$\Gam(\lambda \mid a' + 1, b')$:
+\solstep{Step 3. Substitute Step 2c into Step 1.}
+\[
+  \mathbb{E}[\lambda \mid X]
+  = \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
+  = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda.
+\]
+
+\solstep{Step 3a. Find the integral for Step 3 with the same method.}
+\[
+  \lambda^{a'} e^{-b'\lambda}
+  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \, \Gam(\lambda \mid a' + 1, b')
+  \;\Longrightarrow\;
+  \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+  = \frac{\Gamma(a' + 1)}{b'^{a' + 1}}.
+\]
+
+\solstep{Step 3b. Substitute Step 3a into Step 3.}
 \begin{align*}
   \mathbb{E}[\lambda \mid X]
-  &= \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
-   = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
-   = \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \\
-  &= \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
+  &= \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+   = \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
      && \text{($\Gamma(a' + 1) = a' \, \Gamma(a')$)} \\
   &= \frac{a'}{b'} = \frac{a + S}{b + N}.
 \end{align*}

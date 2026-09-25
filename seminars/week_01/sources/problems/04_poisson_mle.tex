@@ -19,7 +19,13 @@ point.
 \solpart{Solution}
 Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
 
-\solstep{Step 1. Write the log-likelihood.}
+\solstep{Step 1. Write the goal.}
+\[
+  \hat{\lambda}_{\mathrm{ML}} = \arg\max_{\lambda} L(\lambda)
+  = \arg\max_{\lambda} \ell(\lambda).
+\]
+
+\solstep{Step 2. Write $\ell(\lambda)$.}
 \begin{align*}
   \ell(\lambda)
   &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
@@ -27,14 +33,14 @@ Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
    = -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!.
 \end{align*}
 
-\solstep{Step 2. Set the derivative to zero.}
+\solstep{Step 3. Set the derivative to zero.}
 \[
   \ell'(\lambda) = -N + \frac{S}{\lambda} = 0
   \;\Longrightarrow\;
   \lambda = \frac{S}{N} = \bar{x}.
 \]
 
-\solstep{Step 3. Make sure that it is a maximum.}
+\solstep{Step 4. Make sure that it is a maximum.}
 \[
   \ell''(\lambda) = -\frac{S}{\lambda^2} < 0
   \quad \text{if } S > 0.
@@ -45,4 +51,5 @@ $\lambda = 0 = \bar{x}$.
 \[
   \hat{\lambda}_{\mathrm{ML}} = \bar{x}.
 \]
+
 \end{solution}
