@@ -107,85 +107,126 @@ $\sum_{x} p(x \mid \text{parents}) = 1$.
 
 \solpart{Solution}
 \solstep{Step 1. Find $p(P = 1 \mid H = 1)$.}
-\[
-  p(P = 1 \mid H = 1)
-  = \frac{p(P = 1, H = 1)}{p(H = 1)}
-  = \frac{p(P = 1, H = 1)}{p(P = 1, H = 1) + p(P = 0, H = 1)}.
-\]
-
-\solstep{Step 1a. Find $p(P, H = 1)$ for Step 1.}
-Sum out $T$, $A$, $D$ (each factor sums to 1):
 \begin{align*}
-  p(P, H) &= p(P) \, p(H \mid P), \\
-  p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
-  p(P = 0, H = 1) &= (1 - 0.2) \cdot 0.2 = 0.8 \cdot 0.2 = 0.16.
+  p(P = 1 \mid H = 1)
+  &= \frac{p(P = 1, H = 1)}{p(H = 1)}
+   = \frac{p(P = 1, H = 1)}{\sum_{P} p(P, H = 1)} \\
+  &= \frac{p(P = 1, H = 1)}{p(P = 1, H = 1) + p(P = 0, H = 1)}.
+\end{align*}
+
+\solstep{Step 1a. Find $p(P, H)$ for Step 1.}
+Sum out $T$, $A$, $D$:
+\begin{align*}
+  p(P, H)
+  &= \sum_{D} \sum_{A} \sum_{T}
+     p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
+  &= p(P) \, p(H \mid P) \sum_{D} p(D) \sum_{A} p(A \mid P, D)
+     \sum_{T} p(T \mid A)
+    && \text{(move factors out of the sums)} \\
+  &= p(P) \, p(H \mid P) \sum_{D} p(D) \sum_{A} p(A \mid P, D)
+    && \textstyle\text{($\sum_T p(T \mid A) = 1$)} \\
+  &= p(P) \, p(H \mid P) \sum_{D} p(D)
+    && \textstyle\text{($\sum_A p(A \mid P, D) = 1$)} \\
+  &= p(P) \, p(H \mid P)
+    && \textstyle\text{($\sum_D p(D) = 1$)}.
+\end{align*}
+Substitute the values:
+\begin{align*}
+  p(P = 1, H = 1) &= p(P = 1) \, p(H = 1 \mid P = 1) = 0.2 \cdot 0.9 = 0.18, \\
+  p(P = 0, H = 1) &= \bigl(1 - p(P = 1)\bigr) \, p(H = 1 \mid P = 0) \\
+    &= (1 - 0.2) \cdot 0.2 = 0.8 \cdot 0.2 = 0.16.
 \end{align*}
 
 \solstep{Step 1b. Substitute Step 1a into Step 1.}
 \[
   p(P = 1 \mid H = 1)
-  = \frac{0.18}{0.18 + 0.16} = \frac{0.18}{0.34} = \frac{9}{17}
+  = \frac{0.18}{0.18 + 0.16}
+  = \frac{0.18}{0.34}
+  = \frac{9}{17}
   \approx 0.529.
 \]
 
 \solstep{Step 2. Find $p(P = 1 \mid T = 1)$.}
 \[
   p(P = 1 \mid T = 1)
+  = \frac{p(P = 1, T = 1)}{p(T = 1)}
   = \frac{p(P = 1, T = 1)}{p(P = 1, T = 1) + p(P = 0, T = 1)},
-  \qquad
+\]
+\[
   p(P, T) = p(P) \, p(T \mid P).
 \]
 
-\solstep{Step 2a. Find $p(T = 1 \mid P)$ for Step 2.}
+\solstep{Step 2a. Find $p(T \mid P)$ for Step 2.}
 \begin{align*}
   p(T \mid P)
   &= \sum_{A} p(T, A \mid P)
-   = \sum_{A} p(T \mid A, P) \, p(A \mid P) \\
+    && \text{(sum over $A$)} \\
+  &= \sum_{A} p(T \mid A, P) \, p(A \mid P)
+    && \text{(product rule)} \\
   &= \sum_{A} p(T \mid A) \, p(A \mid P)
-   && \text{(parent of $T$: $A$)}.
+    && \text{(parent of $T$: $A$)} \\
+  &= p(T \mid A = 1) \, p(A = 1 \mid P)
+   + p(T \mid A = 0) \, p(A = 0 \mid P).
 \end{align*}
 
-\solstep{Step 2b. Find $p(A = 1 \mid P)$ for Step 2a.}
+\solstep{Step 2b. Find $p(A \mid P)$ for Step 2a.}
 \begin{align*}
   p(A \mid P)
   &= \sum_{D} p(A, D \mid P)
-   = \sum_{D} p(A \mid P, D) \, p(D \mid P) \\
+    && \text{(sum over $D$)} \\
+  &= \sum_{D} p(A \mid P, D) \, p(D \mid P)
+    && \text{(product rule)} \\
   &= \sum_{D} p(A \mid P, D) \, p(D)
-   && \text{($D$ has no parents)}.
+    && \text{($D$ has no parents)} \\
+  &= p(A \mid P, D = 1) \, p(D = 1) + p(A \mid P, D = 0) \, p(D = 0).
 \end{align*}
+Substitute the values, with $p(D = 0) = 1 - 0.4 = 0.6$:
 \begin{align*}
-  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot (1 - 0.4)
+  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
     = 0.3996 + 0.54 = 0.9396, \\
-  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot (1 - 0.4)
+  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
     = 0.36 + 0.006 = 0.366.
 \end{align*}
 
 \solstep{Step 2c. Substitute Step 2b into Step 2a.}
+With $p(A = 0 \mid P) = 1 - p(A = 1 \mid P)$:
 \begin{align*}
-  p(T = 1 \mid P = 1) &= 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396)
-    = 0.89262 + 0.0302 = 0.92282, \\
-  p(T = 1 \mid P = 0) &= 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366)
-    = 0.3477 + 0.317 = 0.6647.
+  p(T = 1 \mid P = 1)
+  &= 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396)
+   = 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604 \\
+  &= 0.89262 + 0.0302
+   = 0.92282, \\
+  p(T = 1 \mid P = 0)
+  &= 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366)
+   = 0.95 \cdot 0.366 + 0.5 \cdot 0.634 \\
+  &= 0.3477 + 0.317
+   = 0.6647.
 \end{align*}
 
 \solstep{Step 2d. Substitute Step 2c into Step 2.}
 \begin{align*}
-  p(P = 1, T = 1) &= 0.2 \cdot 0.92282 = 0.184564, \\
-  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176, \\
-  p(P = 1 \mid T = 1)
-    &= \frac{0.184564}{0.184564 + 0.53176}
-     = \frac{0.184564}{0.716324}
-     \approx 0.258.
+  p(P = 1, T = 1) &= p(P = 1) \, p(T = 1 \mid P = 1)
+    = 0.2 \cdot 0.92282 = 0.184564, \\
+  p(P = 0, T = 1) &= p(P = 0) \, p(T = 1 \mid P = 0)
+    = 0.8 \cdot 0.6647 = 0.53176,
 \end{align*}
-
-\solstep{Step 3. Find $p(P = 1 \mid T = 1, H = 1)$.}
 \[
-  p(P = 1 \mid T = 1, H = 1)
-  = \frac{p(P = 1, H = 1, T = 1)}
-         {p(P = 1, H = 1, T = 1) + p(P = 0, H = 1, T = 1)}.
+  p(P = 1 \mid T = 1)
+  = \frac{0.184564}{0.184564 + 0.53176}
+  = \frac{0.184564}{0.716324}
+  \approx 0.258.
 \]
 
+\solstep{Step 3. Find $p(P = 1 \mid T = 1, H = 1)$.}
+\begin{align*}
+  p(P = 1 \mid T = 1, H = 1)
+  &= \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)} \\
+  &= \frac{p(P = 1, H = 1, T = 1)}
+          {p(P = 1, H = 1, T = 1) + p(P = 0, H = 1, T = 1)}.
+\end{align*}
+
 \solstep{Step 3a. Find $p(P, H, T)$ for Step 3.}
+Sum out $A$ and $D$:
 \begin{align*}
   p(P, H, T)
   &= \sum_{A} \sum_{D} p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
@@ -198,10 +239,12 @@ Sum out $T$, $A$, $D$ (each factor sums to 1):
   &= p(P) \, p(H \mid P) \, p(T \mid P)
      && \text{(Step 2a)}.
 \end{align*}
-With the values from Step 2c:
+Substitute the values from Step 2c:
 \begin{align*}
-  p(P = 1, H = 1, T = 1) &= 0.2 \cdot 0.9 \cdot 0.92282 = 0.166108, \\
-  p(P = 0, H = 1, T = 1) &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.106352.
+  p(P = 1, H = 1, T = 1)
+  &= 0.2 \cdot 0.9 \cdot 0.92282 = 0.18 \cdot 0.92282 = 0.166108, \\
+  p(P = 0, H = 1, T = 1)
+  &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.16 \cdot 0.6647 = 0.106352.
 \end{align*}
 
 \solstep{Step 3b. Substitute Step 3a into Step 3.}

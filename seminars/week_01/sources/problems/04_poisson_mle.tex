@@ -21,24 +21,31 @@ Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
 
 \solstep{Step 1. Write the goal.}
 \[
-  \hat{\lambda}_{\mathrm{ML}} = \arg\max_{\lambda} L(\lambda)
-  = \arg\max_{\lambda} \ell(\lambda).
+  \hat{\lambda}_{\mathrm{ML}}
+  = \arg\max_{\lambda} L(\lambda)
+  = \arg\max_{\lambda} \ell(\lambda)
+  \qquad \text{($\log$ is increasing)}.
 \]
 
-\solstep{Step 2. Write $\ell(\lambda)$.}
+\solstep{Step 2. Find $\ell(\lambda)$ for Step 1.}
 \begin{align*}
   \ell(\lambda)
-  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
-   = \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right)
-   = -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!.
+  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \\
+  &= \sum_{i=1}^{N} \log \Bigl( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \Bigr)
+    && \text{(log of a product)} \\
+  &= \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right)
+    && \text{(log of each factor)} \\
+  &= -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!
+    && \text{(sum each term)}.
 \end{align*}
 
-\solstep{Step 3. Set the derivative to zero.}
-\[
-  \ell'(\lambda) = -N + \frac{S}{\lambda} = 0
-  \;\Longrightarrow\;
-  \lambda = \frac{S}{N} = \bar{x}.
-\]
+\solstep{Step 3. Find the stationary point of $\ell$.}
+\begin{align*}
+  \ell'(\lambda) &= -N + \frac{S}{\lambda}, \\
+  -N + \frac{S}{\lambda} = 0
+  \;&\Longrightarrow\; \frac{S}{\lambda} = N
+  \;\Longrightarrow\; \lambda = \frac{S}{N} = \bar{x}.
+\end{align*}
 
 \solstep{Step 4. Make sure that it is a maximum.}
 \[
@@ -51,5 +58,4 @@ $\lambda = 0 = \bar{x}$.
 \[
   \hat{\lambda}_{\mathrm{ML}} = \bar{x}.
 \]
-
 \end{solution}

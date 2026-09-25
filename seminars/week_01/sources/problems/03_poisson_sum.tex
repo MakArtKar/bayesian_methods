@@ -21,22 +21,28 @@ Goal: show that $p(x_1 + x_2 = k) = e^{-(\lambda_1 + \lambda_2)}
 (\lambda_1 + \lambda_2)^k / k!$ for all $k \geq 0$.
 \begin{align*}
   p(x_1 + x_2 = k)
+  &= p\Bigl(\bigcup_{j=0}^{k} \{x_1 = j, \ x_2 = k - j\}\Bigr)
+    && \text{($x_1, x_2 \geq 0$)} \\
   &= \sum_{j=0}^{k} p(x_1 = j, \ x_2 = k - j)
-    && \text{(disjoint events, $x_i \geq 0$)} \\
+    && \text{(disjoint events)} \\
   &= \sum_{j=0}^{k} p(x_1 = j) \, p(x_2 = k - j)
     && \text{(independence)} \\
   &= \sum_{j=0}^{k} e^{-\lambda_1} \frac{\lambda_1^j}{j!} \cdot
      e^{-\lambda_2} \frac{\lambda_2^{k-j}}{(k-j)!}
     && \text{(Poisson probabilities)} \\
-  &= e^{-(\lambda_1 + \lambda_2)}
+  &= e^{-\lambda_1} e^{-\lambda_2}
      \sum_{j=0}^{k} \frac{\lambda_1^j \lambda_2^{k-j}}{j! \, (k-j)!}
     && \text{(factors without $j$ out of the sum)} \\
+  &= e^{-(\lambda_1 + \lambda_2)}
+     \sum_{j=0}^{k} \frac{\lambda_1^j \lambda_2^{k-j}}{j! \, (k-j)!}
+    && \text{($e^{x} e^{y} = e^{x + y}$)} \\
   &= \frac{e^{-(\lambda_1 + \lambda_2)}}{k!}
      \sum_{j=0}^{k} \frac{k!}{j! \, (k-j)!} \lambda_1^j \lambda_2^{k-j}
     && \text{(multiply and divide by $k!$)} \\
   &= \frac{e^{-(\lambda_1 + \lambda_2)}}{k!}
-     \sum_{j=0}^{k} \binom{k}{j} \lambda_1^j \lambda_2^{k-j} \\
-  &= e^{-(\lambda_1 + \lambda_2)} \frac{(\lambda_1 + \lambda_2)^k}{k!}
+     \sum_{j=0}^{k} \binom{k}{j} \lambda_1^j \lambda_2^{k-j}
+    && \textstyle\text{($\binom{k}{j} = \frac{k!}{j! \, (k-j)!}$)} \\
+  &= \frac{e^{-(\lambda_1 + \lambda_2)}}{k!} (\lambda_1 + \lambda_2)^k
     && \text{(binomial theorem)}.
 \end{align*}
 This is $\Poiss(\lambda_1 + \lambda_2)$.
