@@ -7,17 +7,22 @@ writes `<dir>/<name>.pdf.stamp`. The stamp records the git blob ID of the PDF
 and of every source file in the repository that the build read.
 
 `check` compares the stamps with the git index. It does not run LaTeX, so it
-is fast and works in the pre-commit hook and in CI.
+is fast and works in CI.
+
+`hook` is the pre-commit hook. It builds the stale documents that are in the
+git index, stages their PDFs and stamps, and then runs `check`.
 
 Usage:
     python3 scripts/pdf_freshness.py build          # build stale documents
     python3 scripts/pdf_freshness.py build --all    # build all documents
     python3 scripts/pdf_freshness.py build FILE.tex [FILE.tex ...]
     python3 scripts/pdf_freshness.py check
+    python3 scripts/pdf_freshness.py hook
 """
 
 import argparse
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -103,7 +108,9 @@ def check() -> int:
         stale = []
         for rel, blob in entries.items():
             path = str(tex_path.parent / rel)
-            if blobs.get(path) != blob:
+            if path not in blobs:
+                stale.append(f"{path} is not committed")
+            elif blobs[path] != blob:
                 stale.append(path)
         if tex_path.name not in entries or PurePosixPath(pdf).name not in entries:
             stale.append(stamp)
@@ -121,8 +128,9 @@ def check() -> int:
         for error in errors:
             print(f"  {error}", file=sys.stderr)
         print(
-            "Run `python3 scripts/pdf_freshness.py build`, then stage the "
-            "PDFs and stamps.",
+            "Stage the missing sources. Then run "
+            "`python3 scripts/pdf_freshness.py build` and stage the PDFs and "
+            "stamps, or commit again to let the pre-commit hook do it.",
             file=sys.stderr,
         )
         return 1
@@ -162,6 +170,8 @@ def build_one(tex: Path) -> None:
     cwd = tex.parent
     pdf = tex.with_suffix(".pdf")
     print(f"Building {tex.relative_to(ROOT)}")
+    if shutil.which("latexmk") is None:
+        raise SystemExit("latexmk is not installed; install TeX Live")
     with tempfile.TemporaryDirectory() as tmp:
         deps_file = Path(tmp) / "deps.mk"
         result = subprocess.run(
@@ -196,11 +206,12 @@ def build_one(tex: Path) -> None:
     Path(str(pdf) + STAMP_SUFFIX).write_text("".join(lines))
 
 
-def working_tree_documents() -> list[Path]:
-    """Return tracked and untracked (not ignored) documents."""
-    files = git(
-        "ls-files", "--cached", "--others", "--exclude-standard", "-z"
-    ).decode()
+def working_tree_documents(include_untracked: bool = True) -> list[Path]:
+    """Return tracked and, optionally, untracked (not ignored) documents."""
+    args = ["ls-files", "--cached", "-z"]
+    if include_untracked:
+        args += ["--others", "--exclude-standard"]
+    files = git(*args).decode()
     documents = []
     for path in sorted(set(files.split("\0"))):
         full = ROOT / path
@@ -239,6 +250,19 @@ def build(files: list[str], build_all: bool) -> int:
     return 0
 
 
+def hook() -> int:
+    documents = [
+        tex
+        for tex in working_tree_documents(include_untracked=False)
+        if is_stale(tex)
+    ]
+    for tex in documents:
+        build_one(tex)
+        pdf = tex.with_suffix(".pdf")
+        git("add", "--", str(pdf), str(pdf) + STAMP_SUFFIX)
+    return check()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -248,9 +272,12 @@ def main() -> int:
         "--all", action="store_true", help="build all documents, not only stale"
     )
     sub.add_parser("check", help="check that committed PDFs are up to date")
+    sub.add_parser("hook", help="build and stage stale PDFs, then check")
     args = parser.parse_args()
     if args.command == "check":
         return check()
+    if args.command == "hook":
+        return hook()
     return build(args.files, args.all)
 
 

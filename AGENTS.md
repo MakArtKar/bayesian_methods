@@ -36,20 +36,24 @@ homeworks/week_NN/    # homework assignments
 
 Every committed PDF must be built from the committed version of its sources.
 
-- Build PDFs only with `python3 scripts/pdf_freshness.py build`. It builds
-  all stale documents with `latexmk -pdf` and writes `<name>.pdf.stamp`. The
-  stamp records the git blob IDs of the PDF and of every source file the build
-  read (`.tex`, figures, `.bib`, style files).
-- Commit the source change, the rebuilt PDF, and the stamp in the same commit.
+- After you clone the repository, run `pre-commit install` once. You also
+  need TeX Live (`latexmk`).
+- Commit only the sources. The pre-commit hook
+  (`python3 scripts/pdf_freshness.py hook`) builds each stale document with
+  `latexmk -pdf`, writes `<name>.pdf.stamp`, and adds the PDF and the stamp
+  to the same commit. The stamp records the git blob IDs of the PDF and of
+  every source file the build read (`.tex`, figures, `.bib`, style files).
+- The hook builds from the staged sources only. Stage every file that a
+  document reads, or the commit fails.
+- If LaTeX fails, the commit fails. Fix the error and commit again.
+- To build without a commit, run `python3 scripts/pdf_freshness.py build`.
 - Never edit a PDF or a stamp by hand, and never commit a PDF without its
   sources.
 
-`python3 scripts/pdf_freshness.py check` compares the stamps with the git
-index. It fails if a PDF is stale, if a document has no PDF, or if a PDF has
-no source. It runs:
+GitHub Actions (`.github/workflows/pdf.yml`) runs on every push to `main` and
+on every pull request. It catches commits that skipped the hook:
 
-- as a pre-commit hook. After you clone the repository, run
-  `pre-commit install` once.
-- in GitHub Actions (`.github/workflows/pdf.yml`) on every push to `main` and
-  on every pull request. A second job builds all documents to make sure that
-  the sources compile.
+- `python3 scripts/pdf_freshness.py check` compares the stamps with the
+  committed files. It fails if a PDF is stale, if a document has no PDF, or if
+  a PDF has no source.
+- A second job builds all documents to make sure that the sources compile.
