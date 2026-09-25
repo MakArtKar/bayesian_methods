@@ -93,9 +93,20 @@ values:
   \item Move the factors that do not depend on a summation variable out of
     its sum. Then calculate.
 \end{enumerate}
-\emph{Proof of Steps 2 and 3.} No arrow goes from $\Grest$ to $G$ or
-$\Ganc$: otherwise, its start is an ancestor of $G$. Thus the parents of
-each variable in $G \cup \Ganc$ are in $G \cup \Ganc$:
+\emph{Proof of Step 2.}
+\begin{align*}
+  p(G)
+  &= \sum_{\Ganc} \sum_{\Grest} p(G, \Ganc, \Grest) \\
+  &= \sum_{\Ganc} \sum_{\Grest} p(G, \Ganc) \, p(\Grest \mid G, \Ganc)
+    && \text{(chain rule)} \\
+  &= \sum_{\Ganc} p(G, \Ganc) \sum_{\Grest} p(\Grest \mid G, \Ganc)
+    && \text{(constants out)} \\
+  &= \sum_{\Ganc} p(G, \Ganc)
+    && \text{(a distribution sums to 1)}.
+\end{align*}
+
+\emph{Proof of Step 3.} No arrow goes from $\Grest$ to $G$ or $\Ganc$:
+otherwise, its start is an ancestor of $G$.
 \begin{center}
   \begin{tikzpicture}[
       >={Stealth},
@@ -131,23 +142,9 @@ each variable in $G \cup \Ganc$ are in $G \cup \Ganc$:
     \draw[meta] (BG) -- (BR);
   \end{tikzpicture}
 \end{center}
-Write the joint distribution as the product of the factors
-$p(v \mid \text{parents of } v)$, and split it into two products:
-\begin{align*}
-  p(G)
-  &= \sum_{\Ganc} \sum_{\Grest}
-     \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
-     \prod_{r \in \Grest} p(r \mid \text{parents of } r) \\
-  &= \sum_{\Ganc} \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
-     \sum_{\Grest} \prod_{r \in \Grest} p(r \mid \text{parents of } r)
-    && \text{(constants out)} \\
-  &= \sum_{\Ganc} \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
-    && \text{(sum is 1)}.
-\end{align*}
-The first product does not contain $\Grest$, because the parents of $G \cup
-\Ganc$ are in $G \cup \Ganc$. The last sum is 1: sum first over a variable
-of $\Grest$ without children in $\Grest$. Its factor sums to 1, and no other
-factor contains it. Then repeat.
+Thus the parents of each variable in $G \cup \Ganc$ are in $G \cup \Ganc$.
+Apply the chain rule to the variables of $G \cup \Ganc$, parents first.
+Then each factor is $p(v \mid \text{parents of } v)$, a given table.
 
 For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
 algorithm, then divide:
