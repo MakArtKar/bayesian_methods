@@ -135,11 +135,14 @@ Problem~\ref{prob:medical-test} is a special case.
     \]
   \item \textit{Sum over the kept variables that are not in $G$.} Move
     the constants out of the sums:
-    \[
+    \begin{align*}
       p(H, A)
-      = \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
-        p(H \mid P = p).
-    \]
+      &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
+        && \text{(sum over $P$, $D$)} \\
+      &= \sum_{p} \sum_{d} p(P = p) \, p(D = d)
+        && \text{(Step 2)} \\
+      &\qquad \cdot p(A \mid P = p, D = d) \, p(H \mid P = p).
+    \end{align*}
 \end{enumerate}
 
 \solpart{Solution}
