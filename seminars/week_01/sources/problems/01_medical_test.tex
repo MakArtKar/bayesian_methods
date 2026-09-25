@@ -9,10 +9,11 @@ disease.
 \begin{solution}
 \solpart{Interpretation}
 $D = 1$: the patient has the disease. $T = 1$: the test result is positive.
-\begin{align*}
-  p(D = 1) &= 10^{-4}, & p(D = 0) &= 1 - 10^{-4}, \\
-  p(T = 1 \mid D = 1) &= 0.99, & p(T = 1 \mid D = 0) &= 1 - 0.99 = 0.01.
-\end{align*}
+\[
+  p(D = 1) = 10^{-4}, \qquad
+  p(T = 1 \mid D = 1) = 0.99, \qquad
+  p(T = 0 \mid D = 0) = 0.99.
+\]
 Find $p(D = 1 \mid T = 1)$.
 
 \solpart{Idea}
@@ -68,8 +69,11 @@ Sum the joint distribution over $D$:
   p(T = 1)
   &= \sum_{d} p(D = d) \, p(T = 1 \mid D = d) \\
   &= p(D = 1) \, p(T = 1 \mid D = 1) + p(D = 0) \, p(T = 1 \mid D = 0) \\
-  &= 0.000099 + 0.9999 \cdot 0.01
-    && \text{(Step 3)} \\
+  &= 0.000099
+   + \bigl(1 - p(D = 1)\bigr) \bigl(1 - p(T = 0 \mid D = 0)\bigr)
+    && \text{(Step 3; complements)} \\
+  &= 0.000099 + (1 - 0.0001) \cdot (1 - 0.99) \\
+  &= 0.000099 + 0.9999 \cdot 0.01 \\
   &= 0.000099 + 0.009999
    = 0.010098.
 \end{align*}
