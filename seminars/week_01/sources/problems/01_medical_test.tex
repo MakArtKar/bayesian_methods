@@ -17,30 +17,37 @@ $D = 1$: the patient has the disease. $T = 1$: the test result is positive.
 Find $p(D = 1 \mid T = 1)$.
 
 \solpart{Idea}
-The disease causes the test result: the graph is $D \to T$. The source node
-and the edge give the joint distribution:
-\[
-  p(D, T) = p(D) \, p(T \mid D).
-\]
-The joint distribution gives any other probability with two operations:
+The disease causes the test result: the causal graph is $D \to T$. The
+problem gives the probabilities along the arrow: $p(D)$ and $p(T \mid D)$.
+
+\emph{Rules.} Let $A \to B$ be an arrow of the causal graph: $B$ depends
+directly on $A$. Each rule gives a formula for a probability that is not
+given:
 \begin{align*}
-  p(T) &= \sum_{D} p(D, T)
-    && \text{(marginal; for continuous $x$: $p(y) = \textstyle\int p(x, y) \, dx$)}, \\
-  p(D \mid T) &= \frac{p(D, T)}{p(T)}
-    && \text{(conditional)}.
+  &\text{R1. $p(A \mid B)$, against the arrow:}
+    && p(A \mid B) = \frac{p(A, B)}{p(B)}, \\
+  &\text{R2. $p(A, B)$, along the arrow:}
+    && p(A, B) = p(A) \, p(B \mid A), \\
+  &\text{R3. $p(B)$, the parent $A$ is not fixed:}
+    && p(B) = \sum_{a} p(A = a, B)
+       \quad \text{(for continuous $A$: $\textstyle\int da$)}, \\
+  &\text{R4. The other value of a binary variable:}
+    && p(A = 0 \mid C) = 1 - p(A = 1 \mid C).
 \end{align*}
-Together, they give Bayes' theorem:
+R1, R2, and R3 together give Bayes' theorem:
 \[
-  p(D \mid T)
-  = \frac{p(D, T)}{p(T)}
-  = \frac{p(D, T)}{\sum_{D'} p(D', T)}
-  = \frac{p(D) \, p(T \mid D)}{\sum_{D'} p(D') \, p(T \mid D')}.
+  p(A \mid B)
+  = \frac{p(A) \, p(B \mid A)}{\sum_{a} p(A = a) \, p(B \mid A = a)}.
 \]
 
+\emph{Computation graph.} Put the goal at the top. For each node that is
+not given, apply the rule for its form. Put the terms of the formula below
+the node as new nodes. Stop when all nodes at the bottom are given. Then
+calculate the nodes from the bottom to the top.
+
 \solpart{Solution}
-\emph{Computation graph.} The goal is at the top. Each node needs the
-nodes below it, and the arrow into the node shows the formula. Shaded nodes
-are given.
+\emph{Computation graph.} Each arrow shows the rule and the formula for the
+node above it. Shaded nodes are given.
 \begin{center}
   \begin{tikzpicture}[
       x=1cm, y=1cm, font=\small, >={Stealth},
@@ -67,35 +74,35 @@ are given.
     \coordinate (g) at (1.5, -1);
     \draw (J1) -- (g);
     \draw (T1) -- (g);
-    \draw[->] (g) -- node[op, left] {$p(D{=}1, T{=}1) \,/\, p(T{=}1)$} (G);
+    \draw[->] (g) -- node[op, left] {R1: $p(D{=}1, T{=}1) \,/\, p(T{=}1)$} (G);
     \coordinate (t1) at (4.5, -3);
     \draw (J1) -- (t1);
     \draw (J0) -- (t1);
-    \draw[->] (t1) -- node[op, right] {$p(D{=}1, T{=}1) + p(D{=}0, T{=}1)$} (T1);
+    \draw[->] (t1) -- node[op, right] {R3: $p(D{=}1, T{=}1) + p(D{=}0, T{=}1)$} (T1);
     \coordinate (j1) at (1.5, -5);
     \draw (T1D1) -- (j1);
     \draw (D1) -- (j1);
-    \draw[->] (j1) -- node[op, left] {$p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
+    \draw[->] (j1) -- node[op, left] {R2: $p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
     \coordinate (j0) at (7.5, -5);
     \draw (D0) -- (j0);
     \draw (T1D0) -- (j0);
-    \draw[->] (j0) -- node[op, right] {$p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
-    \draw[->] (D1) -- node[op, below right] {$1 - p(D{=}1)$} (D0);
-    \draw[->] (T0D0) -- node[op, right] {$1 - p(T{=}0 \mid D{=}0)$} (T1D0);
+    \draw[->] (j0) -- node[op, right] {R2: $p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
+    \draw[->] (D1) -- node[op, below right] {R4: $1 - p(D{=}1)$} (D0);
+    \draw[->] (T0D0) -- node[op, right] {R4: $1 - p(T{=}0 \mid D{=}0)$} (T1D0);
   \end{tikzpicture}
 \end{center}
 
-\solstep{Step 1. Find $p(D = 0)$.}
+\solstep{Step 1. Find $p(D = 0)$ with R4.}
 \[
   p(D = 0) = 1 - p(D = 1) = 1 - 0.0001 = 0.9999.
 \]
 
-\solstep{Step 2. Find $p(T = 1 \mid D = 0)$.}
+\solstep{Step 2. Find $p(T = 1 \mid D = 0)$ with R4.}
 \[
   p(T = 1 \mid D = 0) = 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01.
 \]
 
-\solstep{Step 3. Find $p(D = 1, T = 1)$.}
+\solstep{Step 3. Find $p(D = 1, T = 1)$ with R2.}
 \[
   p(D = 1, T = 1)
   = p(D = 1) \, p(T = 1 \mid D = 1)
@@ -103,7 +110,7 @@ are given.
   = 0.000099.
 \]
 
-\solstep{Step 4. Find $p(D = 0, T = 1)$.}
+\solstep{Step 4. Find $p(D = 0, T = 1)$ with R2.}
 \[
   p(D = 0, T = 1)
   = p(D = 0) \, p(T = 1 \mid D = 0)
@@ -111,7 +118,7 @@ are given.
   = 0.009999.
 \]
 
-\solstep{Step 5. Find $p(T = 1)$.}
+\solstep{Step 5. Find $p(T = 1)$ with R3.}
 \begin{align*}
   p(T = 1)
   &= \sum_{D} p(D, T = 1)
@@ -120,7 +127,7 @@ are given.
    = 0.010098.
 \end{align*}
 
-\solstep{Step 6. Find $p(D = 1 \mid T = 1)$.}
+\solstep{Step 6. Find $p(D = 1 \mid T = 1)$ with R1.}
 \begin{align*}
   p(D = 1 \mid T = 1)
   &= \frac{p(D = 1, T = 1)}{p(T = 1)}
