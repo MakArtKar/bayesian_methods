@@ -146,14 +146,12 @@ Problem~\ref{prob:medical-test} is a special case.
 \end{enumerate}
 
 \solpart{Solution}
-\begin{itemize}
-  \item $p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$
-    for each node $X$.
-  \item In the graphs, a red cross marks a struck-out factor: on a source,
-    or on the arrows into a node.
-  \item Joint distribution: chain rule from the children to the parents.
-    Given its parents, a node does not depend on the other nodes.
-\end{itemize}
+For each node $X$,
+$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
+
+\solsubproblem{Joint distribution.}
+Chain rule from the children to the parents. Given its parents, a node does
+not depend on the other nodes.
 \begin{align*}
   p(P, D, A, H, T)
   &= p(P, D, A, H) \, p(T \mid P, D, A, H)
@@ -177,7 +175,7 @@ Problem~\ref{prob:medical-test} is a special case.
 Thus
 \[
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
 \]
 
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
@@ -193,9 +191,9 @@ Thus
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)} \\
+  = \textcolor{fP}{p(P)} \, \strike{\textcolor{fD}{p(D)}} \, \strike{\textcolor{fA}{p(A \mid P, D)}} \, \textcolor{fH}{p(H \mid P)} \, \strike{\textcolor{fT}{p(T \mid A)}} \\
   \Longrightarrow\;
-  p(P, H) = p(P) \, p(H \mid P).
+  p(P, H) = \textcolor{fP}{p(P)} \, \textcolor{fH}{p(H \mid P)}.
 \end{gather*}
 
 \solstep{Step 3 (Idea 3). Numerator.}
@@ -213,9 +211,9 @@ No sum: no other variables are kept.
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, \strike{p(D)} \, \strike{p(A \mid P, D)} \, p(H \mid P) \, \strike{p(T \mid A)} \\
+  = \textcolor{fP}{p(P)} \, \strike{\textcolor{fD}{p(D)}} \, \strike{\textcolor{fA}{p(A \mid P, D)}} \, \textcolor{fH}{p(H \mid P)} \, \strike{\textcolor{fT}{p(T \mid A)}} \\
   \Longrightarrow\;
-  p(P, H) = p(P) \, p(H \mid P).
+  p(P, H) = \textcolor{fP}{p(P)} \, \textcolor{fH}{p(H \mid P)}.
 \end{gather*}
 
 \solstep{Step 5 (Idea 3). Denominator.}
@@ -249,9 +247,9 @@ No sum: no other variables are kept.
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A) \\
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \strike{\textcolor{fH}{p(H \mid P)}} \, \textcolor{fT}{p(T \mid A)} \\
   \Longrightarrow\;
-  p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+  p(P, D, A, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fT}{p(T \mid A)}.
 \end{gather*}
 
 \solstep{Step 3 (Idea 3). Numerator.}
@@ -279,9 +277,9 @@ No sum: no other variables are kept.
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, \strike{p(H \mid P)} \, p(T \mid A) \\
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \strike{\textcolor{fH}{p(H \mid P)}} \, \textcolor{fT}{p(T \mid A)} \\
   \Longrightarrow\;
-  p(P, D, A, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(T \mid A).
+  p(P, D, A, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fT}{p(T \mid A)}.
 \end{gather*}
 
 \solstep{Step 5 (Idea 3). Denominator.}
@@ -324,9 +322,9 @@ No sum: no other variables are kept.
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)} \\
   \Longrightarrow\;
-  p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+  p(P, D, A, H, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
 \end{gather*}
 
 \solstep{Step 3 (Idea 3). Numerator.}
@@ -350,9 +348,9 @@ No sum: no other variables are kept.
 \end{center}
 \begin{gather*}
   p(P, D, A, H, T)
-  = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)} \\
   \Longrightarrow\;
-  p(P, D, A, H, T) = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
+  p(P, D, A, H, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
 \end{gather*}
 
 \solstep{Step 5 (Idea 3). Denominator.}

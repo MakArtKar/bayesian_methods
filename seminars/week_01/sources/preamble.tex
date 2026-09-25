@@ -32,37 +32,37 @@
     \node[inner sep=0pt, outer sep=0pt] (x) {$#1$};
     \draw[red, thick] (x.south west) -- (x.north east);}}}
 
-% The graph of Problem 2. The arguments give the state of P, D, H, A, and T:
-% g (in the group G, blue fill), k (kept), or x (struck-out factor). For a
-% source (P, D), x puts a red cross on the node. For another node, x
-% crosses out its incoming arrows.
+% The graph of Problem 2. Each source and arrow has the color of its factor
+% (fP, fD, fA, fH, fT). The arguments give the state of P, D, H, A, and T:
+% g (in the group G, blue fill), k (kept), or x (struck-out factor: a red
+% cross on the source, or on the arrows into the node).
 \tikzset{
+  srcg/.style={fill=blue!15},
+  srck/.style={},
+  srcx/.style={label={[text=red, font=\LARGE, inner sep=0pt]center:$\times$}},
   ndg/.style={fill=blue!15},
   ndk/.style={},
   ndx/.style={},
-  srcg/.style={fill=blue!15},
-  srck/.style={},
-  srcx/.style={draw=red,
-    label={[text=red, font=\LARGE, inner sep=0pt]center:$\times$}},
   edg/.style={},
   edk/.style={},
-  edx/.style={red, postaction={decorate}, decoration={markings,
+  edx/.style={postaction={decorate}, decoration={markings,
     mark=at position 0.5 with {\node[text=red, inner sep=0pt] {$\times$};}}},
 }
 \newcommand{\crossgraph}[5]{%
   \begin{tikzpicture}[
       node distance=0.6cm and 0.55cm, >={Stealth},
       var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
+      f/.style={->, very thick},
     ]
-    \node[var, src#1] (P) {$P$};
-    \node[var, src#2, right=1.6cm of P] (D) {$D$};
+    \node[var, draw=fP, very thick, src#1] (P) {$P$};
+    \node[var, draw=fD, very thick, src#2, right=1.6cm of P] (D) {$D$};
     \node[var, nd#3, below left=of P] (H) {$H$};
     \node[var, nd#4, below right=of P] (A) {$A$};
     \node[var, nd#5, below=of A] (T) {$T$};
-    \draw[->, ed#3] (P) -- (H);
-    \draw[->, ed#4] (P) -- (A);
-    \draw[->, ed#4] (D) -- (A);
-    \draw[->, ed#5] (A) -- (T);
+    \draw[f, fH, ed#3] (P) -- (H);
+    \draw[f, fA, ed#4] (P) -- (A);
+    \draw[f, fA, ed#4] (D) -- (A);
+    \draw[f, fT, ed#5] (A) -- (T);
     \node[draw, fill=blue!15, minimum size=0.3cm, right=1.2cm of D] (key) {};
     \node[right=0.1cm of key] {variables of $p(G)$};
   \end{tikzpicture}%
