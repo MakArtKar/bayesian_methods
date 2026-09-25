@@ -65,8 +65,61 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-Problem~\ref{prob:medical-test} is a special case of the algorithm below. The
-tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
+Problem~\ref{prob:medical-test} is a special case of this method.
+
+\emph{Joint distribution.} The problem gives the distribution of each source
+node and the distribution of each other node given its parents. The chain
+rule, from the children to the parents, gives the joint distribution as the
+product of these factors. Example for the graph $X \to Z \leftarrow Y$:
+\begin{align*}
+  p(X, Y, Z)
+  &= p(X, Y) \, p(Z \mid X, Y)
+    && \text{(chain rule)} \\
+  &= p(X) \, p(Y \mid X) \, p(Z \mid X, Y)
+    && \text{(chain rule)} \\
+  &= p(X) \, p(Y) \, p(Z \mid X, Y)
+    && \text{($Y$ has no parents)}.
+\end{align*}
+
+\emph{Algorithm for $p(G)$}, where $G$ is a group of variables with fixed
+values:
+\begin{enumerate}[label=\arabic*.]
+  \item $\Ganc$: the ancestors of $G$ that are not in $G$. $\Grest$: all
+    other variables.
+  \item $p(G) = \sum_{\Ganc} p(G, \Ganc)$: the sum over $\Grest$ is 1.
+  \item $G$ and $\Ganc$ together contain the parents of all their variables.
+    Thus the chain rule gives $p(G, \Ganc)$ as a product of the given
+    tables.
+  \item Move the factors that do not depend on a summation variable out of
+    its sum. Then calculate.
+\end{enumerate}
+Proof of Step~2 for $G = \{H, A\}$, with the joint distribution from the
+Solution:
+\begin{center}
+  \groupgraph{anc}{anc}{grp}{grp}{rst}
+\end{center}
+\begin{align*}
+  &p(H, A) \\
+  &= \sum_{p} \sum_{d} \sum_{t} p(P = p) \, p(D = d) \,
+     p(A \mid P = p, D = d) \\
+  &\qquad \cdot p(H \mid P = p) \, p(T = t \mid A) \\
+  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
+    && \text{(constants out)} \\
+  &\qquad \cdot p(H \mid P = p) \sum_{t} p(T = t \mid A) \\
+  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
+    && \textstyle\text{($\sum_t = 1$)} \\
+  &\qquad \cdot p(H \mid P = p) \\
+  &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
+    && \text{(chain rule)}.
+\end{align*}
+For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
+algorithm, then divide:
+\[
+  p(Q \mid E) = \frac{p(Q, E)}{p(E)}.
+\]
+
+\solpart{Solution}
+The tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
 $p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
 
 \emph{Joint distribution.} Apply the chain rule one variable at a time,
@@ -99,78 +152,6 @@ Thus
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
-\emph{Algorithm for $p(V)$}, where $V$ is a set of variables with fixed
-values:
-\begin{enumerate}[label=\arabic*.]
-  \item $\an(V)$: the ancestors of $V$ that are not in $V$. $\Rest$: all
-    other variables.
-  \item Sum out $\Rest$:
-    \begin{align*}
-      p(V)
-      &= \sum_{\an(V)} \sum_{\Rest} p(V, \an(V), \Rest) \\
-      &= \sum_{\an(V)} \sum_{\Rest} p(\Rest \mid V, \an(V)) \,
-         p(V, \an(V))
-        && \text{(chain rule)} \\
-      &= \sum_{\an(V)} p(V, \an(V)) \sum_{\Rest} p(\Rest \mid V, \an(V))
-        && \text{(constants out)} \\
-      &= \sum_{\an(V)} p(V, \an(V))
-        && \textstyle\text{($\sum_{\Rest} p(\Rest \mid V, \an(V)) = 1$)}.
-    \end{align*}
-  \item $V$ and $\an(V)$ together contain the parents of all their
-    variables. Thus the chain rule gives a product of the given tables:
-    $p(V, \an(V)) = \prod_{v} p(v \mid \text{parents of } v)$.
-  \item Move the factors that do not depend on a summation variable out of
-    its sum. Then calculate.
-\end{enumerate}
-\emph{Example:} $V = \{H, A\}$. Then $\an(V) = \{P, D\}$ and
-$\Rest = \{T\}$:
-\begin{center}
-  \begin{tikzpicture}[
-      node distance=0.8cm and 0.9cm,
-      var/.style={circle, draw, minimum size=0.75cm},
-      set/.style={draw, rounded corners, dashed, inner sep=6pt},
-      >={Stealth},
-    ]
-    \node[var] (P) {$P$};
-    \node[var, right=2.4cm of P] (D) {$D$};
-    \node[var, below left=of P] (H) {$H$};
-    \node[var, below right=of P] (A) {$A$};
-    \node[var, below=of A] (T) {$T$};
-    \draw[->] (P) -- (H);
-    \draw[->] (P) -- (A);
-    \draw[->] (D) -- (A);
-    \draw[->] (A) -- (T);
-    \node[set, fit=(P) (D)] (anV) {};
-    \node[set, fit=(H) (A)] (V) {};
-    \node[set, fit=(T)] (R) {};
-    \node[right=0.2cm of anV] {$\an(V)$};
-    \node[right=0.2cm of V] {$V$};
-    \node[right=0.2cm of R] {$\Rest$};
-  \end{tikzpicture}
-\end{center}
-$T$ sums to 1:
-\begin{align*}
-  &p(H, A) \\
-  &= \sum_{p} \sum_{d} \sum_{t} p(P = p) \, p(D = d) \,
-     p(A \mid P = p, D = d) \\
-  &\qquad \cdot p(H \mid P = p) \, p(T = t \mid A) \\
-  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
-    && \text{(constants out)} \\
-  &\qquad \cdot p(H \mid P = p) \sum_{t} p(T = t \mid A) \\
-  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
-    && \textstyle\text{($\sum_t = 1$)} \\
-  &\qquad \cdot p(H \mid P = p) \\
-  &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
-    && \text{(chain rule)}.
-\end{align*}
-
-For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
-algorithm, then divide:
-\[
-  p(Q \mid E) = \frac{p(Q, E)}{p(E)}.
-\]
-
-\solpart{Solution}
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
 
 \solstep{Step 1. Write the goal as a ratio.}
@@ -178,7 +159,10 @@ algorithm, then divide:
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $V = \{P, H\}$, $\an(V) = \varnothing$.}
+\solstep{Step 2. Find the numerator: $G = \{P, H\}$, $\Ganc = \varnothing$.}
+\begin{center}
+  \groupgraph{grp}{rst}{grp}{rst}{rst}
+\end{center}
 \[
   p(P = 1, H = 1)
   = p(P = 1) \, p(H = 1 \mid P = 1)
@@ -186,7 +170,10 @@ algorithm, then divide:
   = 0.18.
 \]
 
-\solstep{Step 3. Find the denominator: $V = \{H\}$, $\an(V) = \{P\}$.}
+\solstep{Step 3. Find the denominator: $G = \{H\}$, $\Ganc = \{P\}$.}
+\begin{center}
+  \groupgraph{anc}{rst}{grp}{rst}{rst}
+\end{center}
 \begin{align*}
   p(H = 1)
   &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p) \\
@@ -210,7 +197,10 @@ algorithm, then divide:
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $V = \{P, T\}$, $\an(V) = \{A, D\}$.}
+\solstep{Step 2. Find the numerator: $G = \{P, T\}$, $\Ganc = \{A, D\}$.}
+\begin{center}
+  \groupgraph{grp}{anc}{rst}{anc}{grp}
+\end{center}
 \begin{align*}
   &p(P = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
@@ -229,7 +219,10 @@ algorithm, then divide:
    = 0.184564.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $V = \{T\}$, $\an(V) = \{P, A, D\}$.}
+\solstep{Step 3. Find the denominator: $G = \{T\}$, $\Ganc = \{P, A, D\}$.}
+\begin{center}
+  \groupgraph{anc}{anc}{rst}{anc}{grp}
+\end{center}
 \begin{align*}
   &p(T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
@@ -263,7 +256,10 @@ algorithm, then divide:
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $V = \{P, H, T\}$, $\an(V) = \{A, D\}$.}
+\solstep{Step 2. Find the numerator: $G = \{P, H, T\}$, $\Ganc = \{A, D\}$.}
+\begin{center}
+  \groupgraph{grp}{anc}{grp}{anc}{grp}
+\end{center}
 \begin{align*}
   &p(P = 1, H = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
@@ -278,7 +274,10 @@ algorithm, then divide:
   &= 0.1661076.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $V = \{H, T\}$, $\an(V) = \{P, A, D\}$.}
+\solstep{Step 3. Find the denominator: $G = \{H, T\}$, $\Ganc = \{P, A, D\}$.}
+\begin{center}
+  \groupgraph{anc}{anc}{grp}{anc}{grp}
+\end{center}
 \begin{align*}
   &p(H = 1, T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,

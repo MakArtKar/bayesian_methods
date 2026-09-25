@@ -11,8 +11,39 @@
 \usetikzlibrary{arrows.meta, fit, positioning}
 
 \DeclareMathOperator{\Poiss}{Poiss}
-\DeclareMathOperator{\an}{an}
-\newcommand{\Rest}{\mathrm{Rest}}
+\newcommand{\Ganc}{G_{\mathrm{ancestors}}}
+\newcommand{\Grest}{G_{\mathrm{rest}}}
+
+% The graph of Problem 2 with the nodes colored by group. The arguments give
+% the group of P, D, H, A, and T: grp (G), anc (G_ancestors), or rst (G_rest).
+\tikzset{
+  grp/.style={fill=blue!15},
+  anc/.style={fill=orange!25},
+  rst/.style={fill=black!6},
+}
+\newcommand{\groupgraph}[5]{%
+  \begin{tikzpicture}[
+      node distance=0.35cm and 0.55cm, >={Stealth},
+      var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
+      key/.style={draw, minimum size=0.3cm},
+    ]
+    \node[var, #1] (P) {$P$};
+    \node[var, #2, right=1.6cm of P] (D) {$D$};
+    \node[var, #3, below left=of P] (H) {$H$};
+    \node[var, #4, below right=of P] (A) {$A$};
+    \node[var, #5, below=of A] (T) {$T$};
+    \draw[->] (P) -- (H);
+    \draw[->] (P) -- (A);
+    \draw[->] (D) -- (A);
+    \draw[->] (A) -- (T);
+    \node[key, grp, right=1.2cm of D] (k1) {};
+    \node[right=0.1cm of k1] {$G$};
+    \node[key, anc, below=0.25cm of k1] (k2) {};
+    \node[right=0.1cm of k2] {$\Ganc$};
+    \node[key, rst, below=0.25cm of k2] (k3) {};
+    \node[right=0.1cm of k3] {$\Grest$};
+  \end{tikzpicture}%
+}
 \newcommand{\Gam}{\mathcal{G}}
 
 % A problem file holds the statement and, optionally, a `solution`

@@ -77,10 +77,10 @@ Divide each solution into these parts, in this order. Start each part with
 1. `Interpretation` (optional). Write the problem in formal terms: define
    the random variables, give the known values as formulas, and state what
    to find. Add this part only when the statement is in words.
-2. `Idea`. Explain how to find the method of the solution. Give the general
-   method first, then apply it to this problem. Give each general rule as a
-   formula, not only in words. If a problem extends the method of an earlier
-   problem, say so.
+2. `Idea`. Explain how to find the method of the solution. Use abstract
+   variables and small examples. Give each general rule as a formula, not
+   only in words. Apply the method to the problem in the `Solution`, not in
+   the `Idea`. If a problem extends the method of an earlier problem, say so.
 3. `Solution`. Give the full derivation. Divide it into steps with
    `\solstep{Step N. <action>.}`. Each step makes one transition. Do not skip
    steps, and do not add text without facts. Write each transition as a
@@ -102,21 +102,23 @@ transition, and keep it short:
 - Do not repeat in words what a formula already shows.
 
 If a solution calculates a probability in a causal graph, use this
-algorithm for `p(V)`, where `V` is a set of variables with fixed values:
+algorithm for `p(G)`, where the group `G` is a set of variables with fixed
+values:
 
-1. `an(V)` is the set of the ancestors of `V` that are not in `V`. `Rest`
-   is the set of all other variables.
-2. `p(V) = sum_{an(V)} p(V, an(V))`, because the sum over `Rest` of
-   `p(Rest | V, an(V))` is 1.
-3. `V` and `an(V)` together contain the parents of all their variables.
-   Thus the chain rule gives `p(V, an(V))` as a product of the given
-   tables.
+1. `G_ancestors` is the set of the ancestors of `G` that are not in `G`.
+   `G_rest` is the set of all other variables.
+2. `p(G) = sum_{G_ancestors} p(G, G_ancestors)`, because the sum over
+   `G_rest` is 1.
+3. `G` and `G_ancestors` together contain the parents of all their
+   variables. Thus the chain rule gives `p(G, G_ancestors)` as a product of
+   the given tables.
 4. Move the factors that do not depend on a summation variable out of its
    sum.
 
 For a query `Q` and an observation `E`, find `p(Q, E)` and `p(E)` with this
 algorithm, then divide. Do not calculate intermediate conditional
-probabilities.
+probabilities. For each `p(G)`, draw the graph with the nodes colored by
+group (`G`, `G_ancestors`, `G_rest`) and a legend.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier
