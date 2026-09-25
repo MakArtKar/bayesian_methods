@@ -93,25 +93,62 @@ values:
   \item Move the factors that do not depend on a summation variable out of
     its sum. Then calculate.
 \end{enumerate}
-Proof of Step~2 for $G = \{H, A\}$, with the joint distribution from the
-Solution:
+\emph{Proof of Steps 2 and 3.} No arrow goes from $\Grest$ to $G$ or
+$\Ganc$: otherwise, its start is an ancestor of $G$. Thus the parents of
+each variable in $G \cup \Ganc$ are in $G \cup \Ganc$:
 \begin{center}
-  \groupgraph{anc}{anc}{grp}{grp}{rst}
+  \begin{tikzpicture}[
+      >={Stealth},
+      dot/.style={circle, draw, fill=white, minimum size=0.3cm, inner sep=0pt},
+      box/.style={draw, rounded corners, inner sep=7pt},
+      meta/.style={->, very thick},
+    ]
+    \node[dot] (a1) at (0, 0) {};
+    \node[dot] (a2) at (1, -0.5) {};
+    \node[dot] (a3) at (2, 0) {};
+    \draw[->] (a1) -- (a2);
+    \draw[->] (a3) -- (a2);
+    \node[dot] (g1) at (-2, -2.4) {};
+    \node[dot] (g2) at (-1, -2.9) {};
+    \node[dot] (g3) at (-2, -3.4) {};
+    \draw[->] (g1) -- (g2);
+    \draw[->] (g3) -- (g2);
+    \node[dot] (r1) at (3, -2.4) {};
+    \node[dot] (r2) at (4, -2.9) {};
+    \node[dot] (r3) at (3, -3.4) {};
+    \draw[->] (r1) -- (r2);
+    \draw[->] (r2) -- (r3);
+    \begin{scope}[on background layer]
+      \node[box, anc, fit=(a1) (a2) (a3)] (BA) {};
+      \node[box, grp, fit=(g1) (g2) (g3)] (BG) {};
+      \node[box, rst, fit=(r1) (r2) (r3)] (BR) {};
+    \end{scope}
+    \node[above=0.05cm of BA] {$\Ganc$};
+    \node[left=0.05cm of BG] {$G$};
+    \node[right=0.05cm of BR] {$\Grest$};
+    \draw[meta] (BA) -- (BG);
+    \draw[meta] (BA) -- (BR);
+    \draw[meta] (BG) -- (BR);
+  \end{tikzpicture}
 \end{center}
+Write the joint distribution as the product of the factors
+$p(v \mid \text{parents of } v)$, and split it into two products:
 \begin{align*}
-  &p(H, A) \\
-  &= \sum_{p} \sum_{d} \sum_{t} p(P = p) \, p(D = d) \,
-     p(A \mid P = p, D = d) \\
-  &\qquad \cdot p(H \mid P = p) \, p(T = t \mid A) \\
-  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
+  p(G)
+  &= \sum_{\Ganc} \sum_{\Grest}
+     \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
+     \prod_{r \in \Grest} p(r \mid \text{parents of } r) \\
+  &= \sum_{\Ganc} \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
+     \sum_{\Grest} \prod_{r \in \Grest} p(r \mid \text{parents of } r)
     && \text{(constants out)} \\
-  &\qquad \cdot p(H \mid P = p) \sum_{t} p(T = t \mid A) \\
-  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d)
-    && \textstyle\text{($\sum_t = 1$)} \\
-  &\qquad \cdot p(H \mid P = p) \\
-  &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
-    && \text{(chain rule)}.
+  &= \sum_{\Ganc} \prod_{v \in G \cup \Ganc} p(v \mid \text{parents of } v)
+    && \text{(sum is 1)}.
 \end{align*}
+The first product does not contain $\Grest$, because the parents of $G \cup
+\Ganc$ are in $G \cup \Ganc$. The last sum is 1: sum first over a variable
+of $\Grest$ without children in $\Grest$. Its factor sums to 1, and no other
+factor contains it. Then repeat.
+
 For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
 algorithm, then divide:
 \[
