@@ -122,6 +122,48 @@ values:
   \item Move the factors that do not depend on a summation variable out of
     its sum. Then calculate.
 \end{enumerate}
+\emph{Example:} $V = \{H, A\}$. Then $\an(V) = \{P, D\}$ and
+$\Rest = \{T\}$:
+\begin{center}
+  \begin{tikzpicture}[
+      node distance=0.8cm and 0.9cm,
+      var/.style={circle, draw, minimum size=0.75cm},
+      set/.style={draw, rounded corners, dashed, inner sep=6pt},
+      >={Stealth},
+    ]
+    \node[var] (P) {$P$};
+    \node[var, right=2.4cm of P] (D) {$D$};
+    \node[var, below left=of P] (H) {$H$};
+    \node[var, below right=of P] (A) {$A$};
+    \node[var, below=of A] (T) {$T$};
+    \draw[->] (P) -- (H);
+    \draw[->] (P) -- (A);
+    \draw[->] (D) -- (A);
+    \draw[->] (A) -- (T);
+    \node[set, fit=(P) (D)] (anV) {};
+    \node[set, fit=(H) (A)] (V) {};
+    \node[set, fit=(T)] (R) {};
+    \node[right=0.2cm of anV] {$\an(V)$};
+    \node[right=0.2cm of V] {$V$};
+    \node[right=0.2cm of R] {$\Rest$};
+  \end{tikzpicture}
+\end{center}
+$T$ sums to 1:
+\begin{align*}
+  &p(H, A) \\
+  &= \sum_{p} \sum_{d} \sum_{t} p(P = p) \, p(D = d) \,
+     p(A \mid P = p, D = d) \, p(H \mid P = p) \, p(T = t \mid A) \\
+  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
+     p(H \mid P = p)
+    && \text{(constants out)} \\
+  &\qquad \cdot \sum_{t} p(T = t \mid A) \\
+  &= \sum_{p} \sum_{d} p(P = p) \, p(D = d) \, p(A \mid P = p, D = d) \,
+     p(H \mid P = p)
+    && \textstyle\text{($\sum_t = 1$)} \\
+  &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
+    && \text{(chain rule)}.
+\end{align*}
+
 For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
 algorithm, then divide:
 \[
