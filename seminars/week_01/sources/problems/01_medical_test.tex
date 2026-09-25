@@ -38,12 +38,62 @@ Together, they give Bayes' theorem:
 \]
 
 \solpart{Solution}
-\solstep{Step 1. Write the goal.}
+\emph{Computation graph.} Shaded nodes are given. Each arrow shows the
+formula for the node below it.
+\begin{center}
+  \begin{tikzpicture}[
+      x=1cm, y=1cm, font=\small, >={Stealth},
+      val/.style={draw, rounded corners, inner sep=3pt},
+      given/.style={val, fill=black!8},
+      goal/.style={val, very thick},
+      op/.style={font=\footnotesize, inner sep=2pt},
+    ]
+    % Given values.
+    \node[given] (T1D1) at (0, 0) {$p(T{=}1 \mid D{=}1)$};
+    \node[given] (D1)   at (4, 0) {$p(D{=}1)$};
+    \node[given] (T0D0) at (9, 0) {$p(T{=}0 \mid D{=}0)$};
+    % Complements.
+    \node[val] (D0)   at (6, -1.6) {$p(D{=}0)$};
+    \node[val] (T1D0) at (9, -1.6) {$p(T{=}1 \mid D{=}0)$};
+    \draw[->] (D1) -- node[op, above right] {$1 - p(D{=}1)$} (D0);
+    \draw[->] (T0D0) -- node[op, right] {$1 - p(T{=}0 \mid D{=}0)$} (T1D0);
+    % Joint probabilities.
+    \node[val] (J1) at (1.5, -3.6) {$p(D{=}1, T{=}1)$};
+    \node[val] (J0) at (7.5, -3.6) {$p(D{=}0, T{=}1)$};
+    \coordinate (j1) at (1.5, -2.6);
+    \coordinate (j0) at (7.5, -2.6);
+    \draw (T1D1) -- (j1);
+    \draw (D1) -- (j1);
+    \draw[->] (j1) -- node[op, left] {$p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
+    \draw (D0) -- (j0);
+    \draw (T1D0) -- (j0);
+    \draw[->] (j0) -- node[op, right] {$p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
+    % Marginal probability.
+    \node[val] (T1) at (4.5, -5.6) {$p(T{=}1)$};
+    \coordinate (t1) at (4.5, -4.6);
+    \draw (J1) -- (t1);
+    \draw (J0) -- (t1);
+    \draw[->] (t1) -- node[op, right] {$p(D{=}1, T{=}1) + p(D{=}0, T{=}1)$} (T1);
+    % Goal.
+    \node[goal] (G) at (1.5, -7.6) {$p(D{=}1 \mid T{=}1)$};
+    \coordinate (g) at (1.5, -6.6);
+    \draw (J1) -- (g);
+    \draw (T1) -- (g);
+    \draw[->] (g) -- node[op, left] {$\dfrac{p(D{=}1, T{=}1)}{p(T{=}1)}$} (G);
+  \end{tikzpicture}
+\end{center}
+
+\solstep{Step 1. Find $p(D = 0)$.}
 \[
-  p(D = 1 \mid T = 1) = \frac{p(D = 1, T = 1)}{p(T = 1)}.
+  p(D = 0) = 1 - p(D = 1) = 1 - 0.0001 = 0.9999.
 \]
 
-\solstep{Step 2. Find the numerator $p(D = 1, T = 1)$ for Step 1.}
+\solstep{Step 2. Find $p(T = 1 \mid D = 0)$.}
+\[
+  p(T = 1 \mid D = 0) = 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01.
+\]
+
+\solstep{Step 3. Find $p(D = 1, T = 1)$.}
 \[
   p(D = 1, T = 1)
   = p(D = 1) \, p(T = 1 \mid D = 1)
@@ -51,35 +101,28 @@ Together, they give Bayes' theorem:
   = 0.000099.
 \]
 
-\solstep{Step 3. Find the denominator $p(T = 1)$ for Step 1.}
+\solstep{Step 4. Find $p(D = 0, T = 1)$.}
+\[
+  p(D = 0, T = 1)
+  = p(D = 0) \, p(T = 1 \mid D = 0)
+  = 0.9999 \cdot 0.01
+  = 0.009999.
+\]
+
+\solstep{Step 5. Find $p(T = 1)$.}
 \begin{align*}
   p(T = 1)
   &= \sum_{D} p(D, T = 1)
    = p(D = 1, T = 1) + p(D = 0, T = 1) \\
-  &= 0.000099 + p(D = 0, T = 1)
-    && \text{(Step 2)}.
+  &= 0.000099 + 0.009999
+   = 0.010098.
 \end{align*}
 
-\solstep{Step 3a. Find $p(D = 0, T = 1)$ for Step 3.}
-\begin{align*}
-  p(D = 0, T = 1)
-  &= p(D = 0) \, p(T = 1 \mid D = 0) \\
-  &= \bigl(1 - p(D = 1)\bigr) \bigl(1 - p(T = 0 \mid D = 0)\bigr)
-    && \text{(complements)} \\
-  &= (1 - 0.0001) \cdot (1 - 0.99) \\
-  &= 0.9999 \cdot 0.01 \\
-  &= 0.009999.
-\end{align*}
-
-\solstep{Step 3b. Substitute Step 3a into Step 3.}
-\[
-  p(T = 1) = 0.000099 + 0.009999 = 0.010098.
-\]
-
-\solstep{Step 4. Substitute Steps 2 and 3b into Step 1.}
+\solstep{Step 6. Find $p(D = 1 \mid T = 1)$.}
 \begin{align*}
   p(D = 1 \mid T = 1)
-  &= \frac{0.000099}{0.010098}
+  &= \frac{p(D = 1, T = 1)}{p(T = 1)}
+   = \frac{0.000099}{0.010098}
    = \frac{99}{10098}
     && \text{(multiply by $10^6$)} \\
   &= \frac{99}{99 \cdot 102}
