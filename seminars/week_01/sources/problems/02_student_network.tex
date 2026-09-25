@@ -65,7 +65,9 @@ $p(P = 1 \mid T = 1, H = 1)$.
 
 \begin{solution}
 \solpart{Idea}
-Use the method of Problem~\ref{prob:medical-test} on a larger graph.
+Use the rules of Problem~\ref{prob:medical-test} on a larger graph. The
+tables give $p(X = 1 \mid \text{parents})$ for each node $X$, and
+$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
 
 \emph{Joint distribution.} Apply the chain rule one variable at a time,
 from the children to the parents. A missing arrow means no direct
@@ -93,165 +95,224 @@ Thus
   p(P, D, A, H, T)
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
-Each factor is a given table.
 
-\emph{Queries.} Move along the edges with sums, and against the edges with
-Bayes' theorem:
-\[
-  p(T \mid P) = \sum_{A} p(T \mid A) \, p(A \mid P),
-  \qquad
-  p(P \mid T) = \frac{p(P) \, p(T \mid P)}{\sum_{P'} p(P') \, p(T \mid P')}.
-\]
-A sum over a node without children removes its factor, because
-$\sum_{x} p(x \mid \text{parents}) = 1$.
+\emph{Rules.} R1 and R2 are the rules of Problem~\ref{prob:medical-test}
+for an observation $E$ of a child of $P$. R3--R5 follow from the joint
+distribution.
+\begin{align*}
+  &\text{R1. Against the arrows (Bayes' theorem):}
+    && p(P \mid E) = \frac{p(E \mid P) \, p(P)}{p(E)}, \\
+  &\text{R2. Marginal probability (chain rule):}
+    && p(E) = \sum_{p} p(E \mid P = p) \, p(P = p), \\
+  &\text{R3. Unobserved node $Z$ on the path:}
+    && p(Y \mid X) = \sum_{z} p(Y \mid Z = z, X) \, p(Z = z \mid X), \\
+  &\text{R4. Only the parents matter:}
+    && p(T \mid A, P) = p(T \mid A), \quad p(D \mid P) = p(D), \\
+  &\text{R5. $H$ and $T$ are independent given $P$:}
+    && p(H, T \mid P) = p(H \mid P) \, p(T \mid P).
+\end{align*}
+R5 follows from the joint distribution:
+\begin{align*}
+  p(H, T \mid P)
+  &= \frac{1}{p(P)} \sum_{a, d}
+     p(P) \, p(D = d) \, p(A = a \mid P, D = d) \, p(H \mid P) \,
+     p(T \mid A = a) \\
+  &= p(H \mid P) \sum_{a} p(T \mid A = a) \sum_{d} p(D = d) \,
+     p(A = a \mid P, D = d) \\
+  &= p(H \mid P) \sum_{a} p(T \mid A = a) \, p(A = a \mid P)
+    && \text{(R3, R4)} \\
+  &= p(H \mid P) \, p(T \mid P)
+    && \text{(R3, R4)}.
+\end{align*}
 
 \solpart{Solution}
-\solstep{Step 1. Find $p(P = 1 \mid H = 1)$.}
+In each computation graph, the goal is at the top. Each arrow shows the
+rule and the formula for the node above it. Shaded nodes are given.
+Dashed nodes are found in an earlier subproblem.
+
+\solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
+\begin{center}
+  \begin{tikzpicture}[cg]
+    \node[cg goal]  (G)  at (2, 0)  {$p(P \mid H)$};
+    \node[cg node]  (H)  at (2, -2) {$p(H)$};
+    \node[cg given] (HP) at (0, -4) {$p(H \mid P)$};
+    \node[cg given] (P)  at (7, -4) {$p(P)$};
+    \coordinate (g) at (2, -1);
+    \draw (H) -- (g);
+    \draw (HP) to[out=90, in=180] (g);
+    \draw (P) to[out=90, in=0] (g);
+    \draw[->] (g) -- node[cg op, right]
+      {R1: $p(H \mid P) \, p(P) \,/\, p(H)$} (G);
+    \coordinate (h) at (2, -3);
+    \draw (HP) -- (h);
+    \draw (P) -- (h);
+    \draw[->] (h) -- node[cg op, right]
+      {R2: $\sum_p p(H \mid P{=}p) \, p(P{=}p)$} (H);
+  \end{tikzpicture}
+\end{center}
+
+\solstep{Step 1. Find $p(H = 1)$ with R2.}
 \begin{align*}
-  p(P = 1 \mid H = 1)
-  &= \frac{p(P = 1, H = 1)}{p(H = 1)}
-   = \frac{p(P = 1, H = 1)}{\sum_{P} p(P, H = 1)} \\
-  &= \frac{p(P = 1, H = 1)}{p(P = 1, H = 1) + p(P = 0, H = 1)}.
+  p(H = 1)
+  &= p(H = 1 \mid P = 1) \, p(P = 1) + p(H = 1 \mid P = 0) \, p(P = 0) \\
+  &= 0.9 \cdot 0.2 + 0.2 \cdot 0.8
+   = 0.18 + 0.16
+   = 0.34.
 \end{align*}
 
-\solstep{Step 1a. Find $p(P, H)$ for Step 1.}
-Sum out $T$, $A$, $D$:
-\begin{align*}
-  p(P, H)
-  &= \sum_{D} \sum_{A} \sum_{T}
-     p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A) \\
-  &= p(P) \, p(H \mid P) \sum_{D} p(D) \sum_{A} p(A \mid P, D)
-     \sum_{T} p(T \mid A)
-    && \text{(move factors out of the sums)} \\
-  &= p(P) \, p(H \mid P) \sum_{D} p(D) \sum_{A} p(A \mid P, D)
-    && \textstyle\text{($\sum_T p(T \mid A) = 1$)} \\
-  &= p(P) \, p(H \mid P) \sum_{D} p(D)
-    && \textstyle\text{($\sum_A p(A \mid P, D) = 1$)} \\
-  &= p(P) \, p(H \mid P)
-    && \textstyle\text{($\sum_D p(D) = 1$)}.
-\end{align*}
-Substitute the values:
-\begin{align*}
-  p(P = 1, H = 1) &= p(P = 1) \, p(H = 1 \mid P = 1) = 0.2 \cdot 0.9 = 0.18, \\
-  p(P = 0, H = 1) &= \bigl(1 - p(P = 1)\bigr) \, p(H = 1 \mid P = 0) \\
-    &= (1 - 0.2) \cdot 0.2 = 0.8 \cdot 0.2 = 0.16.
-\end{align*}
-
-\solstep{Step 1b. Substitute Step 1a into Step 1.}
+\solstep{Step 2. Find $p(P = 1 \mid H = 1)$ with R1.}
 \[
   p(P = 1 \mid H = 1)
-  = \frac{0.18}{0.18 + 0.16}
+  = \frac{p(H = 1 \mid P = 1) \, p(P = 1)}{p(H = 1)}
+  = \frac{0.9 \cdot 0.2}{0.34}
   = \frac{0.18}{0.34}
   = \frac{9}{17}
   \approx 0.529.
 \]
 
-\solstep{Step 2. Find $p(P = 1 \mid T = 1)$.}
-\[
-  p(P = 1 \mid T = 1)
-  = \frac{p(P = 1, T = 1)}{p(T = 1)}
-  = \frac{p(P = 1, T = 1)}{p(P = 1, T = 1) + p(P = 0, T = 1)},
-\]
-\[
-  p(P, T) = p(P) \, p(T \mid P).
-\]
+\solsubproblem{(b) Find $p(P = 1 \mid T = 1)$.}
+\begin{center}
+  \begin{tikzpicture}[cg]
+    \node[cg goal]  (G)   at (2, 0)    {$p(P \mid T)$};
+    \node[cg node]  (T)   at (2, -2)   {$p(T)$};
+    \node[cg node]  (TP)  at (0, -4)   {$p(T \mid P)$};
+    \node[cg given] (P)   at (7, -4)   {$p(P)$};
+    \node[cg given] (TA)  at (-2, -6)  {$p(T \mid A)$};
+    \node[cg node]  (AP)  at (1, -6)   {$p(A \mid P)$};
+    \node[cg given] (APD) at (0, -8)   {$p(A \mid P, D)$};
+    \node[cg given] (D)   at (2.5, -8) {$p(D)$};
+    \coordinate (g) at (2, -1);
+    \draw (T) -- (g);
+    \draw (TP) to[out=90, in=180] (g);
+    \draw (P) to[out=90, in=0] (g);
+    \draw[->] (g) -- node[cg op, right]
+      {R1: $p(T \mid P) \, p(P) \,/\, p(T)$} (G);
+    \coordinate (t) at (2, -3);
+    \draw (TP) -- (t);
+    \draw (P) -- (t);
+    \draw[->] (t) -- node[cg op, right]
+      {R2: $\sum_p p(T \mid P{=}p) \, p(P{=}p)$} (T);
+    \coordinate (tp) at (0, -5);
+    \draw (TA) -- (tp);
+    \draw (AP) -- (tp);
+    \draw[->] (tp) -- node[cg op, left]
+      {R3, R4: $\sum_a p(T \mid A{=}a) \, p(A{=}a \mid P)$} (TP);
+    \coordinate (ap) at (1, -7);
+    \draw (APD) -- (ap);
+    \draw (D) -- (ap);
+    \draw[->] (ap) -- node[cg op, right]
+      {R3, R4: $\sum_d p(A \mid P, D{=}d) \, p(D{=}d)$} (AP);
+  \end{tikzpicture}
+\end{center}
 
-\solstep{Step 2a. Find $p(T \mid P)$ for Step 2.}
+\solstep{Step 1. Find $p(A = 1 \mid P)$ with R3 and R4.}
 \begin{align*}
-  p(T \mid P)
-  &= \sum_{A} p(T, A \mid P)
-    && \text{(sum over $A$)} \\
-  &= \sum_{A} p(T \mid A, P) \, p(A \mid P)
-    && \text{(product rule)} \\
-  &= \sum_{A} p(T \mid A) \, p(A \mid P)
-    && \text{(parent of $T$: $A$)} \\
-  &= p(T \mid A = 1) \, p(A = 1 \mid P)
-   + p(T \mid A = 0) \, p(A = 0 \mid P).
+  p(A = 1 \mid P = 1)
+  &= p(A = 1 \mid P = 1, D = 1) \, p(D = 1)
+   + p(A = 1 \mid P = 1, D = 0) \, p(D = 0) \\
+  &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
+   = 0.3996 + 0.54
+   = 0.9396, \\
+  p(A = 1 \mid P = 0)
+  &= p(A = 1 \mid P = 0, D = 1) \, p(D = 1)
+   + p(A = 1 \mid P = 0, D = 0) \, p(D = 0) \\
+  &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
+   = 0.36 + 0.006
+   = 0.366.
 \end{align*}
+Thus $p(A = 0 \mid P = 1) = 1 - 0.9396 = 0.0604$ and
+$p(A = 0 \mid P = 0) = 1 - 0.366 = 0.634$.
 
-\solstep{Step 2b. Find $p(A \mid P)$ for Step 2a.}
-\begin{align*}
-  p(A \mid P)
-  &= \sum_{D} p(A, D \mid P)
-    && \text{(sum over $D$)} \\
-  &= \sum_{D} p(A \mid P, D) \, p(D \mid P)
-    && \text{(product rule)} \\
-  &= \sum_{D} p(A \mid P, D) \, p(D)
-    && \text{($D$ has no parents)} \\
-  &= p(A \mid P, D = 1) \, p(D = 1) + p(A \mid P, D = 0) \, p(D = 0).
-\end{align*}
-Substitute the values, with $p(D = 0) = 1 - 0.4 = 0.6$:
-\begin{align*}
-  p(A = 1 \mid P = 1) &= 0.999 \cdot 0.4 + 0.9 \cdot 0.6
-    = 0.3996 + 0.54 = 0.9396, \\
-  p(A = 1 \mid P = 0) &= 0.9 \cdot 0.4 + 0.01 \cdot 0.6
-    = 0.36 + 0.006 = 0.366.
-\end{align*}
-
-\solstep{Step 2c. Substitute Step 2b into Step 2a.}
-With $p(A = 0 \mid P) = 1 - p(A = 1 \mid P)$:
+\solstep{Step 2. Find $p(T = 1 \mid P)$ with R3 and R4.}
 \begin{align*}
   p(T = 1 \mid P = 1)
-  &= 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396)
-   = 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604 \\
-  &= 0.89262 + 0.0302
+  &= p(T = 1 \mid A = 1) \, p(A = 1 \mid P = 1)
+   + p(T = 1 \mid A = 0) \, p(A = 0 \mid P = 1) \\
+  &= 0.95 \cdot 0.9396 + 0.5 \cdot 0.0604
+   = 0.89262 + 0.0302
    = 0.92282, \\
   p(T = 1 \mid P = 0)
-  &= 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366)
-   = 0.95 \cdot 0.366 + 0.5 \cdot 0.634 \\
-  &= 0.3477 + 0.317
+  &= p(T = 1 \mid A = 1) \, p(A = 1 \mid P = 0)
+   + p(T = 1 \mid A = 0) \, p(A = 0 \mid P = 0) \\
+  &= 0.95 \cdot 0.366 + 0.5 \cdot 0.634
+   = 0.3477 + 0.317
    = 0.6647.
 \end{align*}
 
-\solstep{Step 2d. Substitute Step 2c into Step 2.}
+\solstep{Step 3. Find $p(T = 1)$ with R2.}
 \begin{align*}
-  p(P = 1, T = 1) &= p(P = 1) \, p(T = 1 \mid P = 1)
-    = 0.2 \cdot 0.92282 = 0.184564, \\
-  p(P = 0, T = 1) &= p(P = 0) \, p(T = 1 \mid P = 0)
-    = 0.8 \cdot 0.6647 = 0.53176,
+  p(T = 1)
+  &= p(T = 1 \mid P = 1) \, p(P = 1) + p(T = 1 \mid P = 0) \, p(P = 0) \\
+  &= 0.92282 \cdot 0.2 + 0.6647 \cdot 0.8
+   = 0.184564 + 0.53176
+   = 0.716324.
 \end{align*}
+
+\solstep{Step 4. Find $p(P = 1 \mid T = 1)$ with R1.}
 \[
   p(P = 1 \mid T = 1)
-  = \frac{0.184564}{0.184564 + 0.53176}
+  = \frac{p(T = 1 \mid P = 1) \, p(P = 1)}{p(T = 1)}
+  = \frac{0.92282 \cdot 0.2}{0.716324}
   = \frac{0.184564}{0.716324}
   \approx 0.258.
 \]
 
-\solstep{Step 3. Find $p(P = 1 \mid T = 1, H = 1)$.}
+\solsubproblem{(c) Find $p(P = 1 \mid T = 1, H = 1)$.}
+\begin{center}
+  \begin{tikzpicture}[cg]
+    \node[cg goal]   (G)   at (2, 0)    {$p(P \mid H, T)$};
+    \node[cg node]   (HT)  at (2, -2)   {$p(H, T)$};
+    \node[cg node]   (HTP) at (0, -4)   {$p(H, T \mid P)$};
+    \node[cg given]  (P)   at (7.5, -4) {$p(P)$};
+    \node[cg given]  (HP)  at (-1, -6)  {$p(H \mid P)$};
+    \node[cg reused] (TP)  at (1, -6)   {$p(T \mid P)$};
+    \coordinate (g) at (2, -1);
+    \draw (HT) -- (g);
+    \draw (HTP) to[out=90, in=180] (g);
+    \draw (P) to[out=90, in=0] (g);
+    \draw[->] (g) -- node[cg op, right]
+      {R1: $p(H, T \mid P) \, p(P) \,/\, p(H, T)$} (G);
+    \coordinate (ht) at (2, -3);
+    \draw (HTP) -- (ht);
+    \draw (P) -- (ht);
+    \draw[->] (ht) -- node[cg op, right]
+      {R2: $\sum_p p(H, T \mid P{=}p) \, p(P{=}p)$} (HT);
+    \coordinate (htp) at (0, -5);
+    \draw (HP) -- (htp);
+    \draw (TP) -- (htp);
+    \draw[->] (htp) -- node[cg op, left]
+      {R5: $p(H \mid P) \, p(T \mid P)$} (HTP);
+  \end{tikzpicture}
+\end{center}
+The node $p(T \mid P)$ is from Step~2 of (b).
+
+\solstep{Step 1. Find $p(H = 1, T = 1 \mid P)$ with R5.}
 \begin{align*}
-  p(P = 1 \mid T = 1, H = 1)
-  &= \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)} \\
-  &= \frac{p(P = 1, H = 1, T = 1)}
-          {p(P = 1, H = 1, T = 1) + p(P = 0, H = 1, T = 1)}.
+  p(H = 1, T = 1 \mid P = 1)
+  &= p(H = 1 \mid P = 1) \, p(T = 1 \mid P = 1)
+   = 0.9 \cdot 0.92282
+   = 0.830538, \\
+  p(H = 1, T = 1 \mid P = 0)
+  &= p(H = 1 \mid P = 0) \, p(T = 1 \mid P = 0)
+   = 0.2 \cdot 0.6647
+   = 0.13294.
 \end{align*}
 
-\solstep{Step 3a. Find $p(P, H, T)$ for Step 3.}
-Sum out $A$ and $D$:
+\solstep{Step 2. Find $p(H = 1, T = 1)$ with R2.}
 \begin{align*}
-  p(P, H, T)
-  &= \sum_{A} \sum_{D} p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
-     p(T \mid A) \\
-  &= p(P) \, p(H \mid P) \sum_{A} p(T \mid A) \sum_{D} p(D) \,
-     p(A \mid P, D)
-     && \text{(move factors out of the sums)} \\
-  &= p(P) \, p(H \mid P) \sum_{A} p(T \mid A) \, p(A \mid P)
-     && \text{(Step 2b)} \\
-  &= p(P) \, p(H \mid P) \, p(T \mid P)
-     && \text{(Step 2a)}.
-\end{align*}
-Substitute the values from Step 2c:
-\begin{align*}
-  p(P = 1, H = 1, T = 1)
-  &= 0.2 \cdot 0.9 \cdot 0.92282 = 0.18 \cdot 0.92282 = 0.166108, \\
-  p(P = 0, H = 1, T = 1)
-  &= 0.8 \cdot 0.2 \cdot 0.6647 = 0.16 \cdot 0.6647 = 0.106352.
+  p(H = 1, T = 1)
+  &= p(H = 1, T = 1 \mid P = 1) \, p(P = 1)
+   + p(H = 1, T = 1 \mid P = 0) \, p(P = 0) \\
+  &= 0.830538 \cdot 0.2 + 0.13294 \cdot 0.8
+   = 0.1661076 + 0.106352
+   = 0.2724596.
 \end{align*}
 
-\solstep{Step 3b. Substitute Step 3a into Step 3.}
+\solstep{Step 3. Find $p(P = 1 \mid T = 1, H = 1)$ with R1.}
 \[
   p(P = 1 \mid T = 1, H = 1)
-  = \frac{0.166108}{0.166108 + 0.106352}
-  = \frac{0.166108}{0.27246}
+  = \frac{p(H = 1, T = 1 \mid P = 1) \, p(P = 1)}{p(H = 1, T = 1)}
+  = \frac{0.1661076}{0.2724596}
   \approx 0.610.
 \]
 

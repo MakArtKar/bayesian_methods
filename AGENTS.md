@@ -97,11 +97,23 @@ transition, and keep it short:
 - Put the reason for a transition next to it:
   `&= ... && \text{(parent of $T$: $A$)}`.
 - Do not repeat in words what a formula already shows.
-- Derive from the goal. Step 1 writes the quantity to find in terms of
-  unknown values. When a formula needs an unknown value, find it in a
-  sub-step (`Step 1a. Find X for Step 1.`), then substitute it back
-  (`Step 1b. Substitute Step 1a into Step 1.`). Do not calculate values
-  before a formula needs them.
+
+If a solution calculates probabilities from other probabilities, use a
+computation graph:
+
+- In the `Idea`, draw the causal graph. List the rules (R1, R2, ...) that
+  the solution uses as formulas on the variables of the problem.
+- Start the `Solution` with the computation graph. Use the `cg` TikZ styles
+  from `preamble.tex`. Put the goal at the top and the given distributions
+  at the bottom (`cg given`). Draw the arrows from the inputs up to the node
+  that uses them. Write the rule and the formula on each arrow. Use
+  distributions as nodes, not single values.
+- Then calculate the nodes from the bottom to the top, one node for each
+  step: `\solstep{Step N. Find X with Rk.}`. Do not go back to substitute
+  into earlier formulas.
+- If the problem asks several questions, make one subproblem for each
+  question (`\solsubproblem{(a) Find X.}`) with its own graph. Reuse the
+  results of earlier subproblems, and draw them with `cg reused`.
 
 Write the text in Simplified Technical English: short sentences, one fact
 for each sentence, active voice, and one term for each concept.

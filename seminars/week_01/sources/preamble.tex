@@ -19,6 +19,20 @@
   \specialcomment{solution}{\par\medskip}{\par\bigskip}}
 \newcommand{\hidesolutions}{\excludecomment{solution}}
 
+% Computation graphs: the goal is at the top, and arrows go from the inputs
+% up to the node that uses them.
+\tikzset{
+  cg/.style={x=1cm, y=1cm, font=\small, >={Stealth}},
+  cg node/.style={draw, rounded corners, inner sep=3pt},
+  cg given/.style={cg node, fill=black!8},
+  cg reused/.style={cg node, dashed},
+  cg goal/.style={cg node, very thick},
+  cg op/.style={font=\footnotesize, inner sep=2pt},
+}
+
+% Title of a subproblem inside a solution.
+\newcommand{\solsubproblem}[1]{\par\medskip\noindent\textbf{#1}\par\nopagebreak}
+
 % Parts of a solution, in this order: Interpretation (optional), Idea,
 % Solution, Conclusion (optional). Use \solstep for steps inside a part.
 \newcommand{\solpart}[1]{\par\smallskip\noindent\textbf{#1.}\ }

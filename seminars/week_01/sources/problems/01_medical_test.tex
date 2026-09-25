@@ -9,11 +9,10 @@ disease.
 \begin{solution}
 \solpart{Interpretation}
 $D = 1$: the patient has the disease. $T = 1$: the test result is positive.
-\[
-  p(D = 1) = 10^{-4}, \qquad
-  p(T = 1 \mid D = 1) = 0.99, \qquad
-  p(T = 0 \mid D = 0) = 0.99.
-\]
+\begin{align*}
+  p(D = 1) &= 10^{-4}, & p(D = 0) &= 1 - 10^{-4}, \\
+  p(T = 1 \mid D = 1) &= 0.99, & p(T = 1 \mid D = 0) &= 1 - 0.99 = 0.01.
+\end{align*}
 Find $p(D = 1 \mid T = 1)$.
 
 \solpart{Idea}
@@ -29,123 +28,54 @@ The disease causes the test result. The causal graph has one arrow:
     \node[above=0.1cm of D, font=\footnotesize] {$p(D)$};
   \end{tikzpicture}
 \end{center}
-The problem gives the probability of the source node, $p(D)$, and the
-probability along the arrow, $p(T \mid D)$.
-
-\emph{Rules.} Each rule gives a formula for a probability that is not
-given:
+The problem gives $p(D)$ and $p(T \mid D)$ for all values. Two rules give
+the other probabilities:
 \begin{align*}
-  &\text{R1. $p(D \mid T)$, against the arrow:}
-    && p(D \mid T) = \frac{p(D, T)}{p(T)}, \\
-  &\text{R2. $p(D, T)$, along the arrow:}
-    && p(D, T) = p(D) \, p(T \mid D), \\
-  &\text{R3. $p(T)$, the parent $D$ is not fixed:}
-    && p(T) = \sum_{d} p(D = d, T), \\
-  &\text{R4. The other value of a binary variable:}
-    && p(D = 0) = 1 - p(D = 1), \\
-  &&& p(T = 1 \mid D = 0) = 1 - p(T = 0 \mid D = 0).
+  &\text{R1. Against the arrow (Bayes' theorem):}
+    && p(D \mid T) = \frac{p(T \mid D) \, p(D)}{p(T)}, \\
+  &\text{R2. Marginal probability (chain rule):}
+    && p(T) = \sum_{d} p(T \mid D = d) \, p(D = d).
 \end{align*}
-R1, R2, and R3 together give Bayes' theorem:
-\[
-  p(D \mid T)
-  = \frac{p(D) \, p(T \mid D)}{\sum_{d} p(D = d) \, p(T \mid D = d)}.
-\]
-The same rules are true for any arrow $A \to B$: replace $D$ with $A$ and
-$T$ with $B$. For a continuous parent, the sum in R3 is an integral.
-
-\emph{Computation graph.} Put the goal at the top. For each node that is
-not given, apply the rule for its form. Put the terms of the formula below
-the node as new nodes. Stop when all nodes at the bottom are given. Then
-calculate the nodes from the bottom to the top.
 
 \solpart{Solution}
-\emph{Computation graph.} Each arrow shows the rule and the formula for the
-node above it. Shaded nodes are given.
+\emph{Computation graph.} The goal is at the top. Each arrow shows the rule
+and the formula for the node above it. Shaded nodes are given.
 \begin{center}
-  \begin{tikzpicture}[
-      x=1cm, y=1cm, font=\small, >={Stealth},
-      val/.style={draw, rounded corners, inner sep=3pt},
-      given/.style={val, fill=black!8},
-      goal/.style={val, very thick},
-      op/.style={font=\footnotesize, inner sep=2pt},
-    ]
-    % Goal.
-    \node[goal] (G) at (1.5, 0.2) {$p(D{=}1 \mid T{=}1)$};
-    % Marginal probability.
-    \node[val] (T1) at (4.5, -2) {$p(T{=}1)$};
-    % Joint probabilities.
-    \node[val] (J1) at (1.5, -4) {$p(D{=}1, T{=}1)$};
-    \node[val] (J0) at (7.5, -4) {$p(D{=}0, T{=}1)$};
-    % Complements.
-    \node[val] (D0)   at (6, -6) {$p(D{=}0)$};
-    \node[val] (T1D0) at (9, -6) {$p(T{=}1 \mid D{=}0)$};
-    % Given values.
-    \node[given] (T1D1) at (0, -7.6) {$p(T{=}1 \mid D{=}1)$};
-    \node[given] (D1)   at (4, -7.6) {$p(D{=}1)$};
-    \node[given] (T0D0) at (9, -7.6) {$p(T{=}0 \mid D{=}0)$};
-    % Arrows go from the inputs up to the node that uses them.
-    \coordinate (g) at (1.5, -1);
-    \draw (J1) -- (g);
-    \draw (T1) -- (g);
-    \draw[->] (g) -- node[op, left] {R1: $p(D{=}1, T{=}1) \,/\, p(T{=}1)$} (G);
-    \coordinate (t1) at (4.5, -3);
-    \draw (J1) -- (t1);
-    \draw (J0) -- (t1);
-    \draw[->] (t1) -- node[op, right] {R3: $p(D{=}1, T{=}1) + p(D{=}0, T{=}1)$} (T1);
-    \coordinate (j1) at (1.5, -5);
-    \draw (T1D1) -- (j1);
-    \draw (D1) -- (j1);
-    \draw[->] (j1) -- node[op, left] {R2: $p(D{=}1) \, p(T{=}1 \mid D{=}1)$} (J1);
-    \coordinate (j0) at (7.5, -5);
-    \draw (D0) -- (j0);
-    \draw (T1D0) -- (j0);
-    \draw[->] (j0) -- node[op, right] {R2: $p(D{=}0) \, p(T{=}1 \mid D{=}0)$} (J0);
-    \draw[->] (D1) -- node[op, below right] {R4: $1 - p(D{=}1)$} (D0);
-    \draw[->] (T0D0) -- node[op, right] {R4: $1 - p(T{=}0 \mid D{=}0)$} (T1D0);
+  \begin{tikzpicture}[cg]
+    \node[cg goal]  (G)  at (2, 0)    {$p(D \mid T)$};
+    \node[cg node]  (T)  at (2, -2)   {$p(T)$};
+    \node[cg given] (TD) at (0, -4)   {$p(T \mid D)$};
+    \node[cg given] (D)  at (7, -4)   {$p(D)$};
+    \coordinate (g) at (2, -1);
+    \draw (T) -- (g);
+    \draw (TD) to[out=90, in=180] (g);
+    \draw (D) to[out=90, in=0] (g);
+    \draw[->] (g) -- node[cg op, right]
+      {R1: $p(T \mid D) \, p(D) \,/\, p(T)$} (G);
+    \coordinate (t) at (2, -3);
+    \draw (TD) -- (t);
+    \draw (D) -- (t);
+    \draw[->] (t) -- node[cg op, right]
+      {R2: $\sum_d p(T \mid D{=}d) \, p(D{=}d)$} (T);
   \end{tikzpicture}
 \end{center}
 
-\solstep{Step 1. Find $p(D = 0)$ with R4.}
-\[
-  p(D = 0) = 1 - p(D = 1) = 1 - 0.0001 = 0.9999.
-\]
-
-\solstep{Step 2. Find $p(T = 1 \mid D = 0)$ with R4.}
-\[
-  p(T = 1 \mid D = 0) = 1 - p(T = 0 \mid D = 0) = 1 - 0.99 = 0.01.
-\]
-
-\solstep{Step 3. Find $p(D = 1, T = 1)$ with R2.}
-\[
-  p(D = 1, T = 1)
-  = p(D = 1) \, p(T = 1 \mid D = 1)
-  = 0.0001 \cdot 0.99
-  = 0.000099.
-\]
-
-\solstep{Step 4. Find $p(D = 0, T = 1)$ with R2.}
-\[
-  p(D = 0, T = 1)
-  = p(D = 0) \, p(T = 1 \mid D = 0)
-  = 0.9999 \cdot 0.01
-  = 0.009999.
-\]
-
-\solstep{Step 5. Find $p(T = 1)$ with R3.}
+\solstep{Step 1. Find $p(T = 1)$ with R2.}
 \begin{align*}
   p(T = 1)
-  &= \sum_{D} p(D, T = 1)
-   = p(D = 1, T = 1) + p(D = 0, T = 1) \\
+  &= p(T = 1 \mid D = 1) \, p(D = 1) + p(T = 1 \mid D = 0) \, p(D = 0) \\
+  &= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
   &= 0.000099 + 0.009999
    = 0.010098.
 \end{align*}
 
-\solstep{Step 6. Find $p(D = 1 \mid T = 1)$ with R1.}
+\solstep{Step 2. Find $p(D = 1 \mid T = 1)$ with R1.}
 \begin{align*}
   p(D = 1 \mid T = 1)
-  &= \frac{p(D = 1, T = 1)}{p(T = 1)}
-   = \frac{0.000099}{0.010098}
-   = \frac{99}{10098}
+  &= \frac{p(T = 1 \mid D = 1) \, p(D = 1)}{p(T = 1)}
+   = \frac{0.99 \cdot 0.0001}{0.010098}
+   = \frac{0.000099}{0.010098} \\
+  &= \frac{99}{10098}
     && \text{(multiply by $10^6$)} \\
   &= \frac{99}{99 \cdot 102}
    = \frac{1}{102}
