@@ -102,18 +102,21 @@ transition, and keep it short:
 - Do not repeat in words what a formula already shows.
 
 If a solution calculates a probability in a causal graph, use this
-algorithm for `p(S)`, where `S` is a set of variables with fixed values:
+algorithm for `p(V)`, where `V` is a set of variables with fixed values:
 
-1. `B` is the set of the ancestors of `S` that are not in `S`. `R` is the
-   set of all other variables.
-2. `p(S) = sum_B p(S, B)`, because the sum over `R` of `p(R | S, B)` is 1.
-3. `S` and `B` together contain the parents of all their variables. Thus
-   the chain rule gives `p(S, B)` as a product of the given tables.
+1. `an(V)` is the set of the ancestors of `V` that are not in `V`. `Rest`
+   is the set of all other variables.
+2. `p(V) = sum_{an(V)} p(V, an(V))`, because the sum over `Rest` of
+   `p(Rest | V, an(V))` is 1.
+3. `V` and `an(V)` together contain the parents of all their variables.
+   Thus the chain rule gives `p(V, an(V))` as a product of the given
+   tables.
 4. Move the factors that do not depend on a summation variable out of its
    sum.
 
-For `p(X | Y)`, find `p(X, Y)` and `p(Y)` with this algorithm, then
-divide. Do not calculate intermediate conditional probabilities.
+For a query `Q` and an observation `E`, find `p(Q, E)` and `p(E)` with this
+algorithm, then divide. Do not calculate intermediate conditional
+probabilities.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier

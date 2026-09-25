@@ -99,31 +99,34 @@ Thus
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
-\emph{Algorithm for $p(S)$}, where $S$ is a set of variables with fixed
+\emph{Algorithm for $p(V)$}, where $V$ is a set of variables with fixed
 values:
 \begin{enumerate}[label=\arabic*.]
-  \item $B$: the ancestors of the variables in $S$ that are not in $S$.
-    $R$: all other variables.
-  \item Sum out $R$:
+  \item $\an(V)$: the ancestors of $V$ that are not in $V$. $\Rest$: all
+    other variables.
+  \item Sum out $\Rest$:
     \begin{align*}
-      p(S)
-      &= \sum_{B} \sum_{R} p(S, B, R)
-       = \sum_{B} \sum_{R} p(R \mid S, B) \, p(S, B)
+      p(V)
+      &= \sum_{\an(V)} \sum_{\Rest} p(V, \an(V), \Rest) \\
+      &= \sum_{\an(V)} \sum_{\Rest} p(\Rest \mid V, \an(V)) \,
+         p(V, \an(V))
         && \text{(chain rule)} \\
-      &= \sum_{B} p(S, B) \sum_{R} p(R \mid S, B)
+      &= \sum_{\an(V)} p(V, \an(V)) \sum_{\Rest} p(\Rest \mid V, \an(V))
         && \text{(constants out)} \\
-      &= \sum_{B} p(S, B)
-        && \textstyle\text{($\sum_R p(R \mid S, B) = 1$)}.
+      &= \sum_{\an(V)} p(V, \an(V))
+        && \textstyle\text{($\sum_{\Rest} p(\Rest \mid V, \an(V)) = 1$)}.
     \end{align*}
-  \item $S \cup B$ contains the parents of all its variables. Thus the
-    chain rule gives a product of the given tables:
-    $p(S, B) = \prod_{v \in S \cup B} p(v \mid \text{parents of } v)$.
+  \item $V$ and $\an(V)$ together contain the parents of all their
+    variables. Thus the chain rule gives a product of the given tables:
+    $p(V, \an(V)) = \prod_{v} p(v \mid \text{parents of } v)$.
   \item Move the factors that do not depend on a summation variable out of
     its sum. Then calculate.
 \end{enumerate}
-For a conditional probability, find $p(X, Y)$ and $p(Y)$ with the
-algorithm:
-$p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
+For a query $Q$ and an observation $E$, find $p(Q, E)$ and $p(E)$ with the
+algorithm, then divide:
+\[
+  p(Q \mid E) = \frac{p(Q, E)}{p(E)}.
+\]
 
 \solpart{Solution}
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
@@ -133,7 +136,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $S = \{P, H\}$, $B = \varnothing$.}
+\solstep{Step 2. Find the numerator: $V = \{P, H\}$, $\an(V) = \varnothing$.}
 \[
   p(P = 1, H = 1)
   = p(P = 1) \, p(H = 1 \mid P = 1)
@@ -141,7 +144,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
   = 0.18.
 \]
 
-\solstep{Step 3. Find the denominator: $S = \{H\}$, $B = \{P\}$.}
+\solstep{Step 3. Find the denominator: $V = \{H\}$, $\an(V) = \{P\}$.}
 \begin{align*}
   p(H = 1)
   &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p) \\
@@ -165,7 +168,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $S = \{P, T\}$, $B = \{A, D\}$.}
+\solstep{Step 2. Find the numerator: $V = \{P, T\}$, $\an(V) = \{A, D\}$.}
 \begin{align*}
   &p(P = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
@@ -184,7 +187,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
    = 0.184564.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $S = \{T\}$, $B = \{P, A, D\}$.}
+\solstep{Step 3. Find the denominator: $V = \{T\}$, $\an(V) = \{P, A, D\}$.}
 \begin{align*}
   &p(T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
@@ -218,7 +221,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator: $S = \{P, H, T\}$, $B = \{A, D\}$.}
+\solstep{Step 2. Find the numerator: $V = \{P, H, T\}$, $\an(V) = \{A, D\}$.}
 \begin{align*}
   &p(P = 1, H = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
@@ -233,7 +236,7 @@ $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
   &= 0.1661076.
 \end{align*}
 
-\solstep{Step 3. Find the denominator: $S = \{H, T\}$, $B = \{P, A, D\}$.}
+\solstep{Step 3. Find the denominator: $V = \{H, T\}$, $\an(V) = \{P, A, D\}$.}
 \begin{align*}
   &p(H = 1, T = 1) \\
   &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
