@@ -99,15 +99,22 @@ Thus
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
-\emph{Sum out variables without children in the result.} Sum the joint
-distribution over a set of variables $Y$, and keep the variables $X$. If no
-variable in $X$ has a parent in $Y$, the factors of $Y$ sum to 1:
-\[
-  p(X) = \prod_{i} p(X_i \mid \text{parents of } X_i).
-\]
-The reason: sum first over the last variable of $Y$ in the order of the
-chain rule. No other factor contains it, and its factor sums to 1. Then
-repeat for the other variables of $Y$.
+\emph{Summed variables that are not parents of kept variables sum to 1.}
+Example: keep $P$ and $H$, and sum over $D$, $A$, and $T$:
+\begin{align*}
+  &p(P, H) \\
+  &= \sum_{d} \sum_{a} \sum_{t} p(P) \, p(D = d) \,
+     p(A = a \mid P, D = d) \, p(H \mid P) \, p(T = t \mid A = a) \\
+  &= p(P) \, p(H \mid P) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P, D = d)
+     \sum_{t} p(T = t \mid A = a)
+    && \text{(constants out)} \\
+  &= p(P) \, p(H \mid P) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P, D = d)
+    && \textstyle\text{($\sum_t = 1$)} \\
+  &= p(P) \, p(H \mid P) \sum_{d} p(D = d)
+    && \textstyle\text{($\sum_a = 1$)} \\
+  &= p(P) \, p(H \mid P)
+    && \textstyle\text{($\sum_d = 1$)}.
+\end{align*}
 
 \solpart{Solution}
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
@@ -118,10 +125,9 @@ repeat for the other variables of $Y$.
 \]
 
 \solstep{Step 2. Find $p(P = p, H = 1)$.}
-Sum out $D$, $A$, and $T$. The parents of $P$ and $H$ are not in
-$\{D, A, T\}$, so their factors sum to 1:
 \[
-  p(P = p, H = 1) = p(P = p) \, p(H = 1 \mid P = p).
+  p(P = p, H = 1) = p(P = p) \, p(H = 1 \mid P = p)
+  \qquad \text{(Idea)}.
 \]
 \begin{align*}
   p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
@@ -152,8 +158,7 @@ $\{D, A, T\}$, so their factors sum to 1:
 \]
 
 \solstep{Step 2. Find $p(P = p, T = 1)$.}
-Sum out $H$: no other variable has the parent $H$. Then sum over $D$ inside
-the sum over $A$:
+Sum over $H$ as in the Idea, then over $D$ inside the sum over $A$:
 \begin{align*}
   &p(P = p, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
@@ -167,11 +172,16 @@ the sum over $A$:
   &= p(P = p) \, p(T = 1 \mid P = p)
     && \text{(sum over $A$)}.
 \end{align*}
-The sum over $D$ uses $p(D = d) = p(D = d \mid P = p)$: the sum-out rule
-gives $p(P, D) = p(P) \, p(D)$. Thus
-$\sum_{d} p(A = a \mid P = p, D = d) \, p(D = d \mid P = p)
-= \sum_{d} p(A = a, D = d \mid P = p) = p(A = a \mid P = p)$.
-The sum over $A$ is the same step with $T$ and $A$.
+The sum over $D$:
+\begin{align*}
+  &\sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
+  &= \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d \mid P = p)
+    && \text{($p(P, D) = p(P) \, p(D)$, Idea)} \\
+  &= \sum_{d} p(A = a, D = d \mid P = p)
+    && \text{(chain rule)} \\
+  &= p(A = a \mid P = p).
+\end{align*}
+The sum over $A$ is the same with $T$ and $A$.
 
 \solstep{Step 3. Find $p(A = 1 \mid P = p)$ for Step 2.}
 \begin{align*}
