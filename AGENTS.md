@@ -117,7 +117,7 @@ method:
 Do not calculate intermediate conditional probabilities. In the
 `Solution`, name the step of the method in each step title, for example
 `Step 2. Strike out the factors for the numerator (Idea, Step 2)`. For each
-`p(G)`, draw the graph: the nodes of `G` with thick borders, and a red cross
+`p(G)`, draw the graph: the nodes of `G` in blue, and a red cross
 on each node with a struck-out factor and red arrows into it.
 
 If the problem asks several questions, make one subproblem for each
