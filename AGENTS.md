@@ -107,7 +107,8 @@ this plan:
 3. Find the numerator and the denominator as sums of the joint
    distribution over the other variables. Move the factors that do not
    depend on the summation variable out of each sum. A distribution sums
-   to 1 over all its values.
+   to 1 over all its values. If no kept variable has a parent among the
+   summed variables, the factors of the summed variables sum to 1.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier

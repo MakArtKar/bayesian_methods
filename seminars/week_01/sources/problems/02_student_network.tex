@@ -96,6 +96,16 @@ Thus
   = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \, p(T \mid A).
 \]
 
+\emph{Sum out variables without children in the result.} Sum the joint
+distribution over a set of variables $Y$, and keep the variables $X$. If no
+variable in $X$ has a parent in $Y$, the factors of $Y$ sum to 1:
+\[
+  p(X) = \prod_{i} p(X_i \mid \text{parents of } X_i).
+\]
+The reason: sum first over the last variable of $Y$ in the order of the
+chain rule. No other factor contains it, and its factor sums to 1. Then
+repeat for the other variables of $Y$.
+
 \solpart{Solution}
 \solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
 
@@ -104,30 +114,15 @@ Thus
   p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator.}
-Sum the joint distribution over $D$, $A$, and $T$. Use any value $p$ of
-$P$, because Step~3 also needs $P = 0$:
-\begin{align*}
-  &p(P = p, H = 1) \\
-  &= \sum_{d} \sum_{a} \sum_{t} p(P = p) \, p(D = d) \,
-     p(A = a \mid P = p, D = d) \\
-  &\qquad \cdot p(H = 1 \mid P = p) \, p(T = t \mid A = a) \\
-  &= p(P = p) \, p(H = 1 \mid P = p) \\
-  &\qquad \cdot \sum_{d} p(D = d) \sum_{a} p(A = a \mid P = p, D = d)
-     \sum_{t} p(T = t \mid A = a)
-    && \text{(constants out)} \\
-  &= p(P = p) \, p(H = 1 \mid P = p)
-     \sum_{d} p(D = d) \sum_{a} p(A = a \mid P = p, D = d)
-    && \textstyle\text{($\sum_t = 1$)} \\
-  &= p(P = p) \, p(H = 1 \mid P = p) \sum_{d} p(D = d)
-    && \textstyle\text{($\sum_a = 1$)} \\
-  &= p(P = p) \, p(H = 1 \mid P = p)
-    && \textstyle\text{($\sum_d = 1$)}.
-\end{align*}
-Substitute the values:
+\solstep{Step 2. Find $p(P = p, H = 1)$.}
+Sum out $D$, $A$, and $T$. The parents of $P$ and $H$ are not in
+$\{D, A, T\}$, so their factors sum to 1:
+\[
+  p(P = p, H = 1) = p(P = p) \, p(H = 1 \mid P = p).
+\]
 \begin{align*}
   p(P = 1, H = 1) &= 0.2 \cdot 0.9 = 0.18, \\
-  p(P = 0, H = 1) &= 0.8 \cdot 0.2 = 0.16.
+  p(P = 0, H = 1) &= (1 - 0.2) \cdot 0.2 = 0.8 \cdot 0.2 = 0.16.
 \end{align*}
 
 \solstep{Step 3. Find the denominator.}
@@ -153,66 +148,64 @@ Substitute the values:
   p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
 \]
 
-\solstep{Step 2. Sum the joint distribution over $H$, $A$, and $D$.}
+\solstep{Step 2. Find $p(P = p, T = 1)$.}
+Sum out $H$: no other variable has the parent $H$. Then sum over $D$ inside
+the sum over $A$:
 \begin{align*}
   &p(P = p, T = 1) \\
-  &= \sum_{d} \sum_{a} \sum_{h} p(P = p) \, p(D = d) \,
-     p(A = a \mid P = p, D = d) \\
-  &\qquad \cdot p(H = h \mid P = p) \, p(T = 1 \mid A = a) \\
-  &= p(P = p) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P = p, D = d) \,
-     p(T = 1 \mid A = a) \\
-  &\qquad \cdot \sum_{h} p(H = h \mid P = p)
+  &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
+     p(A = a \mid P = p, D = d) \, p(T = 1 \mid A = a)
+    && \text{(sum out $H$)} \\
+  &= p(P = p) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
+     p(A = a \mid P = p, D = d) \, p(D = d)
     && \text{(constants out)} \\
-  &= p(P = p) \sum_{d} p(D = d) \sum_{a} p(A = a \mid P = p, D = d) \,
-     p(T = 1 \mid A = a)
-    && \textstyle\text{($\sum_h = 1$)}.
+  &= p(P = p) \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = p)
+    && \text{(sum over $D$)} \\
+  &= p(P = p) \, p(T = 1 \mid P = p)
+    && \text{(sum over $A$)}.
 \end{align*}
+The sum over $D$ uses $p(D = d) = p(D = d \mid P = p)$: the sum-out rule
+gives $p(P, D) = p(P) \, p(D)$. Thus
+$\sum_{d} p(A = a \mid P = p, D = d) \, p(D = d \mid P = p)
+= \sum_{d} p(A = a, D = d \mid P = p) = p(A = a \mid P = p)$.
+The sum over $A$ is the same step with $T$ and $A$.
 
-\solstep{Step 3. Calculate the sum over $A$.}
-Let $q = p(A = 1 \mid P = p, D = d)$. Then $p(A = 0 \mid P = p, D = d) = 1 - q$:
-\[
-  \sum_{a} p(A = a \mid P = p, D = d) \, p(T = 1 \mid A = a)
-  = 0.95 \, q + 0.5 \, (1 - q)
-  = 0.5 + 0.45 \, q.
-\]
-
-\solstep{Step 4. Calculate the sum over $D$.}
-Substitute Step~3 and move the constants out:
+\solstep{Step 3. Find $p(A = 1 \mid P = p)$ for Step 2.}
 \begin{align*}
-  &\sum_{d} p(D = d) \bigl(0.5 + 0.45 \, p(A = 1 \mid P = p, D = d)\bigr) \\
-  &= 0.5 \sum_{d} p(D = d)
-   + 0.45 \sum_{d} p(D = d) \, p(A = 1 \mid P = p, D = d) \\
-  &= 0.5 + 0.45 \sum_{d} p(D = d) \, p(A = 1 \mid P = p, D = d)
-    && \textstyle\text{($\sum_d p(D = d) = 1$)}.
-\end{align*}
-Let $g(p)$ be this value. Substitute the tables:
-\begin{align*}
-  g(1) &= 0.5 + 0.45 \, (0.4 \cdot 0.999 + 0.6 \cdot 0.9)
-        = 0.5 + 0.45 \cdot 0.9396
-        = 0.5 + 0.42282
-        = 0.92282, \\
-  g(0) &= 0.5 + 0.45 \, (0.4 \cdot 0.9 + 0.6 \cdot 0.01)
-        = 0.5 + 0.45 \cdot 0.366
-        = 0.5 + 0.1647
-        = 0.6647.
+  p(A = 1 \mid P = 1)
+  &= \sum_{d} p(A = 1 \mid P = 1, D = d) \, p(D = d)
+   = 0.999 \cdot 0.4 + 0.9 \cdot (1 - 0.4) \\
+  &= 0.3996 + 0.54
+   = 0.9396, \\
+  p(A = 1 \mid P = 0)
+  &= \sum_{d} p(A = 1 \mid P = 0, D = d) \, p(D = d)
+   = 0.9 \cdot 0.4 + 0.01 \cdot (1 - 0.4) \\
+  &= 0.36 + 0.006
+   = 0.366.
 \end{align*}
 
-\solstep{Step 5. Find the numerator.}
-From Steps 2 and 4, $p(P = p, T = 1) = p(P = p) \, g(p)$:
+\solstep{Step 4. Find $p(T = 1 \mid P = p)$ for Step 2.}
+\begin{align*}
+  p(T = 1 \mid P = 1)
+  &= \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = 1)
+   = 0.95 \cdot 0.9396 + 0.5 \cdot (1 - 0.9396) \\
+  &= 0.89262 + 0.0302
+   = 0.92282, \\
+  p(T = 1 \mid P = 0)
+  &= \sum_{a} p(T = 1 \mid A = a) \, p(A = a \mid P = 0)
+   = 0.95 \cdot 0.366 + 0.5 \cdot (1 - 0.366) \\
+  &= 0.3477 + 0.317
+   = 0.6647.
+\end{align*}
+
+\solstep{Step 5. Find the numerator and the denominator.}
 \begin{align*}
   p(P = 1, T = 1) &= 0.2 \cdot 0.92282 = 0.184564, \\
-  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176.
+  p(P = 0, T = 1) &= 0.8 \cdot 0.6647 = 0.53176, \\
+  p(T = 1) &= \sum_{p} p(P = p, T = 1) = 0.184564 + 0.53176 = 0.716324.
 \end{align*}
 
-\solstep{Step 6. Find the denominator.}
-\[
-  p(T = 1)
-  = \sum_{p} p(P = p, T = 1)
-  = 0.184564 + 0.53176
-  = 0.716324.
-\]
-
-\solstep{Step 7. Divide.}
+\solstep{Step 6. Divide.}
 \[
   p(P = 1 \mid T = 1)
   = \frac{0.184564}{0.716324}
@@ -227,21 +220,22 @@ From Steps 2 and 4, $p(P = p, T = 1) = p(P = p) \, g(p)$:
   = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
 \]
 
-\solstep{Step 2. Find the numerator.}
-Sum the joint distribution over $D$ and $A$. The remaining sum is $g(p)$
-from Step~4 of (b):
+\solstep{Step 2. Find $p(P = p, H = 1, T = 1)$.}
+Sum over $D$ and $A$ as in Step~2 of (b). The factor $p(H = 1 \mid P = p)$
+is a constant:
 \begin{align*}
   &p(P = p, H = 1, T = 1) \\
-  &= \sum_{d} \sum_{a} p(P = p) \, p(D = d) \,
+  &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
      p(A = a \mid P = p, D = d) \\
   &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
   &= p(P = p) \, p(H = 1 \mid P = p) \\
-  &\qquad \cdot \sum_{d} p(D = d) \sum_{a} p(A = a \mid P = p, D = d) \,
-     p(T = 1 \mid A = a)
+  &\qquad \cdot \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d)
     && \text{(constants out)} \\
-  &= p(P = p) \, p(H = 1 \mid P = p) \, g(p).
+  &= p(P = p) \, p(H = 1 \mid P = p) \, p(T = 1 \mid P = p)
+    && \text{(Step 2 of (b))}.
 \end{align*}
-Substitute the values:
+With Step~4 of (b):
 \begin{align*}
   p(P = 1, H = 1, T = 1) &= 0.2 \cdot 0.9 \cdot 0.92282
     = 0.18 \cdot 0.92282 = 0.1661076, \\
