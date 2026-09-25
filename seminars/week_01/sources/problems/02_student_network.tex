@@ -72,30 +72,60 @@ Problem~\ref{prob:medical-test} is a special case.
     $p(G_x \mid G_y) = \dfrac{p(G_x, G_y)}{p(G_y)}$.
     Now find $p(G)$ for any group $G$.
   \item \textit{Find the factors of $p(G)$ with the chain rule.} Given:
-    $p(P)$, $p(D)$ for the sources; $p(A \mid P, D)$, $p(H \mid P)$,
-    $p(T \mid A)$ for the other nodes. Example for $G = \{H, A\}$:
+    $\textcolor{fP}{p(P)}$, $\textcolor{fD}{p(D)}$ for the sources;
+    $\textcolor{fA}{p(A \mid P, D)}$, $\textcolor{fH}{p(H \mid P)}$,
+    $\textcolor{fT}{p(T \mid A)}$ for the other nodes. Example for $G = \{H, A\}$:
     \begin{align*}
       p(P, D, A, H)
       &= p(P, D, A) \, p(H \mid P, D, A)
         && \text{(chain rule)} \\
-      &= p(P, D, A) \, p(H \mid P)
+      &= p(P, D, A) \, \textcolor{fH}{p(H \mid P)}
         && \text{(parent of $H$: $P$)} \\
-      &= p(P, D) \, p(A \mid P, D) \, p(H \mid P)
+      &= p(P, D) \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)}
         && \text{(chain rule; parents of $A$: $P$, $D$)} \\
-      &= p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P)
+      &= \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)}
         && \text{(chain rule; $D$ has no parents)}.
     \end{align*}
     Only the factors of the sources and arrows with a path to $G$ appear.
     From $T$, no path goes to $G$, so $p(T \mid A)$ is not in the product:
     \begin{center}
-      \crossgraph{k}{k}{g}{g}{x}
+      \begin{tikzpicture}[
+          node distance=0.6cm and 0.55cm, >={Stealth},
+          var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
+          f/.style={->, very thick},
+          key/.style={minimum width=0.5cm},
+        ]
+        \node[var, draw=fP, very thick] (P) {$P$};
+        \node[var, draw=fD, very thick, right=1.6cm of P] (D) {$D$};
+        \node[var, fill=blue!15, below left=of P] (H) {$H$};
+        \node[var, fill=blue!15, below right=of P] (A) {$A$};
+        \node[var, below=of A] (T) {$T$};
+        \draw[f, fH] (P) -- (H);
+        \draw[f, fA] (P) -- (A);
+        \draw[f, fA] (D) -- (A);
+        \draw[f, fT, postaction={decorate}, decoration={markings,
+          mark=at position 0.5 with {\node[text=red, inner sep=0pt] {$\times$};}}]
+          (A) -- (T);
+        \matrix[right=1.2cm of D, anchor=north west, row sep=2pt,
+            column sep=4pt, nodes={anchor=west}] {
+          \node[circle, draw=fP, very thick, minimum size=0.3cm] {}; &
+            \node {$p(P)$}; \\
+          \node[circle, draw=fD, very thick, minimum size=0.3cm] {}; &
+            \node {$p(D)$}; \\
+          \draw[f, fA] (0, 0) -- (0.5, 0); & \node {$p(A \mid P, D)$}; \\
+          \draw[f, fH] (0, 0) -- (0.5, 0); & \node {$p(H \mid P)$}; \\
+          \draw[f, fT] (0, 0) -- (0.5, 0); & \node {$p(T \mid A)$}; \\
+          \node[draw, fill=blue!15, minimum size=0.3cm] {}; &
+            \node {variables of $p(G)$}; \\
+        };
+      \end{tikzpicture}
     \end{center}
     \textit{Trick:} write the joint distribution of all variables one
     time, and strike out the other factors:
     \[
       p(P, D, A, H, T)
-      = p(P) \, p(D) \, p(A \mid P, D) \, p(H \mid P) \,
-        \strike{p(T \mid A)}.
+      = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \,
+        \strike{\textcolor{fT}{p(T \mid A)}}.
     \]
   \item \textit{Sum over the kept variables that are not in $G$.} Move
     the constants out of the sums:
