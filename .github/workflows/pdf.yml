@@ -1,0 +1,28 @@
+name: PDF
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  freshness:
+    name: PDFs match sources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/pdf_freshness.py check
+
+  build:
+    name: Sources compile
+    runs-on: ubuntu-latest
+    container: texlive/texlive:latest
+    steps:
+      - name: Install git and Python
+        run: |
+          command -v git && command -v python3 || {
+            apt-get update && apt-get install -y --no-install-recommends git python3
+          }
+      - uses: actions/checkout@v4
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: python3 scripts/pdf_freshness.py build --all
