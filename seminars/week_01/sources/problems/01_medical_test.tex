@@ -68,7 +68,8 @@ Sum the joint distribution over $D$:
 \begin{align*}
   p(T = 1)
   &= \sum_{d} p(D = d) \, p(T = 1 \mid D = d) \\
-  &= p(D = 1) \, p(T = 1 \mid D = 1) + p(D = 0) \, p(T = 1 \mid D = 0) \\
+  &= p(D = 1) \, p(T = 1 \mid D = 1) + p(D = 0) \, p(T = 1 \mid D = 0)
+    && \text{($d \in \{0, 1\}$)} \\
   &= 0.000099
    + \bigl(1 - p(D = 1)\bigr) \bigl(1 - p(T = 0 \mid D = 0)\bigr)
     && \text{(Step 3; complements)} \\
@@ -82,10 +83,12 @@ Sum the joint distribution over $D$:
 \begin{align*}
   p(D = 1 \mid T = 1)
   &= \frac{0.000099}{0.010098}
-   = \frac{99}{10098}
+    && \text{(Steps 3, 4)} \\
+  &= \frac{99}{10098}
     && \text{(multiply by $10^6$)} \\
   &= \frac{99}{99 \cdot 102}
-   = \frac{1}{102}
+    && \text{($10098 = 99 \cdot 102$)} \\
+  &= \frac{1}{102}
    \approx 0.0098.
 \end{align*}
 
@@ -98,9 +101,11 @@ independent test uses $p(D = 1 \mid T_1 = 1) = 1/102$ as the prior:
 \begin{align*}
   p(D = 1 \mid T_1 = 1, T_2 = 1)
   &= \frac{\frac{1}{102} \cdot 0.99}
-          {\frac{1}{102} \cdot 0.99 + \bigl(1 - \frac{1}{102}\bigr) \cdot 0.01} \\
+          {\frac{1}{102} \cdot 0.99 + \bigl(1 - \frac{1}{102}\bigr) \cdot 0.01}
+    && \text{(Bayes' theorem)} \\
   &= \frac{\frac{1}{102} \cdot 0.99}
-          {\frac{1}{102} \cdot 0.99 + \frac{101}{102} \cdot 0.01} \\
+          {\frac{1}{102} \cdot 0.99 + \frac{101}{102} \cdot 0.01}
+    && \textstyle\text{($1 - \frac{1}{102} = \frac{101}{102}$)} \\
   &= \frac{0.99}{0.99 + 101 \cdot 0.01}
     && \text{(multiply by 102)} \\
   &= \frac{0.99}{0.99 + 1.01}

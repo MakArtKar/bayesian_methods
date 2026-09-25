@@ -51,7 +51,8 @@ Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
 \begin{align*}
   p(X \mid \lambda) \, p(\lambda)
   &= \prod_{i=1}^{N} \Bigl( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \Bigr)
-     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda} \\
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+    && \text{(likelihood and prior)} \\
   &= \frac{\prod_{i} e^{-\lambda} \cdot \prod_{i} \lambda^{x_i}}
           {\prod_{i} x_i!}
      \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
@@ -97,23 +98,28 @@ Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
           {C \frac{\Gamma(a')}{b'^{a'}}}
     && \text{(Step 2b)} \\
   &= \Gam(\lambda \mid a', b')
-   = \Gam(\lambda \mid a + S, \, b + N).
+    && \text{(the constants cancel)} \\
+  &= \Gam(\lambda \mid a + S, \, b + N).
 \end{align*}
 
 \solstep{Step 3. Substitute Step 2d into Step 1.}
-\[
+\begin{align*}
   \mathbb{E}[\lambda \mid X]
-  = \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
-  = \int \lambda \cdot \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1}
-    e^{-b'\lambda} \, d\lambda
-  = \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda.
-\]
+  &= \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
+    && \text{(Step 2d)} \\
+  &= \int \lambda \cdot \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1}
+     e^{-b'\lambda} \, d\lambda
+    && \text{(gamma density)} \\
+  &= \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+    && \text{(constants out of the integral)}.
+\end{align*}
 
 \solstep{Step 3a. Find the integral for Step 3 with the same method.}
 Use Step 2b with $a' + 1$ instead of $a'$:
 \begin{align*}
   \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
-  &= \int \lambda^{(a' + 1) - 1} e^{-b'\lambda} \, d\lambda \\
+  &= \int \lambda^{(a' + 1) - 1} e^{-b'\lambda} \, d\lambda
+    && \text{($a' = (a' + 1) - 1$)} \\
   &= \int \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \,
      \Gam(\lambda \mid a' + 1, b') \, d\lambda
     && \text{(Step 2b)} \\
@@ -127,7 +133,8 @@ Use Step 2b with $a' + 1$ instead of $a'$:
 \solstep{Step 3b. Substitute Step 3a into Step 3.}
 \begin{align*}
   \mathbb{E}[\lambda \mid X]
-  &= \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \\
+  &= \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+    && \text{(Step 3a)} \\
   &= \frac{\Gamma(a' + 1)}{\Gamma(a') \, b'}
     && \textstyle\text{($b'^{a'} / b'^{a' + 1} = 1 / b'$)} \\
   &= \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}

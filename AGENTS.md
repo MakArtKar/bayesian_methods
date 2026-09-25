@@ -95,7 +95,10 @@ transition, and keep it short:
 
 - Write derivations as `align*` chains, one transition for each line.
 - Put the reason for a transition next to it:
-  `&= ... && \text{(parent of $T$: $A$)}`.
+  `&= ... && \text{(parent of $T$: $A$)}`. Put the reason on the line that
+  starts with the `=` it explains, not on a continuation line. A line with
+  a reason has only one `=`. Give a reason for each line, except for
+  arithmetic.
 - Do not repeat in words what a formula already shows.
 
 If a solution calculates a conditional probability in a causal graph, use

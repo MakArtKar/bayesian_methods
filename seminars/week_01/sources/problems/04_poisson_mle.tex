@@ -20,17 +20,18 @@ point.
 Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
 
 \solstep{Step 1. Write the goal.}
-\[
+\begin{align*}
   \hat{\lambda}_{\mathrm{ML}}
-  = \arg\max_{\lambda} L(\lambda)
-  = \arg\max_{\lambda} \ell(\lambda)
-  \qquad \text{($\log$ is increasing)}.
-\]
+  &= \arg\max_{\lambda} L(\lambda) \\
+  &= \arg\max_{\lambda} \ell(\lambda)
+    && \text{($\log$ is increasing)}.
+\end{align*}
 
 \solstep{Step 2. Find $\ell(\lambda)$ for Step 1.}
 \begin{align*}
   \ell(\lambda)
-  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \\
+  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
+    && \text{(Poisson probabilities)} \\
   &= \sum_{i=1}^{N} \log \Bigl( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \Bigr)
     && \text{(log of a product)} \\
   &= \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right)

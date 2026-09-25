@@ -75,18 +75,21 @@ influence: given its parents, a node does not depend on the other nodes in
 the condition.
 \begin{align*}
   p(P, D, A, H, T)
-  &= p(P, D, A, H) \, p(T \mid P, D, A, H) \\
+  &= p(P, D, A, H) \, p(T \mid P, D, A, H)
+   && \text{(chain rule)} \\
   &= p(P, D, A, H) \, p(T \mid A)
    && \text{(parent of $T$: $A$)} \\
   p(P, D, A, H)
-  &= p(P, D, A) \, p(H \mid P, D, A) \\
+  &= p(P, D, A) \, p(H \mid P, D, A)
+   && \text{(chain rule)} \\
   &= p(P, D, A) \, p(H \mid P)
    && \text{(parent of $H$: $P$)} \\
   p(P, D, A)
   &= p(P, D) \, p(A \mid P, D)
-   && \text{(parents of $A$: $P$, $D$)} \\
+   && \text{(chain rule; parents of $A$: $P$, $D$)} \\
   p(P, D)
-  &= p(P) \, p(D \mid P) \\
+  &= p(P) \, p(D \mid P)
+   && \text{(chain rule)} \\
   &= p(P) \, p(D)
    && \text{($D$ has no parents)}
 \end{align*}
@@ -226,12 +229,13 @@ is a constant:
 \begin{align*}
   &p(P = p, H = 1, T = 1) \\
   &= \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
-     p(A = a \mid P = p, D = d) \\
+     p(A = a \mid P = p, D = d)
+    && \text{(joint distribution)} \\
   &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
-  &= p(P = p) \, p(H = 1 \mid P = p) \\
-  &\qquad \cdot \sum_{a} p(T = 1 \mid A = a)
-     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d)
+  &= p(P = p) \, p(H = 1 \mid P = p)
     && \text{(constants out)} \\
+  &\qquad \cdot \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
   &= p(P = p) \, p(H = 1 \mid P = p) \, p(T = 1 \mid P = p)
     && \text{(Step 2 of (b))}.
 \end{align*}
