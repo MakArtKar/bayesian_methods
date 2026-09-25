@@ -8,7 +8,7 @@
 \usepackage{tikz}
 \usepackage[colorlinks, urlcolor=blue, linkcolor=red]{hyperref}
 
-\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{arrows.meta, decorations.markings, positioning}
 
 \DeclareMathOperator{\Poiss}{Poiss}
 \newcommand{\Gam}{\mathcal{G}}
@@ -26,23 +26,29 @@
     \draw[red, thick] (x.south west) -- (x.north east);}}}
 
 % The graph of Problem 2. The arguments give the state of P, D, H, A, and T:
-% g (in the group G, blue fill), k (kept), or x (struck out: a red cross
-% on the node and red incoming arrows).
+% g (in the group G, blue fill), k (kept), or x (struck-out factor). For a
+% source (P, D), x puts a red cross on the node. For another node, x
+% crosses out its incoming arrows.
 \tikzset{
   ndg/.style={fill=blue!15},
   ndk/.style={},
-  ndx/.style={draw=red, label={[text=red, font=\LARGE, inner sep=0pt]center:$\times$}},
+  ndx/.style={},
+  srcg/.style={fill=blue!15},
+  srck/.style={},
+  srcx/.style={draw=red,
+    label={[text=red, font=\LARGE, inner sep=0pt]center:$\times$}},
   edg/.style={},
   edk/.style={},
-  edx/.style={red},
+  edx/.style={red, postaction={decorate}, decoration={markings,
+    mark=at position 0.5 with {\node[text=red, inner sep=0pt] {$\times$};}}},
 }
 \newcommand{\crossgraph}[5]{%
   \begin{tikzpicture}[
-      node distance=0.35cm and 0.55cm, >={Stealth},
+      node distance=0.6cm and 0.55cm, >={Stealth},
       var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
     ]
-    \node[var, nd#1] (P) {$P$};
-    \node[var, nd#2, right=1.6cm of P] (D) {$D$};
+    \node[var, src#1] (P) {$P$};
+    \node[var, src#2, right=1.6cm of P] (D) {$D$};
     \node[var, nd#3, below left=of P] (H) {$H$};
     \node[var, nd#4, below right=of P] (A) {$A$};
     \node[var, nd#5, below=of A] (T) {$T$};
