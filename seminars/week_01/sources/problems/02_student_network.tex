@@ -77,8 +77,9 @@ Thus it is sufficient to find the joint distribution $p(G)$ of any group
 $G$.
 
 \emph{Step 2. Find the factors for $p(G)$.} The problem gives the
-distribution of each source and the distribution of each other node given
-its parents. The chain rule gives any joint distribution from these
+distribution of each source, $p(P)$ and $p(D)$, and the distribution of
+each other node given its parents, $p(A \mid P, D)$, $p(H \mid P)$, and
+$p(T \mid A)$. The chain rule gives any joint distribution from these
 factors. Example for $G = \{H, A\}$ in the graph of this problem. $H$ and
 $A$ depend on $P$ and $D$, so add $P$ and $D$:
 \begin{align*}
