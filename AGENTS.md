@@ -118,7 +118,10 @@ values:
 For a query `Q` and an observation `E`, find `p(Q, E)` and `p(E)` with this
 algorithm, then divide. Do not calculate intermediate conditional
 probabilities. For each `p(G)`, draw the graph with the nodes colored by
-group (`G`, `G_ancestors`, `G_rest`) and a legend.
+group (`G`, `G_ancestors`, `G_rest`) and a legend. Then write the full joint
+distribution with the variables colored by group (`\vg`, `\va`, `\vr`), and
+strike out in red (`\cancel`) each factor that contains a variable of
+`G_rest`.
 
 If the problem asks several questions, make one subproblem for each
 question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier

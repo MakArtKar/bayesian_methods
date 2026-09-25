@@ -3,6 +3,7 @@
 \usepackage[a4paper, margin=2cm, top=1.5cm]{geometry}
 \usepackage{amsmath, amssymb}
 \usepackage{booktabs}
+\usepackage{cancel}
 \usepackage{comment}
 \usepackage{enumitem}
 \usepackage{tikz}
@@ -16,11 +17,22 @@
 
 % The graph of Problem 2 with the nodes colored by group. The arguments give
 % the group of P, D, H, A, and T: grp (G), anc (G_ancestors), or rst (G_rest).
+\colorlet{grpcolor}{blue!15}
+\colorlet{anccolor}{orange!25}
+\colorlet{rstcolor}{red!15}
 \tikzset{
-  grp/.style={fill=blue!15},
-  anc/.style={fill=orange!25},
-  rst/.style={fill=black!6},
+  grp/.style={fill=grpcolor},
+  anc/.style={fill=anccolor},
+  rst/.style={fill=rstcolor},
 }
+% A variable colored by group, and a red strike for a factor that contains
+% a variable of G_rest.
+\newcommand{\groupvar}[2]{%
+  \mathord{\setlength{\fboxsep}{1pt}\colorbox{#1}{$#2$}}}
+\newcommand{\vg}[1]{\groupvar{grpcolor}{#1}}
+\newcommand{\va}[1]{\groupvar{anccolor}{#1}}
+\newcommand{\vr}[1]{\groupvar{rstcolor}{#1}}
+\renewcommand{\CancelColor}{\color{red}}
 \newcommand{\groupgraph}[5]{%
   \begin{tikzpicture}[
       node distance=0.35cm and 0.55cm, >={Stealth},
