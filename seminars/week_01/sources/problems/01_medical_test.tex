@@ -24,58 +24,61 @@ The disease causes the test result. The causal graph has one arrow:
     ]
     \node[var] (D) {$D$};
     \node[var, right=of D] (T) {$T$};
-    \draw[->] (D) -- node[above, font=\footnotesize] {$p(T \mid D)$} (T);
-    \node[above=0.1cm of D, font=\footnotesize] {$p(D)$};
+    \draw[->] (D) -- (T);
   \end{tikzpicture}
 \end{center}
-The problem gives $p(D)$ and $p(T \mid D)$ for all values. Two rules give
-the other probabilities:
-\begin{align*}
-  &\text{R1. Against the arrow (Bayes' theorem):}
-    && p(D \mid T) = \frac{p(T \mid D) \, p(D)}{p(T)}, \\
-  &\text{R2. Marginal probability (chain rule):}
-    && p(T) = \sum_{d} p(T \mid D = d) \, p(D = d).
-\end{align*}
+Plan for a conditional probability of query variables $X$ given observed
+variables $Y$:
+\begin{enumerate}[label=\arabic*.]
+  \item Write the joint distribution of all variables with the chain rule
+    and the graph.
+  \item Write the goal as a ratio:
+    $p(X \mid Y) = \dfrac{p(X, Y)}{p(Y)}$.
+  \item Find the numerator and the denominator as sums of the joint
+    distribution over the other variables:
+    $p(X, Y) = \sum_{z} p(X, Y, Z = z)$ and $p(Y) = \sum_{x} p(X = x, Y)$.
+    Move the factors that do not depend on the summation variable out of
+    the sum. A distribution sums to 1 over all its values.
+\end{enumerate}
 
 \solpart{Solution}
-\emph{Computation graph.} The goal is at the top. Each arrow shows the rule
-and the formula for the node above it. Shaded nodes are given.
-\begin{center}
-  \begin{tikzpicture}[cg]
-    \node[cg goal]  (G)  at (2, 0)    {$p(D \mid T)$};
-    \node[cg node]  (T)  at (2, -2)   {$p(T)$};
-    \node[cg given] (TD) at (0, -4)   {$p(T \mid D)$};
-    \node[cg given] (D)  at (7, -4)   {$p(D)$};
-    \coordinate (g) at (2, -1);
-    \draw (T) -- (g);
-    \draw (TD) to[out=90, in=180] (g);
-    \draw (D) to[out=90, in=0] (g);
-    \draw[->] (g) -- node[cg op, right]
-      {R1: $p(T \mid D) \, p(D) \,/\, p(T)$} (G);
-    \coordinate (t) at (2, -3);
-    \draw (TD) -- (t);
-    \draw (D) -- (t);
-    \draw[->] (t) -- node[cg op, right]
-      {R2: $\sum_d p(T \mid D{=}d) \, p(D{=}d)$} (T);
-  \end{tikzpicture}
-\end{center}
+\solstep{Step 1. Write the joint distribution.}
+\[
+  p(D, T) = p(D) \, p(T \mid D)
+  \qquad \text{(chain rule; parent of $T$: $D$)}.
+\]
 
-\solstep{Step 1. Find $p(T = 1)$ with R2.}
+\solstep{Step 2. Write the goal as a ratio.}
+\[
+  p(D = 1 \mid T = 1) = \frac{p(D = 1, T = 1)}{p(T = 1)}.
+\]
+
+\solstep{Step 3. Find the numerator.}
+All variables are fixed, so there is no sum:
+\[
+  p(D = 1, T = 1)
+  = p(D = 1) \, p(T = 1 \mid D = 1)
+  = 0.0001 \cdot 0.99
+  = 0.000099.
+\]
+
+\solstep{Step 4. Find the denominator.}
+Sum the joint distribution over $D$:
 \begin{align*}
   p(T = 1)
-  &= p(T = 1 \mid D = 1) \, p(D = 1) + p(T = 1 \mid D = 0) \, p(D = 0) \\
-  &= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999 \\
+  &= \sum_{d} p(D = d) \, p(T = 1 \mid D = d) \\
+  &= p(D = 1) \, p(T = 1 \mid D = 1) + p(D = 0) \, p(T = 1 \mid D = 0) \\
+  &= 0.000099 + 0.9999 \cdot 0.01
+    && \text{(Step 3)} \\
   &= 0.000099 + 0.009999
    = 0.010098.
 \end{align*}
 
-\solstep{Step 2. Find $p(D = 1 \mid T = 1)$ with R1.}
+\solstep{Step 5. Divide.}
 \begin{align*}
   p(D = 1 \mid T = 1)
-  &= \frac{p(T = 1 \mid D = 1) \, p(D = 1)}{p(T = 1)}
-   = \frac{0.99 \cdot 0.0001}{0.010098}
-   = \frac{0.000099}{0.010098} \\
-  &= \frac{99}{10098}
+  &= \frac{0.000099}{0.010098}
+   = \frac{99}{10098}
     && \text{(multiply by $10^6$)} \\
   &= \frac{99}{99 \cdot 102}
    = \frac{1}{102}

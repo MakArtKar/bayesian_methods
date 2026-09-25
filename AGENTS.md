@@ -98,22 +98,20 @@ transition, and keep it short:
   `&= ... && \text{(parent of $T$: $A$)}`.
 - Do not repeat in words what a formula already shows.
 
-If a solution calculates probabilities from other probabilities, use a
-computation graph:
+If a solution calculates a conditional probability in a causal graph, use
+this plan:
 
-- In the `Idea`, draw the causal graph. List the rules (R1, R2, ...) that
-  the solution uses as formulas on the variables of the problem.
-- Start the `Solution` with the computation graph. Use the `cg` TikZ styles
-  from `preamble.tex`. Put the goal at the top and the given distributions
-  at the bottom (`cg given`). Draw the arrows from the inputs up to the node
-  that uses them. Write the rule and the formula on each arrow. Use
-  distributions as nodes, not single values.
-- Then calculate the nodes from the bottom to the top, one node for each
-  step: `\solstep{Step N. Find X with Rk.}`. Do not go back to substitute
-  into earlier formulas.
-- If the problem asks several questions, make one subproblem for each
-  question (`\solsubproblem{(a) Find X.}`) with its own graph. Reuse the
-  results of earlier subproblems, and draw them with `cg reused`.
+1. Write the joint distribution of all variables with the chain rule and
+   the graph.
+2. Write the goal as a ratio: `p(X | Y) = p(X, Y) / p(Y)`.
+3. Find the numerator and the denominator as sums of the joint
+   distribution over the other variables. Move the factors that do not
+   depend on the summation variable out of each sum. A distribution sums
+   to 1 over all its values.
+
+If the problem asks several questions, make one subproblem for each
+question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier
+subproblems.
 
 Write the text in Simplified Technical English: short sentences, one fact
 for each sentence, active voice, and one term for each concept.
