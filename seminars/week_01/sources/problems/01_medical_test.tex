@@ -17,28 +17,41 @@ $D = 1$: the patient has the disease. $T = 1$: the test result is positive.
 Find $p(D = 1 \mid T = 1)$.
 
 \solpart{Idea}
-The disease causes the test result: the causal graph is $D \to T$. The
-problem gives the probabilities along the arrow: $p(D)$ and $p(T \mid D)$.
+The disease causes the test result. The causal graph has one arrow:
+\begin{center}
+  \begin{tikzpicture}[
+      node distance=1.5cm, >={Stealth},
+      var/.style={circle, draw, minimum size=0.75cm},
+    ]
+    \node[var] (D) {$D$};
+    \node[var, right=of D] (T) {$T$};
+    \draw[->] (D) -- node[above, font=\footnotesize] {$p(T \mid D)$} (T);
+    \node[above=0.1cm of D, font=\footnotesize] {$p(D)$};
+  \end{tikzpicture}
+\end{center}
+The problem gives the probability of the source node, $p(D)$, and the
+probability along the arrow, $p(T \mid D)$.
 
-\emph{Rules.} Let $A \to B$ be an arrow of the causal graph: $B$ depends
-directly on $A$. Each rule gives a formula for a probability that is not
+\emph{Rules.} Each rule gives a formula for a probability that is not
 given:
 \begin{align*}
-  &\text{R1. $p(A \mid B)$, against the arrow:}
-    && p(A \mid B) = \frac{p(A, B)}{p(B)}, \\
-  &\text{R2. $p(A, B)$, along the arrow:}
-    && p(A, B) = p(A) \, p(B \mid A), \\
-  &\text{R3. $p(B)$, the parent $A$ is not fixed:}
-    && p(B) = \sum_{a} p(A = a, B)
-       \quad \text{(for continuous $A$: $\textstyle\int da$)}, \\
+  &\text{R1. $p(D \mid T)$, against the arrow:}
+    && p(D \mid T) = \frac{p(D, T)}{p(T)}, \\
+  &\text{R2. $p(D, T)$, along the arrow:}
+    && p(D, T) = p(D) \, p(T \mid D), \\
+  &\text{R3. $p(T)$, the parent $D$ is not fixed:}
+    && p(T) = \sum_{d} p(D = d, T), \\
   &\text{R4. The other value of a binary variable:}
-    && p(A = 0 \mid C) = 1 - p(A = 1 \mid C).
+    && p(D = 0) = 1 - p(D = 1), \\
+  &&& p(T = 1 \mid D = 0) = 1 - p(T = 0 \mid D = 0).
 \end{align*}
 R1, R2, and R3 together give Bayes' theorem:
 \[
-  p(A \mid B)
-  = \frac{p(A) \, p(B \mid A)}{\sum_{a} p(A = a) \, p(B \mid A = a)}.
+  p(D \mid T)
+  = \frac{p(D) \, p(T \mid D)}{\sum_{d} p(D = d) \, p(T \mid D = d)}.
 \]
+The same rules are true for any arrow $A \to B$: replace $D$ with $A$ and
+$T$ with $B$. For a continuous parent, the sum in R3 is an integral.
 
 \emph{Computation graph.} Put the goal at the top. For each node that is
 not given, apply the rule for its form. Put the terms of the formula below

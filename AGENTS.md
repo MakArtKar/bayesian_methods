@@ -67,6 +67,7 @@ seminars/week_01/
   `\showsolutions` (problems with solutions).
 - To refer to another problem or a figure, use `\label` and `\ref`. Do not
   write problem numbers by hand.
+- Use PDF for course materials, not Markdown.
 
 ## Solutions
 
@@ -104,7 +105,6 @@ transition, and keep it short:
 
 Write the text in Simplified Technical English: short sentences, one fact
 for each sentence, active voice, and one term for each concept.
-- Use PDF for course materials, not Markdown.
 
 ## Keeping PDFs up to date
 
