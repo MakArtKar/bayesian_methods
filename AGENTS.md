@@ -83,6 +83,8 @@ Divide each solution into these parts, in this order. Start each part with
    variables and small examples. Give each general rule as a formula, not
    only in words. Apply the method to the problem in the `Solution`, not in
    the `Idea`. If a problem extends the method of an earlier problem, say so.
+   Put each example of the `Idea` in a `solexample` block (a pale block with
+   a line on the left), so that the steps of the method stay short.
 3. `Solution`. Give the full derivation. Divide it into steps with
    `\solstep{Step N. <action>.}`. Each step makes one transition. Do not skip
    steps, and do not add text without facts. Write each transition as a

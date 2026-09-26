@@ -6,6 +6,7 @@
 \usepackage{comment}
 \usepackage{enumitem}
 \usepackage{tikz}
+\usepackage[most]{tcolorbox}
 \usepackage[colorlinks, urlcolor=blue, linkcolor=red]{hyperref}
 
 \usetikzlibrary{arrows.meta, decorations.markings, positioning}
@@ -66,6 +67,14 @@
     \node[draw, fill=blue!15, minimum size=0.3cm, right=1.2cm of D] (key) {};
     \node[right=0.1cm of key] {variables of $p(G)$};
   \end{tikzpicture}%
+}
+
+% An example inside the Idea: a pale block with a line on the left.
+\newtcolorbox{solexample}{
+  enhanced, breakable, sharp corners, boxrule=0pt, leftrule=2pt,
+  colback=black!4, colframe=black!35,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  before skip=6pt, after skip=6pt,
 }
 
 % Title of a subproblem inside a solution.

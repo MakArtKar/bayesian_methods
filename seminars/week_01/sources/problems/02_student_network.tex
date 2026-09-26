@@ -74,7 +74,17 @@ Problem~\ref{prob:medical-test} is a special case.
   \item \textit{Find the factors of $p(G)$ with the chain rule.} Given:
     $\textcolor{fP}{p(P)}$, $\textcolor{fD}{p(D)}$ for the sources;
     $\textcolor{fA}{p(A \mid P, D)}$, $\textcolor{fH}{p(H \mid P)}$,
-    $\textcolor{fT}{p(T \mid A)}$ for the other nodes. Example for $G = \{H, A\}$:
+    $\textcolor{fT}{p(T \mid A)}$ for the other nodes. Only the factors of
+    the sources and arrows with a path to $G$ appear in $p(G)$.
+
+    \textit{Trick:} write the joint distribution of all variables one
+    time. The factor of a node $X$ is $p(X \mid \text{parents of } X)$:
+    \begin{itemize}
+      \item keep it if $X$ is in $G$, or if a path goes from $X$ to $G$;
+      \item else strike it out.
+    \end{itemize}
+    \begin{solexample}
+    \textit{Example:} $G = \{H, A\}$. The chain rule gives
     \begin{align*}
       p(P, D, A, H)
       &= p(P, D, A) \, p(H \mid P, D, A)
@@ -86,7 +96,6 @@ Problem~\ref{prob:medical-test} is a special case.
       &= \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)}
         && \text{(chain rule; $D$ has no parents)}.
     \end{align*}
-    Only the factors of the sources and arrows with a path to $G$ appear.
     From $T$, no path goes to $G$, so $p(T \mid A)$ is not in the product:
     \begin{center}
       \begin{tikzpicture}[
@@ -120,21 +129,18 @@ Problem~\ref{prob:medical-test} is a special case.
         };
       \end{tikzpicture}
     \end{center}
-    \textit{Trick:} write the joint distribution of all variables one
-    time. The factor of a node $X$ is $p(X \mid \text{parents of } X)$:
-    \begin{itemize}
-      \item keep it if $X$ is in $G$, or if a path goes from $X$ to $G$;
-      \item else strike it out.
-    \end{itemize}
-    For $G = \{H, A\}$: $A$ and $H$ are in $G$; $P \to H$; $D \to A$; no
-    path goes from $T$ to $G$:
+    With the trick: $A$ and $H$ are in $G$; $P \to H$; $D \to A$; no path
+    goes from $T$ to $G$:
     \[
       p(P, D, A, H, T)
       = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \,
         \strike{\textcolor{fT}{p(T \mid A)}}.
     \]
+    \end{solexample}
   \item \textit{Sum over the kept variables that are not in $G$.} Move
-    the constants out of the sums:
+    the constants out of the sums.
+    \begin{solexample}
+    \textit{Example:} $G = \{H, A\}$.
     \begin{align*}
       p(H, A)
       &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
@@ -143,6 +149,7 @@ Problem~\ref{prob:medical-test} is a special case.
         && \text{(Step 2)} \\
       &\qquad \cdot p(A \mid P = p, D = d) \, p(H \mid P = p).
     \end{align*}
+    \end{solexample}
 \end{enumerate}
 
 \solpart{Solution}
