@@ -4,8 +4,9 @@ This repository holds the materials for a course on Bayesian methods.
 
 ## Language
 
-Write everything in English: LaTeX sources, PDFs, code, comments, file
-names, commit messages, and documentation.
+Write everything in the repository in English: LaTeX sources, PDFs, code,
+comments, file names, commit messages, and documentation. In the chat, use
+the language of the user.
 
 ## Repository layout
 
@@ -94,11 +95,10 @@ Use these parts, in this order:
    method of an earlier problem, say so.
 3. `Solution`. Give the full derivation in steps:
    `\solstep{Step N. <action>.}`. If the `Idea` has numbered steps, name
-   the step: `\solstep{Step 2 (Idea 2). Numerator: $G = \{P, T\}$.}`. If
-   the problem asks several questions, make one subproblem for each
-   question with `\solsubproblem{(a) Find X.}`. Put shared work, for
-   example a joint distribution, in its own `\solsubproblem` before (a).
-   Reuse the results of earlier subproblems.
+   the step of the `Idea`: `\solstep{Step 2 (Idea 2). <action>.}`. If the
+   problem asks several questions, make one subproblem for each question
+   with `\solsubproblem{(a) Find X.}`. Put shared work in its own
+   `\solsubproblem` before (a). Reuse the results of earlier subproblems.
 4. `Conclusion` (optional). Give the practical meaning of the result or its
    relation to other problems. Use a list for several points.
 
@@ -108,57 +108,36 @@ Use these parts, in this order:
   rule, a complement ($1 - p$), a substitution of values, an arithmetic
   result, or a simplification. Show the products before their sum.
 - Put the reason for a transition on the line that starts with its `=`:
-  `&= ... && \text{(parent of $T$: $A$)}`. Do not put a reason on a
+  `&= ... && \text{(chain rule)}`. Do not put a reason on a
   continuation line. A line with a reason has only one `=`. Give a reason
   for each line, except for arithmetic.
 - If a line uses an earlier result, name its step, for example
   `\text{(Step 3)}` or `\text{((b), Step 5)}`.
 - If a line is too wide, put the left side on its own line
-  (`&p(T = 1) \\ &= ...`) or continue it with `&\qquad \cdot ...`.
+  (`&p(X) \\ &= ...`) or continue it with `&\qquad \cdot ...`.
 - Do not repeat in words what a formula already shows.
 
-### Probabilities in a causal graph
+### Figures and design
 
-To find a probability in a causal graph, use this method:
-
-1. Reduce the question to joint distributions:
-   `p(G_x | G_y) = p(G_x, G_y) / p(G_y)`.
-2. For each joint distribution `p(G)`, write the joint distribution of all
-   variables with the chain rule. The factor of a node `X` is
-   `p(X | parents of X)`. Keep it if `X` is in `G` or a path goes from `X`
-   to `G`. Else strike it out with `\strike`.
-3. Sum the product of the kept factors over the kept variables that are
-   not in `G`. Move the factors that do not depend on a summation variable
-   out of its sum, then calculate.
-
-Find each numerator and denominator separately with this method. Do not
-calculate intermediate conditional probabilities.
-
-### Figures and examples
-
-- For each `p(G)` in the `Solution`, draw the graph of the problem before
-  the formula. Fill the nodes of `G` with blue, and add a legend for them.
-- Give each given factor its own color (`\colorlet` in `preamble.tex`).
-  Use the same color for the factor in the formulas, for the border of the
-  source, and for the arrows into the node.
-- Mark a struck-out factor with a red cross: on the node for a source, or
-  on the arrows into the node (`\edgecross`). Draw the crosses on top of
-  the colors.
-- Make a macro for a graph that the solution draws many times, for example
-  `\crossgraph`.
+- Use pale colors for fills and backgrounds, for example `blue!15` or
+  `black!4`. Keep the text and the lines readable on them.
+- If a figure and a formula show the same objects, give each object one
+  color in both places. Add a legend to the figure.
+- Draw marks, for example a red strike or cross, on top of the colors, not
+  under them.
+- Put examples in a `solexample` block: a pale block with a line on the
+  left. It keeps the text of the method short.
+- Make a macro for a figure that a solution draws many times.
 
 ### Macros
 
-`sources/preamble.tex` of week 1 defines these macros:
+`sources/preamble.tex` defines these general macros:
 
 | Macro | Use |
 | --- | --- |
 | `\showsolutions`, `\hidesolutions` | Show or hide the `solution` environments. |
 | `\solpart`, `\solstep`, `\solsubproblem` | Parts, steps, and subproblems of a solution. |
 | `solexample` | A pale block with a line on the left for an example. |
-| `\strike` | A red strike over a factor, on top of its color. |
-| `\edgecross` | A red cross on an arrow, in the frame of the arrow. |
-| `\crossgraph` | The graph of Problem 2 with the state of each node. |
 | `\uline` | Underline a key rule (package `ulem`). |
 
 ## Keeping PDFs up to date
