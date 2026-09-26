@@ -73,64 +73,93 @@ seminars/week_01/
 
 ## Solutions
 
-Divide each solution into these parts, in this order. Start each part with
-`\solpart{<name>}`:
+Write the text in Simplified Technical English: short sentences, one fact
+for each sentence, active voice, and one term for each concept. A solution
+is mainly formulas and transitions. Use text only to explain a transition,
+and keep it short.
 
-1. `Interpretation` (optional). Write the problem in formal terms: define
-   the random variables, give the known values as formulas, and state what
-   to find. Add this part only when the statement is in words.
-2. `Idea`. Explain how to find the method of the solution. Use abstract
-   variables and small examples. Give each general rule as a formula, not
-   only in words. Apply the method to the problem in the `Solution`, not in
-   the `Idea`. If a problem extends the method of an earlier problem, say so.
-   Put each example of the `Idea` in a `solexample` block (a pale block with
-   a line on the left), so that the steps of the method stay short.
-3. `Solution`. Give the full derivation. Divide it into steps with
-   `\solstep{Step N. <action>.}`. Each step makes one transition. Do not skip
-   steps, and do not add text without facts. Write each transition as a
-   separate equality: a complement ($1 - p$), a substitution of values, an
-   arithmetic result, and a simplification. Show the products before their
-   sum. If a step uses an earlier result, name the step.
+### Parts of a solution
+
+Start each part with `\solpart{<name>}`. It prints the name as a heading.
+Use these parts, in this order:
+
+1. `Interpretation` (optional). Add it only when the statement is in words.
+   Define the random variables, give only the values from the statement,
+   and state what to find. Do not calculate derived values here, for
+   example complements. Calculate them in the step that needs them.
+2. `Idea`. Explain the method with abstract variables. Give each general
+   rule as a formula. Underline the most important rule with `\uline`.
+   Put each example in a `solexample` block. Apply the method to the
+   problem in the `Solution`, not in the `Idea`. If a problem extends the
+   method of an earlier problem, say so.
+3. `Solution`. Give the full derivation in steps:
+   `\solstep{Step N. <action>.}`. If the `Idea` has numbered steps, name
+   the step: `\solstep{Step 2 (Idea 2). Numerator: $G = \{P, T\}$.}`. If
+   the problem asks several questions, make one subproblem for each
+   question with `\solsubproblem{(a) Find X.}`. Put shared work, for
+   example a joint distribution, in its own `\solsubproblem` before (a).
+   Reuse the results of earlier subproblems.
 4. `Conclusion` (optional). Give the practical meaning of the result or its
-   relation to other problems.
+   relation to other problems. Use a list for several points.
 
-A solution is mainly formulas and transitions. Use text only to explain a
-transition, and keep it short:
+### Derivations
 
-- Write derivations as `align*` chains, one transition for each line.
-- Put the reason for a transition next to it:
-  `&= ... && \text{(parent of $T$: $A$)}`. Put the reason on the line that
-  starts with the `=` it explains, not on a continuation line. A line with
-  a reason has only one `=`. Give a reason for each line, except for
-  arithmetic.
+- Write derivations as `align*` chains, one transition for each line: a
+  rule, a complement ($1 - p$), a substitution of values, an arithmetic
+  result, or a simplification. Show the products before their sum.
+- Put the reason for a transition on the line that starts with its `=`:
+  `&= ... && \text{(parent of $T$: $A$)}`. Do not put a reason on a
+  continuation line. A line with a reason has only one `=`. Give a reason
+  for each line, except for arithmetic.
+- If a line uses an earlier result, name its step, for example
+  `\text{(Step 3)}` or `\text{((b), Step 5)}`.
+- If a line is too wide, put the left side on its own line
+  (`&p(T = 1) \\ &= ...`) or continue it with `&\qquad \cdot ...`.
 - Do not repeat in words what a formula already shows.
 
-If a solution calculates a probability in a causal graph, use this
-method:
+### Probabilities in a causal graph
+
+To find a probability in a causal graph, use this method:
 
 1. Reduce the question to joint distributions:
    `p(G_x | G_y) = p(G_x, G_y) / p(G_y)`.
 2. For each joint distribution `p(G)`, write the joint distribution of all
-   variables with the chain rule. Strike out (`\strike`) the factors of the
-   nodes from which no path goes to `G`. The other factors are the factors
-   of the sources and arrows from which a path goes to `G`.
+   variables with the chain rule. The factor of a node `X` is
+   `p(X | parents of X)`. Keep it if `X` is in `G` or a path goes from `X`
+   to `G`. Else strike it out with `\strike`.
 3. Sum the product of the kept factors over the kept variables that are
    not in `G`. Move the factors that do not depend on a summation variable
    out of its sum, then calculate.
 
-Do not calculate intermediate conditional probabilities. In the
-`Solution`, name the step of the method in each step title, for example
-`Step 2 (Idea 2). Numerator: $G = \{P, T\}$.` For each
-`p(G)`, draw the graph: the nodes of `G` in blue. Mark each struck-out
-factor with a red cross: on the node for a source, or on the arrows into
-the node for another node.
+Find each numerator and denominator separately with this method. Do not
+calculate intermediate conditional probabilities.
 
-If the problem asks several questions, make one subproblem for each
-question (`\solsubproblem{(a) Find X.}`). Reuse the results of earlier
-subproblems.
+### Figures and examples
 
-Write the text in Simplified Technical English: short sentences, one fact
-for each sentence, active voice, and one term for each concept.
+- For each `p(G)` in the `Solution`, draw the graph of the problem before
+  the formula. Fill the nodes of `G` with blue, and add a legend for them.
+- Give each given factor its own color (`\colorlet` in `preamble.tex`).
+  Use the same color for the factor in the formulas, for the border of the
+  source, and for the arrows into the node.
+- Mark a struck-out factor with a red cross: on the node for a source, or
+  on the arrows into the node (`\edgecross`). Draw the crosses on top of
+  the colors.
+- Make a macro for a graph that the solution draws many times, for example
+  `\crossgraph`.
+
+### Macros
+
+`sources/preamble.tex` of week 1 defines these macros:
+
+| Macro | Use |
+| --- | --- |
+| `\showsolutions`, `\hidesolutions` | Show or hide the `solution` environments. |
+| `\solpart`, `\solstep`, `\solsubproblem` | Parts, steps, and subproblems of a solution. |
+| `solexample` | A pale block with a line on the left for an example. |
+| `\strike` | A red strike over a factor, on top of its color. |
+| `\edgecross` | A red cross on an arrow, in the frame of the arrow. |
+| `\crossgraph` | The graph of Problem 2 with the state of each node. |
+| `\uline` | Underline a key rule (package `ulem`). |
 
 ## Keeping PDFs up to date
 
