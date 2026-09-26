@@ -1,0 +1,180 @@
+\label{prob:poisson-gamma}
+Let $x_1, x_2, \ldots, x_N$ be an independent sample from $\Poiss(\lambda)$.
+The prior distribution is the gamma distribution
+\[
+  p(\lambda) = \Gam(\lambda \mid a, b)
+  = \frac{b^a}{\Gamma(a)} \lambda^{a - 1} \exp(-b \lambda),
+  \quad a, b > 0.
+\]
+Find the Bayesian estimate of $\lambda$ as the mean of the posterior
+distribution $p(\lambda \mid x_1, \ldots, x_N)$.
+
+\begin{solution}
+\solpart{Idea}
+The numerator and the denominator of Bayes' theorem contain the same
+function:
+\[
+  p(\lambda \mid X)
+  = \frac{p(X \mid \lambda) \, p(\lambda)}
+         {\int p(X \mid \lambda) \, p(\lambda) \, d\lambda},
+  \qquad X = (x_1, \ldots, x_N).
+\]
+Do not calculate the integral directly:
+\begin{align*}
+  p(X \mid \lambda) \, p(\lambda) &= C \cdot g(\lambda)
+    && \text{($C$ does not depend on $\lambda$)} \\
+  g(\lambda) &= Z \, q(\lambda)
+    && \text{($q$ is a known density)} \\
+  \int C Z \, q(\lambda) \, d\lambda &= C Z
+    && \text{(a density integrates to 1)} \\
+  p(\lambda \mid X) &= \frac{C Z \, q(\lambda)}{C Z} = q(\lambda).
+\end{align*}
+The same method gives the posterior mean.
+
+\solpart{Solution}
+Let $S = \sum_{i=1}^{N} x_i$, $a' = a + S$, and $b' = b + N$.
+
+\solstep{Step 1. Write the goal.}
+\[
+  \hat{\lambda}_{\mathrm{B}} = \mathbb{E}[\lambda \mid X]
+  = \int \lambda \, p(\lambda \mid X) \, d\lambda.
+\]
+
+\solstep{Step 2. Find $p(\lambda \mid X)$ for Step 1.}
+\[
+  p(\lambda \mid X)
+  = \frac{p(X \mid \lambda) \, p(\lambda)}
+         {\int p(X \mid \lambda) \, p(\lambda) \, d\lambda}.
+\]
+
+\solstep{Step 2a. Separate the constant in the numerator of Step 2.}
+\begin{align*}
+  p(X \mid \lambda) \, p(\lambda)
+  &= \prod_{i=1}^{N} \Bigl( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \Bigr)
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+    && \text{(likelihood and prior)} \\
+  &= \frac{\prod_{i} e^{-\lambda} \cdot \prod_{i} \lambda^{x_i}}
+          {\prod_{i} x_i!}
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+    && \text{(split the product)} \\
+  &= \frac{e^{-N\lambda} \lambda^{S}}{\prod_{i} x_i!}
+     \cdot \frac{b^a}{\Gamma(a)} \lambda^{a-1} e^{-b\lambda}
+    && \textstyle\text{($\prod_i \lambda^{x_i} = \lambda^{\sum_i x_i}$)} \\
+  &= \frac{b^a}{\Gamma(a) \prod_{i} x_i!}
+     \cdot \lambda^{S} \lambda^{a-1} \cdot e^{-N\lambda} e^{-b\lambda}
+    && \text{(group the factors)} \\
+  &= \underbrace{\frac{b^a}{\Gamma(a) \prod_{i} x_i!}}_{C}
+     \cdot
+     \underbrace{\lambda^{a' - 1} e^{-b'\lambda}}_{g(\lambda)}
+    && \text{(add the exponents)}.
+\end{align*}
+
+\solstep{Step 2b. Find the known density for $g$ from Step 2a.}
+\[
+  \Gam(\lambda \mid a', b')
+  = \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1} e^{-b'\lambda}
+  = \frac{b'^{a'}}{\Gamma(a')} \, g(\lambda)
+  \;\Longrightarrow\;
+  g(\lambda) = \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b').
+\]
+
+\solstep{Step 2c. Find the denominator of Step 2.}
+\begin{align*}
+  \int C g(\lambda) \, d\lambda
+  &= \int C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b') \, d\lambda
+    && \text{(Step 2b)} \\
+  &= C \frac{\Gamma(a')}{b'^{a'}} \int \Gam(\lambda \mid a', b') \, d\lambda
+    && \text{(constants out of the integral)} \\
+  &= C \frac{\Gamma(a')}{b'^{a'}}
+    && \text{(a density integrates to 1)}.
+\end{align*}
+
+\solstep{Step 2d. Substitute Steps 2a--2c into Step 2.}
+\begin{align*}
+  p(\lambda \mid X)
+  &= \frac{C g(\lambda)}{C \frac{\Gamma(a')}{b'^{a'}}}
+    && \text{(Steps 2a, 2c)} \\
+  &= \frac{C \frac{\Gamma(a')}{b'^{a'}} \, \Gam(\lambda \mid a', b')}
+          {C \frac{\Gamma(a')}{b'^{a'}}}
+    && \text{(Step 2b)} \\
+  &= \Gam(\lambda \mid a', b')
+    && \text{(the constants cancel)} \\
+  &= \Gam(\lambda \mid a + S, \, b + N).
+\end{align*}
+
+\solstep{Step 3. Substitute Step 2d into Step 1.}
+\begin{align*}
+  \mathbb{E}[\lambda \mid X]
+  &= \int \lambda \, \Gam(\lambda \mid a', b') \, d\lambda
+    && \text{(Step 2d)} \\
+  &= \int \lambda \cdot \frac{b'^{a'}}{\Gamma(a')} \lambda^{a' - 1}
+     e^{-b'\lambda} \, d\lambda
+    && \text{(gamma density)} \\
+  &= \frac{b'^{a'}}{\Gamma(a')} \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+    && \text{(constants out of the integral)}.
+\end{align*}
+
+\solstep{Step 3a. Find the integral for Step 3 with the same method.}
+Use Step 2b with $a' + 1$ instead of $a'$:
+\begin{align*}
+  \int \lambda^{a'} e^{-b'\lambda} \, d\lambda
+  &= \int \lambda^{(a' + 1) - 1} e^{-b'\lambda} \, d\lambda
+    && \text{($a' = (a' + 1) - 1$)} \\
+  &= \int \frac{\Gamma(a' + 1)}{b'^{a' + 1}} \,
+     \Gam(\lambda \mid a' + 1, b') \, d\lambda
+    && \text{(Step 2b)} \\
+  &= \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+     \int \Gam(\lambda \mid a' + 1, b') \, d\lambda
+    && \text{(constants out of the integral)} \\
+  &= \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+    && \text{(a density integrates to 1)}.
+\end{align*}
+
+\solstep{Step 3b. Substitute Step 3a into Step 3.}
+\begin{align*}
+  \mathbb{E}[\lambda \mid X]
+  &= \frac{b'^{a'}}{\Gamma(a')} \cdot \frac{\Gamma(a' + 1)}{b'^{a' + 1}}
+    && \text{(Step 3a)} \\
+  &= \frac{\Gamma(a' + 1)}{\Gamma(a') \, b'}
+    && \textstyle\text{($b'^{a'} / b'^{a' + 1} = 1 / b'$)} \\
+  &= \frac{a' \, \Gamma(a')}{\Gamma(a') \, b'}
+    && \text{($\Gamma(a' + 1) = a' \, \Gamma(a')$)} \\
+  &= \frac{a'}{b'}
+   = \frac{a + S}{b + N}.
+\end{align*}
+\[
+  \hat{\lambda}_{\mathrm{B}} = \frac{a + S}{b + N}.
+\]
+
+\solpart{Conclusion}
+\begin{itemize}
+  \item \emph{Conjugate prior:} gamma prior $\times$ Poisson likelihood
+    $\to$ gamma posterior. The update only changes the parameters:
+    $a \to a + S$ (events), $b \to b + N$ (observations).
+  \item The estimate is a weighted mean of the prior mean and the
+    estimate $\bar{x}$ from Problem~\ref{prob:poisson-mle}:
+    \[
+      \frac{a + S}{b + N}
+      = \frac{a}{b + N} + \frac{S}{b + N}
+      = \frac{b}{b + N} \cdot \frac{a}{b}
+      + \frac{N}{b + N} \cdot \bar{x}
+      \;\xrightarrow{N \to \infty}\; \bar{x}.
+    \]
+  \item If $a, b \to 0$, then $p(\lambda) \propto \lambda^{a - 1}
+    e^{-b\lambda} \to 1/\lambda$, the non-informative prior from the notes
+    below, and $\hat{\lambda}_{\mathrm{B}} \to S/N = \bar{x}$.
+\end{itemize}
+\end{solution}
+
+\paragraph{Notes on comparing the estimates from
+  Problems~\ref{prob:poisson-mle} and~\ref{prob:poisson-gamma}.}
+\begin{enumerate}[label=\arabic*.]
+  \item For more about non-informative priors, see Section~5.4 ``Priors''
+    in Kevin P.\ Murphy, \emph{Machine Learning: A Probabilistic
+    Perspective}.
+  \item The prior $p(\lambda) \propto \frac{1}{\lambda}$ is a uniform prior
+    on $\log \lambda$. To see this, use the change-of-variables rule for
+    the density of a function of a random variable. See, for example,
+    \href{https://en.wikipedia.org/wiki/Probability_density_function#Function_of_random_variables_and_change_of_variables_in_the_probability_density_function}{this
+    article}.
+\end{enumerate}

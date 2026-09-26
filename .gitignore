@@ -22,3 +22,9 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Temporary files of the comment package
+*.cut
+
+# Main PDFs that a failed build leaves in sources/ (figures are in figures/)
+/*/*/sources/*.pdf

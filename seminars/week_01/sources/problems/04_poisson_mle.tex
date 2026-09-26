@@ -1,0 +1,62 @@
+\label{prob:poisson-mle}
+Let $x_1, x_2, \ldots, x_N$ be an independent sample from $\Poiss(\lambda)$.
+Find the maximum likelihood estimate of $\lambda$.
+
+\begin{solution}
+\solpart{Idea}
+\[
+  L(\lambda) = \prod_{i} p(x_i \mid \lambda)
+  \;\to\;
+  \ell(\lambda) = \log L(\lambda) = \sum_{i} \log p(x_i \mid \lambda)
+  \;\to\;
+  \ell'(\lambda) = 0
+  \;\to\;
+  \ell''(\lambda) < 0.
+\]
+The logarithm is increasing, so $L$ and $\ell$ have the same maximum
+point.
+
+\solpart{Solution}
+Let $S = \sum_{i=1}^{N} x_i$ and $\bar{x} = S / N$.
+
+\solstep{Step 1. Write the goal.}
+\begin{align*}
+  \hat{\lambda}_{\mathrm{ML}}
+  &= \arg\max_{\lambda} L(\lambda) \\
+  &= \arg\max_{\lambda} \ell(\lambda)
+    && \text{($\log$ is increasing)}.
+\end{align*}
+
+\solstep{Step 2. Find $\ell(\lambda)$ for Step 1.}
+\begin{align*}
+  \ell(\lambda)
+  &= \log \prod_{i=1}^{N} e^{-\lambda} \frac{\lambda^{x_i}}{x_i!}
+    && \text{(Poisson probabilities)} \\
+  &= \sum_{i=1}^{N} \log \Bigl( e^{-\lambda} \frac{\lambda^{x_i}}{x_i!} \Bigr)
+    && \text{(log of a product)} \\
+  &= \sum_{i=1}^{N} \left( -\lambda + x_i \log \lambda - \log x_i! \right)
+    && \text{(log of each factor)} \\
+  &= -N\lambda + S \log \lambda - \sum_{i=1}^{N} \log x_i!
+    && \text{(sum each term)}.
+\end{align*}
+
+\solstep{Step 3. Find the stationary point of $\ell$.}
+\begin{align*}
+  \ell'(\lambda) &= -N + \frac{S}{\lambda}, \\
+  -N + \frac{S}{\lambda} = 0
+  \;&\Longrightarrow\; \frac{S}{\lambda} = N
+  \;\Longrightarrow\; \lambda = \frac{S}{N} = \bar{x}.
+\end{align*}
+
+\solstep{Step 4. Make sure that it is a maximum.}
+\[
+  \ell''(\lambda) = -\frac{S}{\lambda^2} < 0
+  \quad \text{if } S > 0.
+\]
+Thus $\ell$ is strictly concave, and $\bar{x}$ is the global maximum. If
+$S = 0$, then $\ell(\lambda) = -N\lambda$ decreases, and the maximum is at
+$\lambda = 0 = \bar{x}$.
+\[
+  \hat{\lambda}_{\mathrm{ML}} = \bar{x}.
+\]
+\end{solution}

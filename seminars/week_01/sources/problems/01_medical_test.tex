@@ -1,0 +1,114 @@
+\label{prob:medical-test}
+A medical test finds a serious disease in a patient. The test is 99\%
+accurate: if the patient has the disease, the test is positive with
+probability 99\%; if the patient does not have the disease, the test is
+negative with probability 99\%. The disease is rare: only one person in
+10\,000 has it. Find the probability that the patient really has the
+disease.
+
+\begin{solution}
+\solpart{Interpretation}
+$D = 1$: the patient has the disease. $T = 1$: the test result is positive.
+\[
+  p(D = 1) = 10^{-4}, \qquad
+  p(T = 1 \mid D = 1) = 0.99, \qquad
+  p(T = 0 \mid D = 0) = 0.99.
+\]
+Find $p(D = 1 \mid T = 1)$.
+
+\solpart{Idea}
+The disease causes the test result. The causal graph has one arrow:
+\begin{center}
+  \begin{tikzpicture}[
+      node distance=1.5cm, >={Stealth},
+      var/.style={circle, draw, minimum size=0.75cm},
+    ]
+    \node[var] (D) {$D$};
+    \node[var, right=of D] (T) {$T$};
+    \draw[->] (D) -- (T);
+  \end{tikzpicture}
+\end{center}
+Write the goal as a ratio, and find the numerator and the denominator from
+the joint distribution:
+\begin{align*}
+  p(D \mid T) &= \frac{p(D, T)}{p(T)}, \\
+  p(D, T) &= p(D) \, p(T \mid D)
+    && \text{(chain rule; both factors are given)}, \\
+  p(T) &= \sum_{d} p(D = d, T)
+    && \text{(sum over the parent $D$)}.
+\end{align*}
+
+\solpart{Solution}
+\solstep{Step 1. Write the joint distribution.}
+\[
+  p(D, T) = p(D) \, p(T \mid D)
+  \qquad \text{(chain rule; parent of $T$: $D$)}.
+\]
+
+\solstep{Step 2. Write the goal as a ratio.}
+\[
+  p(D = 1 \mid T = 1) = \frac{p(D = 1, T = 1)}{p(T = 1)}.
+\]
+
+\solstep{Step 3. Find the numerator.}
+No sum: all variables are fixed.
+\[
+  p(D = 1, T = 1)
+  = p(D = 1) \, p(T = 1 \mid D = 1)
+  = 0.0001 \cdot 0.99
+  = 0.000099.
+\]
+
+\solstep{Step 4. Find the denominator.}
+Sum over $D$:
+\begin{align*}
+  p(T = 1)
+  &= \sum_{d} p(D = d) \, p(T = 1 \mid D = d) \\
+  &= p(D = 1) \, p(T = 1 \mid D = 1) + p(D = 0) \, p(T = 1 \mid D = 0)
+    && \text{($d \in \{0, 1\}$)} \\
+  &= 0.000099
+   + \bigl(1 - p(D = 1)\bigr) \bigl(1 - p(T = 0 \mid D = 0)\bigr)
+    && \text{(Step 3; complements)} \\
+  &= 0.000099 + (1 - 0.0001) \cdot (1 - 0.99) \\
+  &= 0.000099 + 0.9999 \cdot 0.01 \\
+  &= 0.000099 + 0.009999
+   = 0.010098.
+\end{align*}
+
+\solstep{Step 5. Divide.}
+\begin{align*}
+  p(D = 1 \mid T = 1)
+  &= \frac{0.000099}{0.010098}
+    && \text{(Steps 3, 4)} \\
+  &= \frac{99}{10098}
+    && \text{(multiply by $10^6$)} \\
+  &= \frac{99}{99 \cdot 102}
+    && \text{($10098 = 99 \cdot 102$)} \\
+  &= \frac{1}{102}
+   \approx 0.0098.
+\end{align*}
+
+\solpart{Conclusion}
+\begin{itemize}
+  \item The probability increases from 0.01\% to only 1\%.
+  \item In 10\,000 people, the test finds
+    $10\,000 \cdot 0.000099 \approx 1$ sick person and
+    $10\,000 \cdot 0.009999 \approx 100$ healthy people. Thus most positive
+    results of a mass test for a rare disease are false.
+  \item A second positive independent test, with the prior $1/102$:
+\end{itemize}
+\begin{align*}
+  p(D = 1 \mid T_1 = 1, T_2 = 1)
+  &= \frac{\frac{1}{102} \cdot 0.99}
+          {\frac{1}{102} \cdot 0.99 + \bigl(1 - \frac{1}{102}\bigr) \cdot 0.01}
+    && \text{(Bayes' theorem)} \\
+  &= \frac{\frac{1}{102} \cdot 0.99}
+          {\frac{1}{102} \cdot 0.99 + \frac{101}{102} \cdot 0.01}
+    && \textstyle\text{($1 - \frac{1}{102} = \frac{101}{102}$)} \\
+  &= \frac{0.99}{0.99 + 101 \cdot 0.01}
+    && \text{(multiply by 102)} \\
+  &= \frac{0.99}{0.99 + 1.01}
+   = \frac{0.99}{2}
+   = 0.495.
+\end{align*}
+\end{solution}

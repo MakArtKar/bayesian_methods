@@ -1,0 +1,397 @@
+\label{prob:student-network}
+Consider the following probabilistic model. At a seminar, a student answers
+badly ($A = 1$) or well ($A = 0$). This depends on whether the student has
+depression ($D = 1$ or $D = 0$) and whether the student went to a party the
+night before ($P = 1$ or $P = 0$). The party can also give the student a
+headache ($H = 1$). A bad answer makes the teacher unhappy ($T = 1$).
+Figure~\ref{fig:student-network} shows the causal relations in the model.
+The probabilities are:
+\begin{center}
+  \begin{tabular}[t]{c|cc}
+    \toprule
+    $p(A = 1 \mid P, D)$ & $P$ & $D$ \\
+    \midrule
+    0.999 & 1 & 1 \\
+    0.9   & 1 & 0 \\
+    0.9   & 0 & 1 \\
+    0.01  & 0 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \quad
+  \begin{tabular}[t]{c|c}
+    \toprule
+    $p(H = 1 \mid P)$ & $P$ \\
+    \midrule
+    0.9 & 1 \\
+    0.2 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \quad
+  \begin{tabular}[t]{c|c}
+    \toprule
+    $p(T = 1 \mid A)$ & $A$ \\
+    \midrule
+    0.95 & 1 \\
+    0.5  & 0 \\
+    \bottomrule
+  \end{tabular}
+
+  \medskip
+  $p(P = 1) = 0.2, \qquad p(D = 1) = 0.4.$
+\end{center}
+Find $p(P = 1 \mid H = 1)$, $p(P = 1 \mid T = 1)$, and
+$p(P = 1 \mid T = 1, H = 1)$.
+
+\begin{figure}[ht]
+  \centering
+  \begin{tikzpicture}[
+      node distance=0.3cm and 0.5cm,
+      var/.style={circle, draw, minimum size=0.75cm},
+      >={Stealth},
+    ]
+    \node[var] (P) {$P$};
+    \node[var, right=2cm of P] (D) {$D$};
+    \node[var, below left=of P] (H) {$H$};
+    \node[var, below right=of P] (A) {$A$};
+    \node[var, below=of A] (T) {$T$};
+    \draw[->] (P) -- (H);
+    \draw[->] (P) -- (A);
+    \draw[->] (D) -- (A);
+    \draw[->] (A) -- (T);
+  \end{tikzpicture}
+  \caption{Causal relations for Problem~\ref{prob:student-network}}
+  \label{fig:student-network}
+\end{figure}
+
+\begin{solution}
+\solpart{Idea}
+Goal: $p(G_x \mid G_y)$ for any groups of variables $G_x$ and $G_y$.
+Problem~\ref{prob:medical-test} is a special case.
+\begin{enumerate}[label=\textit{Step \arabic*.}, leftmargin=*]
+  \item \textit{Reduce to joint distributions:}
+    $p(G_x \mid G_y) = \dfrac{p(G_x, G_y)}{p(G_y)}$.
+    Now find $p(G)$ for any group $G$.
+  \item \textit{Find the factors of $p(G)$ with the chain rule.} Given:
+    $\textcolor{fP}{p(P)}$, $\textcolor{fD}{p(D)}$ for the sources;
+    $\textcolor{fA}{p(A \mid P, D)}$, $\textcolor{fH}{p(H \mid P)}$,
+    $\textcolor{fT}{p(T \mid A)}$ for the other nodes. \uline{Only the factors
+    of the sources and arrows with a path to $G$ appear in $p(G)$.}
+
+    \textit{Trick:} write the joint distribution of all variables one
+    time. The factor of a node $X$ is $p(X \mid \text{parents of } X)$:
+    \begin{itemize}
+      \item keep it if $X$ is in $G$, or if a path goes from $X$ to $G$;
+      \item else strike it out.
+    \end{itemize}
+    \begin{solexample}
+    \textit{Example:} $G = \{H, A\}$. The chain rule gives
+    \begin{align*}
+      p(P, D, A, H)
+      &= p(P, D, A) \, p(H \mid P, D, A)
+        && \text{(chain rule)} \\
+      &= p(P, D, A) \, \textcolor{fH}{p(H \mid P)}
+        && \text{(parent of $H$: $P$)} \\
+      &= p(P, D) \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)}
+        && \text{(chain rule; parents of $A$: $P$, $D$)} \\
+      &= \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)}
+        && \text{(chain rule; $D$ has no parents)}.
+    \end{align*}
+    From $T$, no path goes to $G$, so $p(T \mid A)$ is not in the product:
+    \begin{center}
+      \begin{tikzpicture}[
+          node distance=0.6cm and 0.55cm, >={Stealth},
+          var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
+          f/.style={->, very thick},
+          key/.style={minimum width=0.5cm},
+        ]
+        \node[var, draw=fP, very thick] (P) {$P$};
+        \node[var, draw=fD, very thick, right=1.6cm of P] (D) {$D$};
+        \node[var, fill=blue!15, below left=of P] (H) {$H$};
+        \node[var, fill=blue!15, below right=of P] (A) {$A$};
+        \node[var, below=of A] (T) {$T$};
+        \draw[f, fH] (P) -- (H);
+        \draw[f, fA] (P) -- (A);
+        \draw[f, fA] (D) -- (A);
+        \draw[f, fT, postaction={decorate}, decoration={markings,
+          mark=at position 0.5 with {\edgecross}}]
+          (A) -- (T);
+        \matrix[right=1.2cm of D, anchor=north west, row sep=2pt,
+            column sep=4pt, nodes={anchor=west}] {
+          \node[circle, draw=fP, very thick, minimum size=0.3cm] {}; &
+            \node {$p(P)$}; \\
+          \node[circle, draw=fD, very thick, minimum size=0.3cm] {}; &
+            \node {$p(D)$}; \\
+          \draw[f, fA] (0, 0) -- (0.5, 0); & \node {$p(A \mid P, D)$}; \\
+          \draw[f, fH] (0, 0) -- (0.5, 0); & \node {$p(H \mid P)$}; \\
+          \draw[f, fT] (0, 0) -- (0.5, 0); & \node {$p(T \mid A)$}; \\
+          \node[draw, fill=blue!15, minimum size=0.3cm] {}; &
+            \node {variables of $p(G)$}; \\
+        };
+      \end{tikzpicture}
+    \end{center}
+    With the trick: $A$ and $H$ are in $G$; $P \to H$; $D \to A$; no path
+    goes from $T$ to $G$:
+    \[
+      p(P, D, A, H, T)
+      = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \,
+        \strike{\textcolor{fT}{p(T \mid A)}}.
+    \]
+    \end{solexample}
+  \item \textit{Sum over the kept variables that are not in $G$.} Move
+    the constants out of the sums.
+    \begin{solexample}
+    \textit{Example:} $G = \{H, A\}$.
+    \begin{align*}
+      p(H, A)
+      &= \sum_{p} \sum_{d} p(H, A, P = p, D = d)
+        && \text{(sum over $P$, $D$)} \\
+      &= \sum_{p} \sum_{d} p(P = p) \, p(D = d)
+        && \text{(Step 2)} \\
+      &\qquad \cdot p(A \mid P = p, D = d) \, p(H \mid P = p).
+    \end{align*}
+    \end{solexample}
+\end{enumerate}
+
+\solpart{Solution}
+For each node $X$,
+$p(X = 0 \mid \text{parents}) = 1 - p(X = 1 \mid \text{parents})$.
+
+\solsubproblem{Joint distribution.}
+Chain rule from the children to the parents. Given its parents, a node does
+not depend on the other nodes.
+\begin{align*}
+  p(P, D, A, H, T)
+  &= p(P, D, A, H) \, p(T \mid P, D, A, H)
+   && \text{(chain rule)} \\
+  &= p(P, D, A, H) \, p(T \mid A)
+   && \text{(parent of $T$: $A$)} \\
+  p(P, D, A, H)
+  &= p(P, D, A) \, p(H \mid P, D, A)
+   && \text{(chain rule)} \\
+  &= p(P, D, A) \, p(H \mid P)
+   && \text{(parent of $H$: $P$)} \\
+  p(P, D, A)
+  &= p(P, D) \, p(A \mid P, D)
+   && \text{(chain rule; parents of $A$: $P$, $D$)} \\
+  p(P, D)
+  &= p(P) \, p(D \mid P)
+   && \text{(chain rule)} \\
+  &= p(P) \, p(D)
+   && \text{($D$ has no parents)}
+\end{align*}
+Thus
+\[
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
+\]
+
+\solsubproblem{(a) Find $p(P = 1 \mid H = 1)$.}
+
+\solstep{Step 1 (Idea 1). Write the ratio.}
+\[
+  p(P = 1 \mid H = 1) = \frac{p(P = 1, H = 1)}{p(H = 1)}.
+\]
+
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, H\}$.}
+\begin{center}
+  \crossgraph{g}{x}{g}{x}{x}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \strike{\textcolor{fD}{p(D)}} \, \strike{\textcolor{fA}{p(A \mid P, D)}} \, \textcolor{fH}{p(H \mid P)} \, \strike{\textcolor{fT}{p(T \mid A)}} \\
+  \Longrightarrow\;
+  p(P, H) = \textcolor{fP}{p(P)} \, \textcolor{fH}{p(H \mid P)}.
+\end{gather*}
+
+\solstep{Step 3 (Idea 3). Numerator.}
+No sum: no other variables are kept.
+\[
+  p(P = 1, H = 1)
+  = p(P = 1) \, p(H = 1 \mid P = 1)
+  = 0.2 \cdot 0.9
+  = 0.18.
+\]
+
+\solstep{Step 4 (Idea 2). Denominator: $G = \{H\}$.}
+\begin{center}
+  \crossgraph{k}{x}{g}{x}{x}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \strike{\textcolor{fD}{p(D)}} \, \strike{\textcolor{fA}{p(A \mid P, D)}} \, \textcolor{fH}{p(H \mid P)} \, \strike{\textcolor{fT}{p(T \mid A)}} \\
+  \Longrightarrow\;
+  p(P, H) = \textcolor{fP}{p(P)} \, \textcolor{fH}{p(H \mid P)}.
+\end{gather*}
+
+\solstep{Step 5 (Idea 3). Denominator.}
+\begin{align*}
+  p(H = 1)
+  &= \sum_{p} p(P = p) \, p(H = 1 \mid P = p)
+    && \text{(Step 4)} \\
+  &= 0.2 \cdot 0.9 + (1 - 0.2) \cdot 0.2
+   = 0.18 + 0.16
+   = 0.34.
+\end{align*}
+
+\solstep{Step 6. Divide.}
+\[
+  p(P = 1 \mid H = 1)
+  = \frac{0.18}{0.34}
+  = \frac{9}{17}
+  \approx 0.529.
+\]
+
+\solsubproblem{(b) Find $p(P = 1 \mid T = 1)$.}
+
+\solstep{Step 1 (Idea 1). Write the ratio.}
+\[
+  p(P = 1 \mid T = 1) = \frac{p(P = 1, T = 1)}{p(T = 1)}.
+\]
+
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, T\}$.}
+\begin{center}
+  \crossgraph{g}{k}{x}{k}{g}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \strike{\textcolor{fH}{p(H \mid P)}} \, \textcolor{fT}{p(T \mid A)} \\
+  \Longrightarrow\;
+  p(P, D, A, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fT}{p(T \mid A)}.
+\end{gather*}
+
+\solstep{Step 3 (Idea 3). Numerator.}
+\begin{align*}
+  &p(P = 1, T = 1) \\
+  &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d) \,
+     p(T = 1 \mid A = a)
+    && \text{(Step 2)} \\
+  &= p(P = 1) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
+     p(A = a \mid P = 1, D = d) \, p(D = d)
+    && \text{(constants out)} \\
+  &= 0.2 \, \bigl[ 0.95 \, \bigl(0.999 \cdot 0.4 + 0.9 \cdot (1 - 0.4)\bigr)
+    && \text{($a = 1$, $a = 0$)} \\
+  &\qquad + 0.5 \, \bigl((1 - 0.999) \cdot 0.4 + (1 - 0.9) \cdot (1 - 0.4)\bigr)
+     \bigr] \\
+  &= 0.2 \, [0.95 \cdot 0.9396 + 0.5 \cdot 0.0604] \\
+  &= 0.2 \, [0.89262 + 0.0302]
+   = 0.2 \cdot 0.92282
+   = 0.184564.
+\end{align*}
+
+\solstep{Step 4 (Idea 2). Denominator: $G = \{T\}$.}
+\begin{center}
+  \crossgraph{k}{k}{x}{k}{g}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \strike{\textcolor{fH}{p(H \mid P)}} \, \textcolor{fT}{p(T \mid A)} \\
+  \Longrightarrow\;
+  p(P, D, A, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fT}{p(T \mid A)}.
+\end{gather*}
+
+\solstep{Step 5 (Idea 3). Denominator.}
+\begin{align*}
+  &p(T = 1) \\
+  &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
+     p(A = a \mid P = p, D = d) \, p(T = 1 \mid A = a)
+    && \text{(Step 4)} \\
+  &= \sum_{p} p(P = p) \sum_{a} p(T = 1 \mid A = a) \sum_{d}
+     p(A = a \mid P = p, D = d) \, p(D = d)
+    && \text{(constants out)} \\
+  &= 0.184564 + (1 - 0.2) \, \bigl[ 0.95 \, (0.9 \cdot 0.4 + 0.01 \cdot 0.6)
+    && \text{($p = 1$: Step 3)} \\
+  &\qquad + 0.5 \, \bigl((1 - 0.9) \cdot 0.4 + (1 - 0.01) \cdot 0.6\bigr) \bigr] \\
+  &= 0.184564 + 0.8 \, [0.95 \cdot 0.366 + 0.5 \cdot 0.634] \\
+  &= 0.184564 + 0.8 \, [0.3477 + 0.317]
+   = 0.184564 + 0.8 \cdot 0.6647 \\
+  &= 0.184564 + 0.53176
+   = 0.716324.
+\end{align*}
+
+\solstep{Step 6. Divide.}
+\[
+  p(P = 1 \mid T = 1)
+  = \frac{0.184564}{0.716324}
+  \approx 0.258.
+\]
+
+\solsubproblem{(c) Find $p(P = 1 \mid T = 1, H = 1)$.}
+
+\solstep{Step 1 (Idea 1). Write the ratio.}
+\[
+  p(P = 1 \mid T = 1, H = 1)
+  = \frac{p(P = 1, H = 1, T = 1)}{p(H = 1, T = 1)}.
+\]
+
+\solstep{Step 2 (Idea 2). Numerator: $G = \{P, H, T\}$.}
+\begin{center}
+  \crossgraph{g}{k}{g}{k}{g}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)} \\
+  \Longrightarrow\;
+  p(P, D, A, H, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
+\end{gather*}
+
+\solstep{Step 3 (Idea 3). Numerator.}
+\begin{align*}
+  &p(P = 1, H = 1, T = 1) \\
+  &= \sum_{a} \sum_{d} p(P = 1) \, p(D = d) \, p(A = a \mid P = 1, D = d)
+    && \text{(Step 2)} \\
+  &\qquad \cdot p(H = 1 \mid P = 1) \, p(T = 1 \mid A = a) \\
+  &= p(H = 1 \mid P = 1)
+    && \text{(constants out)} \\
+  &\qquad \cdot p(P = 1) \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = 1, D = d) \, p(D = d) \\
+  &= 0.9 \cdot 0.184564
+    && \text{((b), Step 3)} \\
+  &= 0.1661076.
+\end{align*}
+
+\solstep{Step 4 (Idea 2). Denominator: $G = \{H, T\}$.}
+\begin{center}
+  \crossgraph{k}{k}{g}{k}{g}
+\end{center}
+\begin{gather*}
+  p(P, D, A, H, T)
+  = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)} \\
+  \Longrightarrow\;
+  p(P, D, A, H, T) = \textcolor{fP}{p(P)} \, \textcolor{fD}{p(D)} \, \textcolor{fA}{p(A \mid P, D)} \, \textcolor{fH}{p(H \mid P)} \, \textcolor{fT}{p(T \mid A)}.
+\end{gather*}
+
+\solstep{Step 5 (Idea 3). Denominator.}
+\begin{align*}
+  &p(H = 1, T = 1) \\
+  &= \sum_{p} \sum_{a} \sum_{d} p(P = p) \, p(D = d) \,
+     p(A = a \mid P = p, D = d)
+    && \text{(Step 4)} \\
+  &\qquad \cdot p(H = 1 \mid P = p) \, p(T = 1 \mid A = a) \\
+  &= \sum_{p} p(H = 1 \mid P = p)
+    && \text{(constants out)} \\
+  &\qquad \cdot p(P = p) \sum_{a} p(T = 1 \mid A = a)
+     \sum_{d} p(A = a \mid P = p, D = d) \, p(D = d) \\
+  &= 0.9 \cdot 0.184564 + 0.2 \cdot 0.53176
+    && \text{((b), Step 5)} \\
+  &= 0.1661076 + 0.106352
+   = 0.2724596.
+\end{align*}
+
+\solstep{Step 6. Divide.}
+\[
+  p(P = 1 \mid T = 1, H = 1)
+  = \frac{0.1661076}{0.2724596}
+  \approx 0.610.
+\]
+
+\solpart{Conclusion}
+\[
+  \underbrace{0.2}_{\text{prior}}
+  \;\to\;
+  \underbrace{0.529}_{H = 1}, \quad
+  \underbrace{0.258}_{T = 1}, \quad
+  \underbrace{0.610}_{H = 1,\, T = 1}.
+\]
+An unhappy teacher is weak evidence: without the party, the teacher is
+also often unhappy ($0.6647$ in Step~5 of (b)). Two observations together give the strongest evidence.
+\end{solution}
