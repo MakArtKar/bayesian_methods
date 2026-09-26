@@ -7,6 +7,7 @@
 \usepackage{enumitem}
 \usepackage{tikz}
 \usepackage[most]{tcolorbox}
+\usepackage[normalem]{ulem}
 \usepackage[colorlinks, urlcolor=blue, linkcolor=red]{hyperref}
 
 \usetikzlibrary{arrows.meta, decorations.markings, positioning}
@@ -69,9 +70,11 @@
   \end{tikzpicture}%
 }
 
-% An example inside the Idea: a pale block with a line on the left.
+% An example inside the Idea: a pale block with a line on the left. Inside a
+% list, the block starts at the left edge of the list, not of the item.
 \newtcolorbox{solexample}{
   enhanced, breakable, sharp corners, boxrule=0pt, leftrule=2pt,
+  grow to left by=\leftmargin,
   colback=black!4, colframe=black!35,
   left=6pt, right=6pt, top=4pt, bottom=4pt,
   before skip=6pt, after skip=6pt,
