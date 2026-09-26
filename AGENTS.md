@@ -62,6 +62,8 @@ seminars/week_01/
 
 - A problem file has no preamble and no `\item`. Main files include it
   inside an `enumerate` list: `\item \input{problems/04_poisson_mle}`.
+- In a main file with solutions, start each problem on a new page: put
+  `\clearpage` before each `\item` except the first.
 - Put packages and macros in `sources/preamble.tex`. Each main file starts
   with `\input{preamble}`, then calls `\hidesolutions` (problems only) or
   `\showsolutions` (problems with solutions).
