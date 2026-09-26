@@ -91,5 +91,7 @@
 
 % Parts of a solution, in this order: Interpretation (optional), Idea,
 % Solution, Conclusion (optional). Use \solstep for steps inside a part.
-\newcommand{\solpart}[1]{\par\smallskip\noindent\textbf{#1.}\ }
+\newcommand{\solpart}[1]{%
+  \par\medskip\noindent{\large\bfseries\MakeUppercase{#1}}\par\nopagebreak
+  \smallskip\noindent\ignorespaces}
 \newcommand{\solstep}[1]{\par\smallskip\noindent\textit{#1}\ }
