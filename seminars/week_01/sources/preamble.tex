@@ -34,6 +34,12 @@
     \node[inner sep=0pt, outer sep=0pt] (x) {$#1$};
     \draw[red, thick] (x.south west) -- (x.north east);}}}
 
+% A red cross on an arrow. It is drawn in the coordinates of the arrow, so
+% that both lines cross the arrow at about 65 degrees.
+\newcommand{\edgecross}{%
+  \draw[red, line width=0.7pt, -] (-1.7pt, -3.6pt) -- (1.7pt, 3.6pt);
+  \draw[red, line width=0.7pt, -] (1.7pt, -3.6pt) -- (-1.7pt, 3.6pt);}
+
 % The graph of Problem 2. Each source and arrow has the color of its factor
 % (fP, fD, fA, fH, fT). The arguments give the state of P, D, H, A, and T:
 % g (in the group G, blue fill), k (kept), or x (struck-out factor: a red
@@ -48,7 +54,7 @@
   edg/.style={},
   edk/.style={},
   edx/.style={postaction={decorate}, decoration={markings,
-    mark=at position 0.5 with {\node[text=red, inner sep=0pt] {$\times$};}}},
+    mark=at position 0.5 with {\edgecross}}},
 }
 \newcommand{\crossgraph}[5]{%
   \begin{tikzpicture}[
