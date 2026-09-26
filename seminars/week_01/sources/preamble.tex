@@ -6,9 +6,11 @@
 \usepackage{comment}
 \usepackage{enumitem}
 \usepackage{tikz}
+\usepackage[most]{tcolorbox}
+\usepackage[normalem]{ulem}
 \usepackage[colorlinks, urlcolor=blue, linkcolor=red]{hyperref}
 
-\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{arrows.meta, decorations.markings, positioning}
 
 \DeclareMathOperator{\Poiss}{Poiss}
 \newcommand{\Gam}{\mathcal{G}}
@@ -18,3 +20,78 @@
 \newcommand{\showsolutions}{%
   \specialcomment{solution}{\par\medskip}{\par\bigskip}}
 \newcommand{\hidesolutions}{\excludecomment{solution}}
+
+% Colors of the factors of the joint distribution in Problem 2.
+\colorlet{fP}{orange!90!black}
+\colorlet{fD}{green!55!black}
+\colorlet{fA}{violet}
+\colorlet{fH}{cyan!70!black}
+\colorlet{fT}{black!50}
+
+% A red strike for a factor that the solution does not need.
+\newcommand{\strike}[1]{%
+  \mathord{\tikz[baseline=(x.base)]{
+    \node[inner sep=0pt, outer sep=0pt] (x) {$#1$};
+    \draw[red, thick] (x.south west) -- (x.north east);}}}
+
+% A red cross on an arrow. It is drawn in the coordinates of the arrow, so
+% that both lines cross the arrow at about 65 degrees.
+\newcommand{\edgecross}{%
+  \draw[red, line width=0.7pt, -] (-1.7pt, -3.6pt) -- (1.7pt, 3.6pt);
+  \draw[red, line width=0.7pt, -] (1.7pt, -3.6pt) -- (-1.7pt, 3.6pt);}
+
+% The graph of Problem 2. Each source and arrow has the color of its factor
+% (fP, fD, fA, fH, fT). The arguments give the state of P, D, H, A, and T:
+% g (in the group G, blue fill), k (kept), or x (struck-out factor: a red
+% cross on the source, or on the arrows into the node).
+\tikzset{
+  srcg/.style={fill=blue!15},
+  srck/.style={},
+  srcx/.style={label={[text=red, font=\LARGE, inner sep=0pt]center:$\times$}},
+  ndg/.style={fill=blue!15},
+  ndk/.style={},
+  ndx/.style={},
+  edg/.style={},
+  edk/.style={},
+  edx/.style={postaction={decorate}, decoration={markings,
+    mark=at position 0.5 with {\edgecross}}},
+}
+\newcommand{\crossgraph}[5]{%
+  \begin{tikzpicture}[
+      node distance=0.6cm and 0.55cm, >={Stealth},
+      var/.style={circle, draw, minimum size=0.65cm, inner sep=1pt},
+      f/.style={->, very thick},
+    ]
+    \node[var, draw=fP, very thick, src#1] (P) {$P$};
+    \node[var, draw=fD, very thick, src#2, right=1.6cm of P] (D) {$D$};
+    \node[var, nd#3, below left=of P] (H) {$H$};
+    \node[var, nd#4, below right=of P] (A) {$A$};
+    \node[var, nd#5, below=of A] (T) {$T$};
+    \draw[f, fH, ed#3] (P) -- (H);
+    \draw[f, fA, ed#4] (P) -- (A);
+    \draw[f, fA, ed#4] (D) -- (A);
+    \draw[f, fT, ed#5] (A) -- (T);
+    \node[draw, fill=blue!15, minimum size=0.3cm, right=1.2cm of D] (key) {};
+    \node[right=0.1cm of key] {variables of $p(G)$};
+  \end{tikzpicture}%
+}
+
+% An example inside the Idea: a pale block with a line on the left. Inside a
+% list, the block starts at the left edge of the list, not of the item.
+\newtcolorbox{solexample}{
+  enhanced, breakable, sharp corners, boxrule=0pt, leftrule=2pt,
+  grow to left by=\leftmargin,
+  colback=black!4, colframe=black!35,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  before skip=6pt, after skip=6pt,
+}
+
+% Title of a subproblem inside a solution.
+\newcommand{\solsubproblem}[1]{\par\medskip\noindent\textbf{#1}\par\nopagebreak}
+
+% Parts of a solution, in this order: Interpretation (optional), Idea,
+% Solution, Conclusion (optional). Use \solstep for steps inside a part.
+\newcommand{\solpart}[1]{%
+  \par\medskip\noindent{\large\bfseries\MakeUppercase{#1}}\par\nopagebreak
+  \smallskip\noindent\ignorespaces}
+\newcommand{\solstep}[1]{\par\smallskip\noindent\textit{#1}\ }
